@@ -45,7 +45,7 @@ namespace GTBack.WebAPI.Extensions
         public static void LoadValidators(this IServiceCollection services)
         {
             services.AddTransient<IValidatorFactory, ServiceProviderValidatorFactory>();
-            services.AddTransient<IValidator<CustomerDto>, CustomerDtoValidator>();
+            services.AddTransient<IValidator<UserRegisterDTO>, CustomerDtoValidator>();
             services.AddTransient<IValidator<LoginDto>,LoginDtoValidator >();
 
         }

@@ -10,7 +10,10 @@
     <PackageReference Include="Auth0.ManagementApi" Version="7.17.4" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
     <PackageReference Include="FluentValidation" Version="11.2.2" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.62.0" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.7" />
@@ -25,5 +28,10 @@
   <ItemGroup>
     <ProjectReference Include="..\GTBack.Repository\GTBack.Repository.csproj" />
   </ItemGroup>
+
+
+
+
+
 
 </Project>

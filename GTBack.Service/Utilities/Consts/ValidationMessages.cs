@@ -8,6 +8,16 @@ namespace GTBack.Service.Utilities.Consts
 {
     public class ValidationMessages
     {
+        //User Validation Not Empty Messages
+        public const string Name_Not_Empty = "Name cannot be empty.";
+        public const string Email_Not_Empty = "E-Mail cannot be empty.";
+        public const string Username_Not_Empty = "Username cannot be empty.";
+        public const string Password_Not_Empty = "Password cannot be empty.";
+        public const string Phone_Not_Empty = "Phone cannot be empty.";
+        public const string Address_Not_Empty = "Address cannot be empty.";
+        public const string Surname_Not_Empty = "Surname cannot be empty.";
+        
+        
         public const string Email_Invalid = "Please enter a valid e-mail address.";
         public const string Phone_Number_Invalid = "Please enter a valid phone number.";
 
@@ -19,10 +29,7 @@ namespace GTBack.Service.Utilities.Consts
         public const string Password_Not_Match = "Passwords not match.";
 
 
-        public const string Name_Not_Empty = "Name cannot be empty.";
-        public const string Email_Not_Empty = "E-Mail cannot be empty.";
-        public const string Username_Not_Empty = "Username cannot be empty.";
-        public const string Password_Not_Empty = "Password cannot be empty.";
+
         public const string PasswordConfirm_Not_Empty = "Password confirm cannot be empty.";
         public const string Unauthorized = "Unauthorized.";
 
