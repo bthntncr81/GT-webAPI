@@ -146,17 +146,17 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "GoThere API v1");
     c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
 });
-// app.UseHangfireDashboard("/hangfire", new DashboardOptions
-// {
-//     Authorization = new[]
-//     {
-//         new HangfireCustomBasicAuthenticationFilter
-//         {
-//             User = app.Configuration.GetSection("HangfireOptions:User").Value,
-//             Pass = app.Configuration.GetSection("HangfireOptions:Pass").Value
-//         }
-//     }
-// });
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[]
+    {
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = app.Configuration.GetSection("HangfireOptions:User").Value,
+            Pass = app.Configuration.GetSection("HangfireOptions:Pass").Value
+        }
+    }
+});
 app.UseAuthentication();
 
 
