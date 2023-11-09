@@ -84,8 +84,8 @@ builder.Services.AddHangfire((sp, config) =>
 FirebaseApp.Create(new AppOptions()
 {
     Credential =
-        GoogleCredential.FromFile(
-            "GTBack.WebAPI/private_key.json")
+        GoogleCredential.FromAccessToken(
+            "AIzaSyCNXfm1uCzdHsKyg0YuTSkdrRAiEdpRZc8")
 });
 builder.Services.AddHangfireServer();
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
