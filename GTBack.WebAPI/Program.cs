@@ -5,7 +5,6 @@ using GTBack.Core.Services;
 using GTBack.Core.UnitOfWorks;
 using GTBack.Repository;
 using GTBack.Repository.Repositories;
-
 using GTBack.Repository.UnitOfWorks;
 using GTBack.Service.Configurations;
 using GTBack.Service.Mapping;
@@ -66,30 +65,27 @@ builder.Services.AddSwaggerGen(c =>
                 Scheme = "oauth2",
                 Name = "Bearer",
                 In = ParameterLocation.Header,
-
             },
             new List<string>()
         }
     });
 });
 SqlConnectionStringBuilder mySql = new SqlConnectionStringBuilder();
-mySql.DataSource = "database-2.cfcokfalhlyk.eu-central-1.rds.amazonaws.com"; 
-mySql.UserID = "admin";            
-mySql.Password = "Bthntncr81.";     
+mySql.DataSource = "database-2.cfcokfalhlyk.eu-central-1.rds.amazonaws.com";
+mySql.UserID = "admin";
+mySql.Password = "Bthntncr81.";
 mySql.InitialCatalog = "database-2";
 
 builder.Services.AddHangfire((sp, config) =>
 {
-    config.UseSqlServerStorage(mySql.ConnectionString).SetDataCompatibilityLevel(CompatibilityLevel.Version_180).UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings();
+    config.UseSqlServerStorage(mySql.ConnectionString).SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings();
 });
-// FirebaseApp.Create(new AppOptions()
-// {
-//     Credential = GoogleCredential.FromFile("/Users/omerbatuhantuncer/Documents/GitHub/GT-webAPI/GTBack.WebAPI/private_key.json")
-// });
+
 builder.Services.AddHangfireServer();
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddTransient<IValidatorFactory, ServiceProviderValidatorFactory>();
 builder.Services.AddTransient<IMailService, MailService>();
@@ -98,45 +94,46 @@ builder.Services.AddScoped(typeof(IRefreshTokenService), typeof(RefreshTokenServ
 builder.Services.AddAppConfiguration(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient(typeof(IListingServiceI<,>),typeof(ListService<,>));
+builder.Services.AddTransient(typeof(IListingServiceI<,>), typeof(ListService<,>));
 builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
 builder.Services.AddScoped(typeof(GTBack.Core.Services.Restourant.IClientService), typeof(ClientService));
 builder.Services.AddScoped(typeof(IEventService), typeof(EventService));
 builder.Services.AddScoped(typeof(IMenuAndCategoryService), typeof(MenuAndCategoryService));
 builder.Services.AddScoped(typeof(IAdditionAndOrderService), typeof(AdditionAndOrderService));
 builder.Services.AddScoped(typeof(ITableAndAreaService), typeof(TableAndAreaService));
-builder.Services.AddScoped(typeof(IRoleService<RoleCreateDTO,RoleListDTO>), typeof(RoleService));
-builder.Services.AddScoped(typeof(IRestoCompanyService<CompanyAddDTO,CompanyListDTO>), typeof(CompanyService));
-builder.Services.AddScoped(typeof(IDepartmentService<DepartmentAddDTO,DepartmentListDTO>), typeof(DepartmentService));
+builder.Services.AddScoped(typeof(IRoleService<RoleCreateDTO, RoleListDTO>), typeof(RoleService));
+builder.Services.AddScoped(typeof(IRestoCompanyService<CompanyAddDTO, CompanyListDTO>), typeof(CompanyService));
+builder.Services.AddScoped(typeof(IDepartmentService<DepartmentAddDTO, DepartmentListDTO>), typeof(DepartmentService));
 builder.Services.AddScoped(typeof(IEmployeeService), typeof(EmployeeService));
-builder.Services.AddScoped(typeof(IService<>),typeof(Service<>));
-builder.Services.AddScoped(typeof(IEventTypeService),typeof(EventTypeService));
+builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
+builder.Services.AddScoped(typeof(IEventTypeService), typeof(EventTypeService));
 builder.Services.AddAutoMapper(typeof(RestourantMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
+if (FirebaseApp.DefaultInstance == null)
+{
+    FirebaseApp.Create(new AppOptions()
+    {
+        Credential =
+            GoogleCredential.FromFile(
+                "/Users/omerbatuhantuncer/Documents/GitHub/GT-webAPI/GTBack.WebAPI/private_key.json")
+    });
+}
 
 var appConfig = builder.Configuration.Get<GoThereAppConfig>();
 
 
-
-
-
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
-    x.UseSqlServer(mySql.ConnectionString, option =>
-    {
-        option.MigrationsAssembly(Assembly.GetAssembly(typeof(AppDbContext)).GetName().Name);
-    });
-
-
+    x.UseSqlServer(mySql.ConnectionString,
+        option => { option.MigrationsAssembly(Assembly.GetAssembly(typeof(AppDbContext)).GetName().Name); });
 });
 
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
 
 
 app.UseSwagger();
@@ -163,9 +160,9 @@ app.UseAuthentication();
 app.UseCors(builder =>
 {
     builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader();
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
 });
 app.UseHttpsRedirection();
 
