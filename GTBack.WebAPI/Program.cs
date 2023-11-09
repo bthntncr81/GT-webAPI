@@ -81,7 +81,12 @@ builder.Services.AddHangfire((sp, config) =>
     config.UseSqlServerStorage(mySql.ConnectionString).SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
         .UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings();
 });
-
+FirebaseApp.Create(new AppOptions()
+{
+    Credential =
+        GoogleCredential.FromFile(
+            "GTBack.WebAPI/private_key.json")
+});
 builder.Services.AddHangfireServer();
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -113,12 +118,7 @@ builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
 if (FirebaseApp.DefaultInstance == null)
 {
-    FirebaseApp.Create(new AppOptions()
-    {
-        Credential =
-            GoogleCredential.FromFile(
-                "/Users/omerbatuhantuncer/Documents/GitHub/GT-webAPI/GTBack.WebAPI/private_key.json")
-    });
+   
 }
 
 var appConfig = builder.Configuration.Get<GoThereAppConfig>();
