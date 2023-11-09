@@ -82,10 +82,10 @@ builder.Services.AddHangfire((sp, config) =>
 {
     config.UseSqlServerStorage(mySql.ConnectionString).SetDataCompatibilityLevel(CompatibilityLevel.Version_180).UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings();
 });
-FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromFile("/Users/omerbatuhantuncer/Documents/GitHub/GT-webAPI/GTBack.WebAPI/private_key.json")
-});
+// FirebaseApp.Create(new AppOptions()
+// {
+//     Credential = GoogleCredential.FromFile("/Users/omerbatuhantuncer/Documents/GitHub/GT-webAPI/GTBack.WebAPI/private_key.json")
+// });
 builder.Services.AddHangfireServer();
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -146,17 +146,17 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "GoThere API v1");
     c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
 });
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
-{
-    Authorization = new[]
-    {
-        new HangfireCustomBasicAuthenticationFilter
-        {
-            User = app.Configuration.GetSection("HangfireOptions:User").Value,
-            Pass = app.Configuration.GetSection("HangfireOptions:Pass").Value
-        }
-    }
-});
+// app.UseHangfireDashboard("/hangfire", new DashboardOptions
+// {
+//     Authorization = new[]
+//     {
+//         new HangfireCustomBasicAuthenticationFilter
+//         {
+//             User = app.Configuration.GetSection("HangfireOptions:User").Value,
+//             Pass = app.Configuration.GetSection("HangfireOptions:Pass").Value
+//         }
+//     }
+// });
 app.UseAuthentication();
 
 
