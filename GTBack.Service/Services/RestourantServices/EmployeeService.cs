@@ -263,7 +263,7 @@ public class EmployeeService : IEmployeeService
         return null;
     }
 
-    public async Task<IDataResults<AuthenticatedUserResponseDto>> PasswordChoose(PasowordConfirmDTO passwordConfirmDto)
+    public async Task<IResults> PasswordChoose(PasowordConfirmDTO passwordConfirmDto)
     {
         var id = GetLoggedUserId();
 
@@ -275,11 +275,10 @@ public class EmployeeService : IEmployeeService
         await _service.UpdateAsync(employee);
 
 
-        var response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(employee));
 
-        return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
+        return new SuccessResult();
     }
-    public async Task<IDataResults<AuthenticatedUserResponseDto>> PasswordChange(ResetPassword passwordConfirmDto)
+    public async  Task<IResults>PasswordChange(ResetPassword passwordConfirmDto)
     {
         var id = GetLoggedUserId();
 
