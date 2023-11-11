@@ -234,8 +234,14 @@ public class EmployeeService : IEmployeeService
                 response.IsTemp = true;
             }
         }
+        else
+        {
+            response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(parent));
+            response.IsTemp = false;
 
-        response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(parent));
+
+        }
+
         parent.ApiKey = loginDto.FirebaseToken;
         _service.UpdateAsync(parent);
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
