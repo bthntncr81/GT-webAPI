@@ -51,7 +51,6 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement()
     {
         {
@@ -69,6 +68,8 @@ builder.Services.AddSwaggerGen(c =>
             new List<string>()
         }
     });
+    
+    
 });
 SqlConnectionStringBuilder mySql = new SqlConnectionStringBuilder();
 mySql.DataSource = "database-2.cfcokfalhlyk.eu-central-1.rds.amazonaws.com";

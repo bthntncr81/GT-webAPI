@@ -204,7 +204,7 @@ public class EmployeeService : IEmployeeService
 
         var userName = loginDto.UserName.ToLower().Trim();
         var parent =
-            await _service.GetByIdAsync((x => x.UserName.ToLower() == userName && !x.IsDeleted)); //get by mail eklenecek
+            await _service.GetByIdAsync((x => x.UserName.ToLower() == userName.ToLower() && !x.IsDeleted)); //get by mail eklenecek
 
      
 
@@ -234,7 +234,6 @@ public class EmployeeService : IEmployeeService
         }
 
         response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(parent));
-        response.IsTemp = true;
 
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
     }
@@ -282,17 +281,17 @@ public class EmployeeService : IEmployeeService
         var id = GetLoggedUserId();
 
         var employee = await _service.GetByIdAsync((x => x.Id == id && !x.IsDeleted));
-
-        employee.PasswordHash = SHA1.Generate(passwordConfirmDto.NewPassword);
-        employee.TempPasswordHash = " ";
-
+        if (Utilities.SHA1.Verify(passwordConfirmDto.OldPassword, employee.PasswordHash))
+        {
+            employee.PasswordHash = SHA1.Generate(passwordConfirmDto.NewPassword);
+        }
+        
         await _service.UpdateAsync(employee);
-
-
         var response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(employee));
 
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
     }
+    
     public async Task<IResults> Register(EmployeeRegisterDTO registerDto)
     {
         var valResult =
@@ -304,9 +303,9 @@ public class EmployeeService : IEmployeeService
             return new ErrorDataResults<AuthenticatedUserResponseDto>(HttpStatusCode.BadRequest, valResult.Errors);
         }
 
-        var mail = registerDto.Mail.ToLower().Trim();
+        var username = registerDto.UserName.ToLower().Trim();
         var employee =
-            await _service.GetByIdAsync((x => x.Mail.ToLower() == mail && !x.IsDeleted)); //get by mail eklenecek
+            await _service.GetByIdAsync((x => x.UserName.ToLower() == username && !x.IsDeleted)); //get by mail eklenecek
 
 
         if (!employee.IsNull())
@@ -328,6 +327,7 @@ public class EmployeeService : IEmployeeService
             ShiftStart = registerDto.ShiftStart,
             ShiftEnd = registerDto.ShiftEnd,
             SalaryType = registerDto.SalaryType,
+            UserName = registerDto.UserName,
             Salary = registerDto.Salary,
             DeviceId = registerDto.DeviceId,
             Phone = registerDto.Phone,

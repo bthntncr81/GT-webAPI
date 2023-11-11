@@ -14,4 +14,5 @@ public interface IEmployeeService
     Task<IDataResults<AuthenticatedUserResponseDto>> PasswordChoose(PasowordConfirmDTO loginDto);
     Task<IResults> Register(EmployeeRegisterDTO registerDto);
     Task<IResults> EmployeeRoleChange(EmployeeRegisterDTO registerDto);
+    Task<IDataResults<AuthenticatedUserResponseDto>> PasswordChange(ResetPassword passwordConfirmDto);
 }

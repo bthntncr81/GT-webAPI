@@ -48,17 +48,27 @@ namespace GTBack.WebAPI.Controllers.Restourant
             
             return ApiResult(await _clientService.Register(request));
         }
+        
         [HttpPost("EmployeeRegister")]
         public async Task<IActionResult> EmpRegister(EmployeeRegisterDTO request)
         {
             return ApiResult(await _employeeService.Register(request));
         }
+        
         [Authorize]
         [HttpPost("EmployeeSelectPassword")]
-        public async Task<IActionResult> EmplooyeSelectPassowrd(PasowordConfirmDTO request)
+        public async Task<IActionResult> EmployeeSelectPassword(PasowordConfirmDTO request)
         {
             return ApiResult(await _employeeService.PasswordChoose(request));
         }
+        
+        [Authorize]
+        [HttpPost("PasswordChange")]
+        public async Task<IActionResult> PasswordChange(ResetPassword request)
+        {
+            return ApiResult(await _employeeService.PasswordChange(request));
+        }
+
         
         [HttpPost("EmployeeLogin")]
         public async Task<IActionResult> EmployeeLogin(LoginRestourantDTO log)
