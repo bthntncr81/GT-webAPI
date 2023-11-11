@@ -44,6 +44,7 @@ public class MenuController: CustomRestourantBaseController
   
     [Authorize]
     [HttpGet("CategoryList")]
+    [ProducesResponseType(typeof(ICollection<CategoryListDTO>),200)]
     public async Task<IActionResult> CategoryList()
     {
         return ApiResult(await _service.AllCategoryListByCompanyId());
@@ -56,6 +57,7 @@ public class MenuController: CustomRestourantBaseController
     }
     [Authorize]
     [HttpPost("AllMenuItems")]
+    [ProducesResponseType(typeof(BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>),200)]
     public async Task<IActionResult> AllMenuItemsByCompanyId( BaseListFilterDTO<MenuListFilterDTO> menuFilter)
     {
         return ApiResult(await _service.AllMenuItemsByCompanyId(menuFilter));
