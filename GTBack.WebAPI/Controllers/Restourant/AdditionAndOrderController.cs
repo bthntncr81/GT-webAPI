@@ -33,6 +33,13 @@ public class AdditionAndOrderController: CustomRestourantBaseController
         return ApiResult(await _service.AdditionAddOrUpdate(model));
     }
     
+    [HttpPost("OrderAddList")]
+    public async Task<IActionResult> Order(List<OrderAddOrUpdateDTO> model)
+    {
+        return ApiResult(await _service.OrderAddList(model));
+    }
+
+    
    
     
     [HttpPost("OrderAddOrUpdate")]

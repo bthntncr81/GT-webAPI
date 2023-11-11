@@ -21,7 +21,7 @@ public class MenuController: CustomRestourantBaseController
     }
     
          
-    [HttpPost("CreatMenu")]
+    [HttpPost("CreateMenu")]
     public async Task<IActionResult> CreateMenu(MenuCreateDTO model)
     {
         return ApiResult(await _service.MenuCreate(model));
@@ -67,20 +67,20 @@ public class MenuController: CustomRestourantBaseController
         return ApiResult(await _service.ExtraMenuItemByMenuItemId(menuItemId));
     }
     
-    [HttpDelete("DeleteCategory")]
-    public async Task<IActionResult> DeleteCategory(long id)
+    [HttpDelete("CategoryDelete")]
+    public async Task<IActionResult> CategoryDelete(long id)
     {
         return ApiResult(await _service.CategoryDelete(id));
     }
     
-    [HttpDelete("DeleteMenuItem")]
-    public async Task<IActionResult> DeleteMenuItem(long id)
+    [HttpDelete("MenuItemDelete")]
+    public async Task<IActionResult> MenuItemDelete(long id)
     {
         return ApiResult(await _service.MenuItemDelete(id));
     }
     
-    [HttpDelete("DeleteExtraMenuItem")]
-    public async Task<IActionResult> DeleteExtraMenuItem(long id)
+    [HttpDelete("ExtraMenuItemDelete")]
+    public async Task<IActionResult> ExtraMenuItemDelete(long id)
     {
         return ApiResult(await _service.ExtraMenuItemDelete(id));
     }

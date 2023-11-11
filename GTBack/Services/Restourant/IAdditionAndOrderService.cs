@@ -19,4 +19,6 @@ public interface IAdditionAndOrderService
     
     Task<IResults>  ChangeOrderStatus(ChangeOrderStatusDTO model);
     Task<IResults>  CloseAddition(long additionId);
+
+    Task<IResults> OrderAddList(List<OrderAddOrUpdateDTO> item);
 }

@@ -17,6 +17,8 @@ using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Hangfire;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Table = GTBack.Core.Entities.Restourant.Table;
 
 namespace GTBack.Service.Services.RestourantServices;
 
@@ -111,6 +113,7 @@ public class AdditionAndOrderService : IAdditionAndOrderService
     {
         var extra = await _extraMenuService.Where(x => x.Id == model.ExtraMenuItemId).FirstOrDefaultAsync();
         var employee = await _employeeService.Where(x => x.Id == model.EmployeeId).FirstOrDefaultAsync();
+        var addition = await _additionService.Where(x => x.Id == model.AdditionId).FirstOrDefaultAsync();
         if (model.Id == 0)
         {
             var response = _mapper.Map<Order>(model);
@@ -130,7 +133,7 @@ public class AdditionAndOrderService : IAdditionAndOrderService
 
 
             _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                    "Yiyeceğin tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
+                    addition.Id+"nolu adisyonun"+extra.Name+ "adlı ürününün"+"tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
                 , TimeSpan.FromMinutes(extra.EstimatedTime - 10));
 
             return new SuccessResult();
@@ -141,6 +144,52 @@ public class AdditionAndOrderService : IAdditionAndOrderService
             await _orderService.UpdateAsync(response);
             return new SuccessResult();
         }
+    }
+
+    
+    public  async Task<IResults> OrderAddList(List<OrderAddOrUpdateDTO> item){
+    
+
+        
+            foreach(var model in item)
+            {
+                
+                var extra = await _extraMenuService.Where(x => x.Id == model.ExtraMenuItemId).FirstOrDefaultAsync();
+                var employee = await _employeeService.Where(x => x.Id == model.EmployeeId).FirstOrDefaultAsync();
+                var addition = await _additionService.Where(x => x.Id == model.AdditionId).FirstOrDefaultAsync();
+                
+                if (model.Id == 0)
+                {
+                    var response = _mapper.Map<Order>(model);
+                    var addedOrder = await _orderService.AddAsync(response);
+                
+                    var orderProcess = new OrderProcess()
+                    {
+                        InitialOrderStatus = OrderStatus.ORDERED,
+                        FinishedOrderStatus = OrderStatus.ORDERED,
+                        ChangeDate = DateTime.UtcNow,
+                        ChangeNote = addedOrder.OrderNote,
+                        OrderId = addedOrder.Id,
+                        EmployeeId = GetLoggedUserId()
+                    };
+                
+                    await _orderProcessService.AddAsync(orderProcess);
+                
+                
+                    _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
+                            addition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün  tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
+                        , TimeSpan.FromMinutes(extra.EstimatedTime - 10));
+                
+                    
+                }
+                else
+                {
+                    var response = _mapper.Map<Order>(model);
+                    await _orderService.UpdateAsync(response);
+                  
+                }
+            }
+            return new SuccessResult();
     }
 
     public async Task<IResults> OrderDelete(long id)

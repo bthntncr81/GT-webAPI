@@ -277,7 +277,22 @@ public class EmployeeService : IEmployeeService
 
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
     }
+    public async Task<IDataResults<AuthenticatedUserResponseDto>> PasswordChange(ResetPassword passwordConfirmDto)
+    {
+        var id = GetLoggedUserId();
 
+        var employee = await _service.GetByIdAsync((x => x.Id == id && !x.IsDeleted));
+
+        employee.PasswordHash = SHA1.Generate(passwordConfirmDto.NewPassword);
+        employee.TempPasswordHash = " ";
+
+        await _service.UpdateAsync(employee);
+
+
+        var response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(employee));
+
+        return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
+    }
     public async Task<IResults> Register(EmployeeRegisterDTO registerDto)
     {
         var valResult =
