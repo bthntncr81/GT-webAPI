@@ -217,6 +217,7 @@ public class EmployeeService : IEmployeeService
 
         var response = new AuthenticatedUserResponseDto();
         response.IsTemp = false;
+        
 
         if (!Utilities.SHA1.Verify(loginDto.Password, parent.PasswordHash))
         {
@@ -229,11 +230,13 @@ public class EmployeeService : IEmployeeService
             else
             {
                 response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(parent));
+                parent.ApiKey = loginDto.FirebaseToken;
                 response.IsTemp = true;
             }
         }
 
         response = await Authenticate(_mapper.Map<EmployeeRegisterDTO>(parent));
+        parent.ApiKey = loginDto.FirebaseToken;
 
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
     }
