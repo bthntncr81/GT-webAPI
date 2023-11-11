@@ -133,8 +133,8 @@ public class AdditionAndOrderService : IAdditionAndOrderService
 
 
             _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                    addition.Id+"nolu adisyonun"+extra.Name+ "adlı ürününün"+"tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
-                , TimeSpan.FromMinutes(extra.EstimatedTime - 10));
+                    addition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün "+" tahmini teslim süresine son 10 dakika ", employee.ApiKey,addedOrder.Id)
+                , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
 
             return new SuccessResult();
         }
@@ -177,8 +177,8 @@ public class AdditionAndOrderService : IAdditionAndOrderService
                 
                 
                     _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                            addition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün  tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
-                        , TimeSpan.FromMinutes(extra.EstimatedTime - 10));
+                            addition.Id+" "+" nolu adisyonun  " + " " +extra.Name+ " "+"  adlı ürününün  tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
+                        , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
                 
                     
                 }
