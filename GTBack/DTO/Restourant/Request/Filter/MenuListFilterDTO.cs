@@ -6,6 +6,7 @@ public class MenuListFilterDTO
 {
     
     public String? Name { get; set; }
+    public int? CategoryId { get; set; }
     public RangeFilter? Price { get; set; }
     public RangeFilter? Stock { get; set; }
     public String? Description { get; set; }

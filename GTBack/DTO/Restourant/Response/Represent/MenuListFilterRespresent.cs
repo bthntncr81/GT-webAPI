@@ -6,6 +6,7 @@ public class MenuListFilterRespresent
 {
     
     public RequestFilter Name { get; set; }
+    public RequestFilter CategoryId { get; set; }
     public RequestFilter Price { get; set; }
     public RequestFilter Stock { get; set; }
     public RequestFilter Description { get; set; }
@@ -14,6 +15,7 @@ public class MenuListFilterRespresent
     public MenuListFilterRespresent()
     {
         Name = new RequestFilter("Name","string");
+        CategoryId = new RequestFilter("CategoryId","int");
         Price = new RequestFilter("Price","range");
         Stock = new RequestFilter("Stock","range");
         Description = new RequestFilter("Description","string");

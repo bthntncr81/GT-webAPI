@@ -146,9 +146,9 @@ public class MenuAndCategoryService : IMenuAndCategoryService
 
 
     public async Task<IDataResults<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>> MenuItemListByCategoryId(
-        BaseListFilterDTO<MenuListFilterDTO> menuFilter, long categoryId)
+        BaseListFilterDTO<MenuListFilterDTO> menuFilter)
     {
-        var query = _menuItemService.Where(x => x.CategoryId == categoryId && !x.IsDeleted);
+        var query = _menuItemService.Where(x => x.CategoryId == menuFilter.RequestFilter.CategoryId && !x.IsDeleted);
         BaseListDTO<MenuItemListDTO, MenuListFilterRespresent> menuList =
             new BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>();
 
@@ -226,6 +226,11 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         if (!CollectionUtilities.IsNullOrEmpty(menuFilter.RequestFilter.Name))
         {
             query = query.Where(x => x.Name.Contains(menuFilter.RequestFilter.Name));
+        }
+        
+        if (menuFilter.RequestFilter.CategoryId.HasValue)
+        {
+            query = query.Where(x => x.CategoryId==menuFilter.RequestFilter.CategoryId);
         }
 
         if (!CollectionUtilities.IsNullOrEmpty(menuFilter.RequestFilter.Contains))

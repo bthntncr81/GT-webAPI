@@ -16,7 +16,7 @@ public interface IMenuAndCategoryService
     Task<IResults> MenuItemDelete(long id);
     Task<IResults> ExtraMenuItemDelete(long id);
     Task<IDataResults<ICollection<CategoryListDTO>>> AllCategoryListByCompanyId();
-    Task<IDataResults<BaseListDTO<MenuItemListDTO,MenuListFilterRespresent>>> MenuItemListByCategoryId(BaseListFilterDTO<MenuListFilterDTO>  menuFilter,long categoryId);
+    Task<IDataResults<BaseListDTO<MenuItemListDTO,MenuListFilterRespresent>>> MenuItemListByCategoryId(BaseListFilterDTO<MenuListFilterDTO>  menuFilter);
     Task<IDataResults<ICollection<ExtraMenuItemListDTO>>> ExtraMenuItemByMenuItemId(long menuItemId);
 
     Task<IDataResults<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>> AllMenuItemsByCompanyId(
