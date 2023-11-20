@@ -45,15 +45,20 @@ public class MenuAndCategoryService : IMenuAndCategoryService
 
     public async Task<IResults> CategoryAdd(CategoryAddOrUpdateDTO model)
     {
+        var companyId = GetLoggedCompanyId();
+        var menu = await _menuService.Where(x => x.RestoCompanyId == companyId).FirstOrDefaultAsync();
         if (model.Id != 0)
         {
             var response = _mapper.Map<Category>(model);
+            response.MenuId = menu.Id;
             await _categoryService.AddAsync(response);
             return new SuccessResult();
         }
         else
         {
+            
             var response = _mapper.Map<Category>(model);
+            response.MenuId = menu.Id;
             await _categoryService.UpdateAsync(response);
             return new SuccessResult();
         }
