@@ -17,7 +17,7 @@ namespace GTBack.Core.Services
         Task<T> AddAsync(T entity);
         Task SendMail(MailData mail);
         Task<IEnumerable<T>>AddRangeAsync(IEnumerable<T> entities);
-        Task UpdateAsync(T entity);
+        Task<T> UpdateAsync(T entity);
         Task RemoveAsync(T entity);
 
         Task RemoveRangeAsync(IEnumerable<T> entities);

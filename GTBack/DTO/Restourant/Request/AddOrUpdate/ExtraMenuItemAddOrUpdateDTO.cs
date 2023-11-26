@@ -2,7 +2,7 @@ namespace GTBack.Core.DTO.Restourant.Request;
 
 public class ExtraMenuItemAddOrUpdateDTO
 {
-    public long Id { get; set; }
+    public long? Id { get; set; }
     public String Name { get; set; }
     public int Price { get; set; }
     public int Stock { get; set; }

@@ -51,31 +51,53 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         {
             var response = _mapper.Map<Category>(model);
             response.MenuId = menu.Id;
-            await _categoryService.AddAsync(response);
+            await _categoryService.UpdateAsync(response);
             return new SuccessResult();
         }
         else
         {
-            
             var response = _mapper.Map<Category>(model);
             response.MenuId = menu.Id;
-            await _categoryService.UpdateAsync(response);
+            await _categoryService.AddAsync(response);
             return new SuccessResult();
         }
     }
 
     public async Task<IResults> MenuItemAdd(MenuItemAddOrUpdateDTO model)
     {
-        if (model.Id != 0)
+        if (!model.Id.HasValue || model.Id == 0)
         {
             var response = _mapper.Map<MenuItem>(model);
-            await _menuItemService.AddAsync(response);
+            var added = await _menuItemService.AddAsync(response);
+            var extraMenuItem = new ExtraMenuItemAddOrUpdateDTO()
+            {
+                Id = 0,
+                Name = model.Name,
+                Price = 0,
+                Description = model.Description,
+                Contains = model.Contains,
+                Image = model.Image,
+                MenuItemId = added.Id,
+            };
+            ExtraMenuItemAdd(extraMenuItem);
             return new SuccessResult();
         }
         else
         {
             var response = _mapper.Map<MenuItem>(model);
-            await _menuItemService.UpdateAsync(response);
+            var updated = await _menuItemService.UpdateAsync(response);
+            var extraMenuItemList = await _extraMenuItemService.Where(x => x.MenuItemId == updated.Id).OrderByDescending(x=>x.Id).ToListAsync();
+            var extraMenuItem = new ExtraMenuItemAddOrUpdateDTO()
+            {
+                Id = extraMenuItemList[0].Id,
+                Name = model.Name,
+                Price = 0,
+                Description = model.Description,
+                Contains = model.Contains,
+                Image = model.Image,
+                MenuItemId = updated.Id,
+            };
+            ExtraMenuItemAdd(extraMenuItem);
             return new SuccessResult();
         }
     }
@@ -85,13 +107,13 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         if (model.Id != 0)
         {
             var response = _mapper.Map<ExtraMenuItem>(model);
-            await _extraMenuItemService.AddAsync(response);
+            await _extraMenuItemService.UpdateAsync(response);
             return new SuccessResult();
         }
         else
         {
             var response = _mapper.Map<ExtraMenuItem>(model);
-            await _extraMenuItemService.UpdateAsync(response);
+            await _extraMenuItemService.AddAsync(response);
             return new SuccessResult();
         }
     }
@@ -204,11 +226,11 @@ public class MenuAndCategoryService : IMenuAndCategoryService
     {
         List<MenuItem> menuItems = new List<MenuItem>();
         var companyId = GetLoggedCompanyId();
-        var menuRepo =  _menuService.Where(x =>  !x.IsDeleted);
+        var menuRepo = _menuService.Where(x => !x.IsDeleted);
         var categoryRepo = _categoryService.Where(x => !x.IsDeleted);
         var menuItemRepo = _menuItemService.Where(x => !x.IsDeleted);
 
-        var query = from menu in menuRepo.Where(x=>x.RestoCompanyId==companyId)
+        var query = from menu in menuRepo.Where(x => x.RestoCompanyId == companyId)
             join category in categoryRepo on menu.Id equals category.MenuId into categoryLeft
             from category in categoryLeft
             join menuItem in menuItemRepo on category.Id equals menuItem.CategoryId into menuItemLeft
@@ -216,7 +238,7 @@ public class MenuAndCategoryService : IMenuAndCategoryService
             select new MenuItemListDTO()
 
             {
-                Id = menuItem.Id.IsNull()? 0 :menuItem.Id,
+                Id = menuItem.Id.IsNull() ? 0 : menuItem.Id,
                 Name = menuItem.Name,
                 Price = menuItem.Price,
                 Stock = menuItem.Stock,
@@ -232,10 +254,10 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         {
             query = query.Where(x => x.Name.Contains(menuFilter.RequestFilter.Name));
         }
-        
+
         if (menuFilter.RequestFilter.CategoryId.HasValue)
         {
-            query = query.Where(x => x.CategoryId==menuFilter.RequestFilter.CategoryId);
+            query = query.Where(x => x.CategoryId == menuFilter.RequestFilter.CategoryId);
         }
 
         if (!CollectionUtilities.IsNullOrEmpty(menuFilter.RequestFilter.Contains))
@@ -261,7 +283,7 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         }
 
         query = query.Skip(menuFilter.PaginationFilter.Skip).Take(menuFilter.PaginationFilter.Take);
-        
+
 
         BaseListDTO<MenuItemListDTO, MenuListFilterRespresent> menuList =
             new BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>();
