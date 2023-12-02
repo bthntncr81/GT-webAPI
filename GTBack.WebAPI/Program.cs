@@ -72,10 +72,10 @@ builder.Services.AddSwaggerGen(c =>
     
 });
 SqlConnectionStringBuilder mySql = new SqlConnectionStringBuilder();
-mySql.DataSource = "database-2.cfcokfalhlyk.eu-central-1.rds.amazonaws.com";
+mySql.DataSource = "restourant.cgrgyf6ib59b.eu-central-1.rds.amazonaws.com";
 mySql.UserID = "admin";
 mySql.Password = "Bthntncr81.";
-mySql.InitialCatalog = "database-2";
+mySql.InitialCatalog = "restourant";
 
 builder.Services.AddHangfire((sp, config) =>
 {
