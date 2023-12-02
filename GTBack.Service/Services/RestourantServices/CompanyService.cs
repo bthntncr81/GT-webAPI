@@ -18,25 +18,19 @@ public class CompanyService : IRestoCompanyService<CompanyAddDTO,CompanyListDTO>
     private readonly IService<RestoCompany> _companyService;
     private readonly IService<Department> _departmentService;
     private readonly IService<Employee> _employeeService;
-    private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IService<EmployeeRoleRelation> _empRoleService;
     private readonly IMenuAndCategoryService _menuService;
-    private readonly ClaimsPrincipal? _loggedUser;
-    private readonly IMapper _mapper;
-    private readonly IJwtTokenService<BaseRegisterDTO> _tokenService;
 
     public CompanyService(IRefreshTokenService refreshTokenService, IService<Employee> employeeService,
         IService<Department> departmentService, IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<RestoCompany> companyService,IMenuAndCategoryService menuService,
-        IMapper mapper)
+        IMapper mapper,IService<EmployeeRoleRelation> empRoleService)
     {
-        _mapper = mapper;
         _companyService = companyService;
         _departmentService = departmentService;
         _employeeService = employeeService;
-        _loggedUser = httpContextAccessor.HttpContext?.User;
-        _refreshTokenService = refreshTokenService;
-        _tokenService = tokenService;
         _menuService = menuService;
+        _empRoleService = empRoleService;
     }
 
     public async Task<IDataResults<CompanyAddDTO>> Create(CompanyAddDTO model)
@@ -73,6 +67,10 @@ public class CompanyService : IRestoCompanyService<CompanyAddDTO,CompanyListDTO>
         };
 
         var department = await _departmentService.AddAsync(depAdded);
+        
+      
+      
+        
         var employeeAdded = new Employee()
         {
             CreatedDate = DateTime.UtcNow,
@@ -91,8 +89,20 @@ public class CompanyService : IRestoCompanyService<CompanyAddDTO,CompanyListDTO>
             Name = model.Name,
             PasswordHash = SHA1.Generate(model.Password),
         };
+        
 
         var user = await _employeeService.AddAsync(employeeAdded);
+        
+        
+        foreach (var role in model.RoleList)
+        {
+            var employeeRoleRelation = new EmployeeRoleRelation()
+            {
+                RoleId = role.RoleId,
+                EmployeeId = employeeAdded.Id
+            };
+            await _empRoleService.AddAsync(employeeRoleRelation);
+        }
 
         return new SuccessDataResult<CompanyAddDTO>(model);
     }
