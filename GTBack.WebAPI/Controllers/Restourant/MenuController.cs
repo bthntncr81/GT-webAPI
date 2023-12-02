@@ -69,6 +69,12 @@ public class MenuController: CustomRestourantBaseController
         return ApiResult(await _service.ExtraMenuItemByMenuItemId(menuItemId));
     }
     
+    [HttpPost("ExtraMenuItemAdd")]
+    public async Task<IActionResult> ExtraMenuItemAdd(ExtraMenuItemAddOrUpdateDTO extraMenuItem)
+    {
+        return ApiResult(await _service.ExtraMenuItemAdd(extraMenuItem));
+    }
+    
     [HttpDelete("CategoryDelete")]
     public async Task<IActionResult> CategoryDelete(long id)
     {

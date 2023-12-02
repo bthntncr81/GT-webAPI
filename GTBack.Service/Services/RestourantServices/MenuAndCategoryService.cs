@@ -1,8 +1,10 @@
+using System.IO.Compression;
 using System.Security.Claims;
 using AutoMapper;
 using GTBack.Core.DTO;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Restourant.Response;
+using GTBack.Core.DTO.Restourant.Response.List;
 using GTBack.Core.Entities.Restourant;
 using GTBack.Core.Results;
 using GTBack.Core.Services;
@@ -10,6 +12,7 @@ using GTBack.Core.Services.Restourant;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using XAct;
 
 namespace GTBack.Service.Services.RestourantServices;
@@ -172,7 +175,7 @@ public class MenuAndCategoryService : IMenuAndCategoryService
     }
 
 
-    public async Task<IDataResults<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>> MenuItemListByCategoryId(
+    public async Task<IDataResults<BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>>> MenuItemListByCategoryId(
         BaseListFilterDTO<MenuListFilterDTO> menuFilter)
     {
         var query = _menuItemService.Where(x => x.CategoryId == menuFilter.RequestFilter.CategoryId && !x.IsDeleted);
@@ -206,11 +209,30 @@ public class MenuAndCategoryService : IMenuAndCategoryService
             query = query.Where(x =>
                 x.Stock < menuFilter.RequestFilter.Stock.Max && x.Stock > menuFilter.RequestFilter.Stock.Min);
         }
-
-
+        
         menuList.List = _mapper.Map<ICollection<MenuItemListDTO>>(await query.ToListAsync());
-        menuList.Filter = new MenuListFilterRespresent();
-        return new SuccessDataResult<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>(menuList);
+        
+        var menuExtraDTOList = new List<MenuAndExtrasListDTO>();
+        
+        foreach (var menuItem in menuList.List)
+        { var extraMenuItemList = await _extraMenuItemService.Where(x => x.MenuItemId == menuItem.Id).ToListAsync();
+           var extraMenuItemListDTO = _mapper.Map<List<ExtraMenuItemListDTO>>(extraMenuItemList);
+           var menuExtraDTO = new MenuAndExtrasListDTO();
+           menuExtraDTO.MenuItem = menuItem;
+           menuExtraDTO.ExtraMenuItemList = extraMenuItemListDTO;
+           menuExtraDTOList.Add(menuExtraDTO);
+        }
+        
+        
+        BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent> menuListSended =
+            new BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>();
+        
+        menuListSended.List=_mapper.Map<ICollection<MenuAndExtrasListDTO>>(menuExtraDTOList);
+        
+        menuListSended.Filter = new MenuListFilterRespresent();
+
+        
+        return new SuccessDataResult<BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>>(menuListSended);
     }
 
     public async Task<IDataResults<ICollection<ExtraMenuItemListDTO>>> ExtraMenuItemByMenuItemId(long menuItemId)
