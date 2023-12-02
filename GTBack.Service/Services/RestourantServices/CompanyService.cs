@@ -77,6 +77,7 @@ public class CompanyService : IRestoCompanyService<CompanyAddDTO,CompanyListDTO>
         {
             CreatedDate = DateTime.UtcNow,
             UpdatedDate = DateTime.UtcNow,
+            UserName = model.UserName,
             Mail = model.Mail,
             Address = model.Address,
             Surname = model.Surname,
@@ -88,7 +89,7 @@ public class CompanyService : IRestoCompanyService<CompanyAddDTO,CompanyListDTO>
             Phone = model.Phone,
             IsDeleted = false,
             Name = model.Name,
-            PasswordHash = SHA1.Generate(model.Password)
+            PasswordHash = SHA1.Generate(model.Password),
         };
 
         var user = await _employeeService.AddAsync(employeeAdded);
