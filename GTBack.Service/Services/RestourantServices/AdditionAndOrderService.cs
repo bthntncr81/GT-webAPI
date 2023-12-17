@@ -109,41 +109,46 @@ public class AdditionAndOrderService : IAdditionAndOrderService
         }
     }
 
-    public async Task<IResults> OrderAddOrUpdate(OrderAddOrUpdateDTO model)
+    public async Task<IResults> OrderAddOrUpdate(List<OrderAddOrUpdateDTO> orderList)
     {
-        var extra = await _extraMenuService.Where(x => x.Id == model.ExtraMenuItemId).FirstOrDefaultAsync();
-        var employee = await _employeeService.Where(x => x.Id == model.EmployeeId).FirstOrDefaultAsync();
-        var addition = await _additionService.Where(x => x.Id == model.AdditionId).FirstOrDefaultAsync();
-        if (model.Id == 0)
+        foreach (var model in orderList)
         {
-            var response = _mapper.Map<Order>(model);
-            var addedOrder = await _orderService.AddAsync(response);
-
-            var orderProcess = new OrderProcess()
+            
+            var extra = await _extraMenuService.Where(x => x.Id == model.ExtraMenuItemId).FirstOrDefaultAsync();
+            var employee = await _employeeService.Where(x => x.Id == model.EmployeeId).FirstOrDefaultAsync();
+            var addition = await _additionService.Where(x => x.Id == model.AdditionId).FirstOrDefaultAsync();
+            if (model.Id == 0)
             {
-                InitialOrderStatus = OrderStatus.ORDERED,
-                FinishedOrderStatus = OrderStatus.ORDERED,
-                ChangeDate = DateTime.UtcNow,
-                ChangeNote = addedOrder.OrderNote,
-                OrderId = addedOrder.Id,
-                EmployeeId = GetLoggedUserId()
-            };
+                var response = _mapper.Map<Order>(model);
+                var addedOrder = await _orderService.AddAsync(response);
 
-            await _orderProcessService.AddAsync(orderProcess);
+                var orderProcess = new OrderProcess()
+                {
+                    InitialOrderStatus = OrderStatus.ORDERED,
+                    FinishedOrderStatus = OrderStatus.ORDERED,
+                    ChangeDate = DateTime.UtcNow,
+                    ChangeNote = addedOrder.OrderNote,
+                    OrderId = addedOrder.Id,
+                    EmployeeId = GetLoggedUserId()
+                };
+
+                await _orderProcessService.AddAsync(orderProcess);
 
 
-            _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                    addition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün "+" tahmini teslim süresine son 10 dakika ", employee.ApiKey,addedOrder.Id)
-                , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
+                _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
+                        addition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün "+" tahmini teslim süresine son 10 dakika ", employee.ApiKey,addedOrder.Id)
+                    , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
 
-            return new SuccessResult();
+            }
+            else
+            {
+                var response = _mapper.Map<Order>(model);
+                await _orderService.UpdateAsync(response);
+            }
         }
-        else
-        {
-            var response = _mapper.Map<Order>(model);
-            await _orderService.UpdateAsync(response);
-            return new SuccessResult();
-        }
+        
+        return new SuccessResult();
+
     }
 
     

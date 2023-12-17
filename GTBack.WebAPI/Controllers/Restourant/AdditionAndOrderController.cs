@@ -43,7 +43,7 @@ public class AdditionAndOrderController: CustomRestourantBaseController
    
     
     [HttpPost("OrderAddOrUpdate")]
-    public async Task<IActionResult> OrderAddOrUpdate(OrderAddOrUpdateDTO model)
+    public async Task<IActionResult> OrderAddOrUpdate(List<OrderAddOrUpdateDTO> model)
     {
         return ApiResult(await _service.OrderAddOrUpdate(model));
     }

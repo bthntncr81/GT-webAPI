@@ -9,7 +9,7 @@ namespace GTBack.Core.Services.Restourant;
 public interface IAdditionAndOrderService
 {
     Task<IResults> AdditionAddOrUpdate(AdditionAddOrUpdateDTO model);
-    Task<IResults> OrderAddOrUpdate(OrderAddOrUpdateDTO model);
+    Task<IResults> OrderAddOrUpdate(List<OrderAddOrUpdateDTO> model);
 
     Task<IResults> OrderDelete(long id);
     Task<IResults> AdditionDelete(long id);
