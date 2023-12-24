@@ -243,7 +243,7 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         return new SuccessDataResult<ICollection<ExtraMenuItemListDTO>>(response);
     }
 
-    public async Task<IDataResults<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>> AllMenuItemsByCompanyId(
+    public async Task<IDataResults<BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>>> AllMenuItemsByCompanyId(
         BaseListFilterDTO<MenuListFilterDTO> menuFilter)
     {
         List<MenuItem> menuItems = new List<MenuItem>();
@@ -309,10 +309,30 @@ public class MenuAndCategoryService : IMenuAndCategoryService
 
         BaseListDTO<MenuItemListDTO, MenuListFilterRespresent> menuList =
             new BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>();
+        
+        BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent> menuList2 =
+            new BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>();
 
         menuList.List = _mapper.Map<ICollection<MenuItemListDTO>>(await query.ToListAsync());
+        
+        foreach (var men in menuList.List)
+        {
+            var extraList =  await _extraMenuItemService.Where(x => !x.IsDeleted&&x.MenuItemId==men.Id).ToListAsync();
+            MenuAndExtrasListDTO extraMen = new MenuAndExtrasListDTO();
+
+            foreach (var extra in extraList)
+            {
+                var extraItem = _mapper.Map<ExtraMenuItemListDTO>(extra);
+                
+                extraMen.ExtraMenuItemList.Add(extraItem);
+            }
+            
+            
+            menuList2.List.Add(extraMen);
+            
+        }
         menuList.Filter = new MenuListFilterRespresent();
 
-        return new SuccessDataResult<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>(menuList);
+        return new SuccessDataResult<BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>>(menuList2);
     }
 }

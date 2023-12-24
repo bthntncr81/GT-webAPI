@@ -20,7 +20,7 @@ public interface IMenuAndCategoryService
     Task<IDataResults<BaseListDTO<MenuAndExtrasListDTO,MenuListFilterRespresent>>> MenuItemListByCategoryId(BaseListFilterDTO<MenuListFilterDTO>  menuFilter);
     Task<IDataResults<ICollection<ExtraMenuItemListDTO>>> ExtraMenuItemByMenuItemId(long menuItemId);
 
-    Task<IDataResults<BaseListDTO<MenuItemListDTO, MenuListFilterRespresent>>> AllMenuItemsByCompanyId(
+    Task<IDataResults<BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>>> AllMenuItemsByCompanyId(
         BaseListFilterDTO<MenuListFilterDTO> menuFilter);
 
 }
