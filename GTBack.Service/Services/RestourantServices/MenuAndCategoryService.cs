@@ -319,7 +319,7 @@ public class MenuAndCategoryService : IMenuAndCategoryService
         {
             var extraList =  await _extraMenuItemService.Where(x => !x.IsDeleted&&x.MenuItemId==men.Id).ToListAsync();
             MenuAndExtrasListDTO extraMen = new MenuAndExtrasListDTO();
-
+            extraMen.MenuItem = men;
             foreach (var extra in extraList)
             {
                 var extraItem = _mapper.Map<ExtraMenuItemListDTO>(extra);
