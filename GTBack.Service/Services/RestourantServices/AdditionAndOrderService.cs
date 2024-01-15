@@ -116,7 +116,13 @@ public class AdditionAndOrderService : IAdditionAndOrderService
             
             var extra = await _extraMenuService.Where(x => x.Id == model.ExtraMenuItemId).FirstOrDefaultAsync();
             var employee = await _employeeService.Where(x => x.Id == model.EmployeeId).FirstOrDefaultAsync();
-            var addition = await _additionService.Where(x => x.Id == model.AdditionId).FirstOrDefaultAsync();
+            var table = await _tableService.Where(x => x.Id == model.TableId).FirstOrDefaultAsync();
+            var selectedAddition = new Addition();
+            if (table.ActiveAdditionId!=null)
+            {
+                selectedAddition  = await  _additionService.Where(x => x.Id == table.ActiveAdditionId).FirstOrDefaultAsync();
+
+            }
             if (model.Id == 0)
             {
                 var response = _mapper.Map<Order>(model);
@@ -136,7 +142,7 @@ public class AdditionAndOrderService : IAdditionAndOrderService
 
 
                 _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                        addition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün "+" tahmini teslim süresine son 10 dakika ", employee.ApiKey,addedOrder.Id)
+                        selectedAddition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün "+" tahmini teslim süresine son 10 dakika ", employee.ApiKey,addedOrder.Id)
                     , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
 
             }
@@ -161,11 +167,33 @@ public class AdditionAndOrderService : IAdditionAndOrderService
                 
                 var extra = await _extraMenuService.Where(x => x.Id == model.ExtraMenuItemId).FirstOrDefaultAsync();
                 var employee = await _employeeService.Where(x => x.Id == model.EmployeeId).FirstOrDefaultAsync();
-                var addition = await _additionService.Where(x => x.Id == model.AdditionId).FirstOrDefaultAsync();
-                
+                var table = await _tableService.Where(x => x.Id == model.TableId).FirstOrDefaultAsync();
+                var selectedAddition = new Addition();
+                if (table.ActiveAdditionId!=null&&table.ActiveAdditionId!=0)
+                {
+                    selectedAddition  = await  _additionService.Where(x => x.Id == table.ActiveAdditionId).FirstOrDefaultAsync();
+                }
+                else
+                {
+
+                    var additionDTO = new AdditionAddOrUpdateDTO();
+                    additionDTO.Id = 0;
+                    additionDTO.Name = "table";
+                    additionDTO.TableId = model.TableId;
+                    // additionDTO.ClientId = table.ActiveClientId;
+                    additionDTO.IsClosed = false;
+                    
+                    var response = _mapper.Map<Addition>(additionDTO);
+                 
+                     selectedAddition=  await _additionService.AddAsync(response);
+                     
+                     table.ActiveAdditionId = selectedAddition.Id;
+                     _tableService.UpdateAsync(table);
+                }
                 if (model.Id == 0)
                 {
                     var response = _mapper.Map<Order>(model);
+                    response.AdditionId = selectedAddition.Id;
                     var addedOrder = await _orderService.AddAsync(response);
                 
                     var orderProcess = new OrderProcess()
@@ -182,7 +210,7 @@ public class AdditionAndOrderService : IAdditionAndOrderService
                 
                 
                     _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                            addition.Id+" "+" nolu adisyonun  " + " " +extra.Name+ " "+"  adlı ürününün  tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
+                            selectedAddition.Id+" "+" nolu adisyonun  " + " " +extra.Name+ " "+"  adlı ürününün  tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
                         , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
                 
                     

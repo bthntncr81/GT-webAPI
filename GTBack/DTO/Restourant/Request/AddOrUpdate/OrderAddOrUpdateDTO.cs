@@ -10,7 +10,7 @@ public class OrderAddOrUpdateDTO
     public long EmployeeId { get; set; }
     public int EstimtedTime { get; set; }
     public long? ExtraMenuItemId { get; set; }
-    public long AdditionId { get; set; }
+    public long TableId { get; set; }
     public OrderStatus OrderStatus { get; set; }
     public DateTime OrderStartDate { get; set; }
 }
