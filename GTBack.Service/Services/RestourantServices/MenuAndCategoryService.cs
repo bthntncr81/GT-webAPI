@@ -331,7 +331,7 @@ public class MenuAndCategoryService : IMenuAndCategoryService
             menuList2.List.Add(extraMen);
             
         }
-        menuList.Filter = new MenuListFilterRespresent();
+        menuList2.Filter = new MenuListFilterRespresent();
 
         return new SuccessDataResult<BaseListDTO<MenuAndExtrasListDTO, MenuListFilterRespresent>>(menuList2);
     }
