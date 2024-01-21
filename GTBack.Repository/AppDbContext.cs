@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using GTBack.Core.Entities.Restourant;
-using GTBack.Core.Entities.Shopping;
 using Company = GTBack.Core.Entities.Company;
 using User = GTBack.Core.Entities.User;
 
@@ -45,16 +44,6 @@ namespace GTBack.Repository
         public DbSet<ShiftControl> ShiftControl { get; set; }
         public DbSet<Table> Table { get; set; }
         public DbSet<TableArea> TableArea { get; set; }
-        
-        
-        //Shopping
-        // public DbSet<Basket> Basket { get; set; }
-        // public DbSet<Favorite> Favorite { get; set; }
-        // public DbSet<Image> Image { get; set; }
-        // public DbSet<Product> Product { get; set; }
-        // public DbSet<ShoppingCompany> ShoppingCompany { get; set; }
-        // public DbSet<ShoppingOrder> ShoppingOrder { get; set; }
-        // public DbSet<ShoppingUser> ShoppingUser { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 
@@ -97,7 +86,10 @@ namespace GTBack.Repository
                 .WithMany(e => e.Faq)
                 .HasForeignKey(e => e.AnsweredUserId);
 
-    
+            // modelBuilder.Entity<FAQ>()
+            //     .HasOne(e => e.SenderUser)
+            //     .WithMany(e => e.FAQ)
+            //     .HasForeignKey(e => e.SenderUserId);
 
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.User)

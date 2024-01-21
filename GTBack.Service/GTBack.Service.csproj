@@ -27,10 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GTBack.Repository\GTBack.Repository.csproj" />
-  <ItemGroup>
-    <Folder Include="Services\ShoppingService\" />
-  </ItemGroup>
-
   </ItemGroup>
 
 
