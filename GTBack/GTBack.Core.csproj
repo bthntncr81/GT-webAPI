@@ -24,6 +24,11 @@
 
 
 
+  <ItemGroup>
+    <Folder Include="DTO\Shopping\Request\" />
+    <Folder Include="DTO\Shopping\Response\" />
+    </ItemGroup>
+
   </ItemGroup>
 
 
