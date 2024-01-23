@@ -9,6 +9,9 @@ public class Product:BaseEntity
     public int Price { get; set; }
     public int Stock { get; set; }
     public CategoryEnum CategoryId { get; set; }
+    public ShoppingCompany ShoppingCompany { get; set; }
+    public long ShoppingCompanyId { get; set; }
+
+
     public CollectionEnum CollectionId { get; set; }
-    public virtual ICollection<ShoppingUser> ShoppingUser { get; set; }
 }

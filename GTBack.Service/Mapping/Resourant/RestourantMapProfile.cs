@@ -4,6 +4,7 @@ using GTBack.Core.DTO.Restourant;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Restourant.Response;
 using GTBack.Core.Entities.Restourant;
+using GTBack.Core.Entities.Shopping;
 
 namespace GTBack.Service.Mapping.Resourant;
 
@@ -14,7 +15,9 @@ public class RestourantMapProfile:Profile
         {
             //CLİENT
             CreateMap<Client, ClientRegisterRequestDTO>().ReverseMap();
+            CreateMap<ShoppingUser, ClientRegisterRequestDTO>().ReverseMap();
             CreateMap<Client, UserDTO>().ReverseMap();
+            CreateMap<ShoppingUser, UserDTO>().ReverseMap();
             
             //EMPLOYEE
             CreateMap<Employee, EmployeeRegisterDTO>().ReverseMap();

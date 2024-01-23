@@ -4,6 +4,7 @@ using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240122152820_changes on user")]
+    partial class changesonuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +68,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company", (string)null);
+                    b.ToTable("Company");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Event", b =>
@@ -119,7 +121,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("EventTypeId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.EventType", b =>
@@ -155,7 +157,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EventTypes", (string)null);
+                    b.ToTable("EventTypes");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.EventTypeCompanyRelation", b =>
@@ -187,7 +189,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("EventTypeId");
 
-                    b.ToTable("EventTypeCompanyRelations", (string)null);
+                    b.ToTable("EventTypeCompanyRelations");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.FAQ", b =>
@@ -230,7 +232,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("FAQs", (string)null);
+                    b.ToTable("FAQs");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.RefreshToken", b =>
@@ -263,7 +265,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Addition", b =>
@@ -305,7 +307,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("TableId");
 
-                    b.ToTable("Addition", (string)null);
+                    b.ToTable("Addition");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Category", b =>
@@ -340,7 +342,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("MenuId");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Client", b =>
@@ -385,7 +387,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Client", (string)null);
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Currency", b =>
@@ -419,7 +421,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currency", (string)null);
+                    b.ToTable("Currency");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Department", b =>
@@ -456,7 +458,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("RestoCompanyId");
 
-                    b.ToTable("Department", (string)null);
+                    b.ToTable("Department");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Device", b =>
@@ -486,7 +488,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Device", (string)null);
+                    b.ToTable("Device");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Employee", b =>
@@ -569,7 +571,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("DeviceId");
 
-                    b.ToTable("Employee", (string)null);
+                    b.ToTable("Employee");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.EmployeeOrderRelation", b =>
@@ -601,7 +603,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeOrderRelation", (string)null);
+                    b.ToTable("EmployeeOrderRelation");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.EmployeeRoleRelation", b =>
@@ -633,7 +635,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("EmployeeRoleRelation", (string)null);
+                    b.ToTable("EmployeeRoleRelation");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.ExtraMenuItem", b =>
@@ -685,7 +687,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("MenuItemId");
 
-                    b.ToTable("ExtraMenuItem", (string)null);
+                    b.ToTable("ExtraMenuItem");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Menu", b =>
@@ -717,7 +719,7 @@ namespace GTBack.Repository.Migrations
                     b.HasIndex("RestoCompanyId")
                         .IsUnique();
 
-                    b.ToTable("Menu", (string)null);
+                    b.ToTable("Menu");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.MenuItem", b =>
@@ -769,7 +771,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("MenuItem", (string)null);
+                    b.ToTable("MenuItem");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Order", b =>
@@ -822,7 +824,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("ExtraMenuItemId");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.OrderProcess", b =>
@@ -866,7 +868,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderProcess", (string)null);
+                    b.ToTable("OrderProcess");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Payment", b =>
@@ -902,7 +904,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("AdditionId");
 
-                    b.ToTable("Payment", (string)null);
+                    b.ToTable("Payment");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Reservation", b =>
@@ -948,7 +950,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("TableId");
 
-                    b.ToTable("Reservation", (string)null);
+                    b.ToTable("Reservation");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.RestoCompany", b =>
@@ -995,7 +997,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RestoCompany", (string)null);
+                    b.ToTable("RestoCompany");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Role", b =>
@@ -1024,7 +1026,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role", (string)null);
+                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.ShiftControl", b =>
@@ -1057,7 +1059,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("ShiftControl", (string)null);
+                    b.ToTable("ShiftControl");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Table", b =>
@@ -1106,7 +1108,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("TableAreaId");
 
-                    b.ToTable("Table", (string)null);
+                    b.ToTable("Table");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.TableArea", b =>
@@ -1148,7 +1150,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("RestoCompanyId");
 
-                    b.ToTable("TableArea", (string)null);
+                    b.ToTable("TableArea");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Basket", b =>
@@ -1178,7 +1180,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("ShoppingUserId1");
 
-                    b.ToTable("Basket", (string)null);
+                    b.ToTable("Basket");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Favorite", b =>
@@ -1216,7 +1218,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("ShoppingUserId1");
 
-                    b.ToTable("Favorite", (string)null);
+                    b.ToTable("Favorite");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Image", b =>
@@ -1247,7 +1249,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Image", (string)null);
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Product", b =>
@@ -1277,9 +1279,6 @@ namespace GTBack.Repository.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.Property<long>("ShoppingCompanyId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
@@ -1288,9 +1287,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ShoppingCompanyId");
-
-                    b.ToTable("Product", (string)null);
+                    b.ToTable("Product");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingCompany", b =>
@@ -1332,7 +1329,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShoppingCompany", (string)null);
+                    b.ToTable("ShoppingCompany");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingOrder", b =>
@@ -1368,7 +1365,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ShoppingOrder", (string)null);
+                    b.ToTable("ShoppingOrder");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingUser", b =>
@@ -1408,6 +1405,9 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("ProductId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ShoppingCompanyId")
                         .HasColumnType("bigint");
 
@@ -1423,9 +1423,11 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("ShoppingCompanyId");
 
-                    b.ToTable("ShoppingUser", (string)null);
+                    b.ToTable("ShoppingUser");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.SpecialAttributeRelation", b =>
@@ -1455,7 +1457,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("ClientUserId");
 
-                    b.ToTable("SpecialAttributeRelations", (string)null);
+                    b.ToTable("SpecialAttributeRelations");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.User", b =>
@@ -1509,7 +1511,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Event", b =>
@@ -1893,17 +1895,6 @@ namespace GTBack.Repository.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Shopping.Product", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Shopping.ShoppingCompany", "ShoppingCompany")
-                        .WithMany("Product")
-                        .HasForeignKey("ShoppingCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingCompany");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingOrder", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.Shopping.Basket", "Basket")
@@ -1925,6 +1916,10 @@ namespace GTBack.Repository.Migrations
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingUser", b =>
                 {
+                    b.HasOne("GTBack.Core.Entities.Shopping.Product", null)
+                        .WithMany("ShoppingUser")
+                        .HasForeignKey("ProductId");
+
                     b.HasOne("GTBack.Core.Entities.Shopping.ShoppingCompany", "ShoppingCompany")
                         .WithMany("ShoppingUser")
                         .HasForeignKey("ShoppingCompanyId")
@@ -2072,12 +2067,12 @@ namespace GTBack.Repository.Migrations
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Product", b =>
                 {
                     b.Navigation("Image");
+
+                    b.Navigation("ShoppingUser");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingCompany", b =>
                 {
-                    b.Navigation("Product");
-
                     b.Navigation("ShoppingUser");
                 });
 

@@ -8,5 +8,6 @@ public class ShoppingCompany:BaseEntity
     public string Phone { get; set; }
     public string Logo { get; set; }
     public virtual ICollection<ShoppingUser> ShoppingUser { get; set; }
+    public virtual ICollection<Product> Product { get; set; }
 
 }

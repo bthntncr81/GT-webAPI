@@ -21,9 +21,11 @@ using GTBack.Core.DTO;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Restourant.Response;
 using GTBack.Core.Services.Restourant;
+using GTBack.Core.Services.Shopping;
 using GTBack.Service.Mapping.Resourant;
 using GTBack.Service.Services.RestourantServices;
 using GTBack.Service.Services.SharedServices;
+using GTBack.Service.Services.ShoppingService;
 using GTBack.WebAPI;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
@@ -72,10 +74,10 @@ builder.Services.AddSwaggerGen(c =>
     
 });
 SqlConnectionStringBuilder mySql = new SqlConnectionStringBuilder();
-mySql.DataSource = "restourant.cgrgyf6ib59b.eu-central-1.rds.amazonaws.com";
+mySql.DataSource = "database-2.ctgyyookmwdo.eu-central-1.rds.amazonaws.com";
 mySql.UserID = "admin";
-mySql.Password = "Bthntncr81.";
-mySql.InitialCatalog = "restourant";
+mySql.Password = "bthntncr81";
+mySql.InitialCatalog = "database-2";
 
 builder.Services.AddHangfire((sp, config) =>
 {
@@ -106,7 +108,10 @@ builder.Services.AddScoped(typeof(GTBack.Core.Services.Restourant.IClientService
 builder.Services.AddScoped(typeof(IEventService), typeof(EventService));
 builder.Services.AddScoped(typeof(IMenuAndCategoryService), typeof(MenuAndCategoryService));
 builder.Services.AddScoped(typeof(IAdditionAndOrderService), typeof(AdditionAndOrderService));
+builder.Services.AddScoped(typeof(IShoppingCompany), typeof(ShoppingCompanyService));
 builder.Services.AddScoped(typeof(ITableAndAreaService), typeof(TableAndAreaService));
+builder.Services.AddScoped(typeof(IShoppingUserService), typeof(ShoppingUserService));
+builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
 builder.Services.AddScoped(typeof(IRoleService<RoleCreateDTO, RoleListDTO>), typeof(RoleService));
 builder.Services.AddScoped(typeof(IRestoCompanyService<CompanyAddDTO, CompanyListDTO>), typeof(CompanyService));
 builder.Services.AddScoped(typeof(IDepartmentService<DepartmentAddDTO, DepartmentListDTO>), typeof(DepartmentService));
@@ -114,6 +119,7 @@ builder.Services.AddScoped(typeof(IEmployeeService), typeof(EmployeeService));
 builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 builder.Services.AddScoped(typeof(IEventTypeService), typeof(EventTypeService));
 builder.Services.AddAutoMapper(typeof(RestourantMapProfile));
+builder.Services.AddAutoMapper(typeof(ShoppingMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();

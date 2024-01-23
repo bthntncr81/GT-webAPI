@@ -1,3 +1,5 @@
+using GTBack.Core.Enums;
+
 namespace GTBack.Core.Entities.Shopping;
 
 public class ShoppingUser:BaseEntity
@@ -9,5 +11,8 @@ public class ShoppingUser:BaseEntity
     public string Mail { get; set; }
     public string PasswordHash { get; set; }
     public long? ActiveBasketId { get; set; }
+    public long ShoppingCompanyId { get; set; }
+    public UserTypeShopping? UserTypeId { get; set; }
+    public virtual ShoppingCompany ShoppingCompany { get; set; }
     public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
 }
