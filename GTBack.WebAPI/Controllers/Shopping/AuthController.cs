@@ -4,6 +4,7 @@ using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Shopping.Request;
 using GTBack.Core.Entities.Restourant;
 using GTBack.Core.Entities.Shopping;
+using GTBack.Core.Results;
 using GTBack.Core.Services;
 using GTBack.Core.Services.Restourant;
 using GTBack.Core.Services.Shopping;
@@ -36,7 +37,35 @@ namespace GTBack.WebAPI.Controllers.Shopping
             
             return ApiResult(await _userService.Me());
         }
+        
+        [HttpGet("BPM")]
+        public async Task<IActionResult> BPM()
+        {
+            using var httpClient = new HttpClient();
+
+            httpClient.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
+
+            var result = httpClient.GetAsync("").Result;
+            var json = result.Content.ReadAsStringAsync().Result;
             
+            return ApiResult(new SuccessDataResult<string>(json));
+        }
+        
+           
+        [HttpGet("TarzYeri")]
+        public async Task<IActionResult> TarzYeri()
+        {
+            using var httpClient = new HttpClient();
+
+            httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/api/user/product/lists");
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            request.Headers.Add("ApiKey","5f0c7e38d8a9c61b23770399fbcfadb4OHOmr3xKK8ByUauzyVbYcqWBVRywRSCa62A9UDkbsyxDHKYHAvxLbw==");
+            // request.Headers.Add("Content-Type", "application/json");
+            var response = await httpClient.SendAsync(request);
+            var json = response.Content.ReadAsStringAsync().Result;
+            
+            return ApiResult(new SuccessDataResult<string>(json));
+        }
             
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto log)
