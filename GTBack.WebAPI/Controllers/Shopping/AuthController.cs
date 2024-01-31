@@ -57,7 +57,7 @@ namespace GTBack.WebAPI.Controllers.Shopping
         {
             using var httpClient = new HttpClient();
 
-            httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/api/user/product/lists");
+            httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");
             var request = new HttpRequestMessage(HttpMethod.Get, "");
             request.Headers.Add("ApiKey","5f0c7e38d8a9c61b23770399fbcfadb4OHOmr3xKK8ByUauzyVbYcqWBVRywRSCa62A9UDkbsyxDHKYHAvxLbw==");
             // request.Headers.Add("Content-Type", "application/json");
