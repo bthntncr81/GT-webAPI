@@ -73,7 +73,7 @@ public class ShoppingUserService:IShoppingUserService
         }
     }
     
-    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent)
+    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent,string mainCategory,string subCategory)
     {
 
         // XML'i Deserialize et
@@ -81,7 +81,11 @@ public class ShoppingUserService:IShoppingUserService
         using (StringReader reader = new StringReader(xmlContent))
         {
             ProductBPM.ProductBpms myObject = (ProductBPM.ProductBpms)serializer.Deserialize(reader);
-           var elem= myObject.ProductList.Where(x =>Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
+            if (mainCategory == "kadin")
+            {
+                mainCategory = "kadın";
+            }
+           var elem= myObject.ProductList.Where(x =>x.MainCategory.ToLower().Contains(mainCategory)&&(x.SubCategory.ToLower().Contains(subCategory)||x.Category.ToLower().Contains(subCategory))&&Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
            
             return elem;
         }

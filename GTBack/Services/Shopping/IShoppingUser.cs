@@ -15,6 +15,6 @@ public interface IShoppingUserService
 
     List<ProductTarzYeri> XmlConverter(string xmlContent);
 
-    List<ProductBPM.ElementBpm>XmlConverterBpm(string xmlContent);
+    List<ProductBPM.ElementBpm>XmlConverterBpm(string xmlContent,string main,string sub);
 
 }

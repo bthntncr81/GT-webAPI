@@ -55,17 +55,60 @@ public class ProductBPM
         public string Image5 { get; set; }
         [XmlElement(ElementName = "Description")]
         public string Description { get; set; }
-        [XmlElement(ElementName = "Variant")]
-        public Variant Variant { get; set; }
+        [XmlElement(ElementName = "variants")]
+        public Variants Variants { get; set; }
     }
 
+
+    
+    public class Variants
+    {
+        [XmlElement(ElementName = "variant")]
+        public Variant[] Variant { get; set; }
+    }
+    
     public class Variant
     {
-        [XmlElement(ElementName = "Color")]
-        public string Color { get; set; }
-        [XmlElement(ElementName = "Size")]
-        public string Size { get; set; }
-        [XmlElement(ElementName = "Weight")]
-        public string Weight { get; set; }
+        [XmlElement(ElementName = "spec")]
+        public Spec[] Specs { get; set; }
+        [XmlElement(ElementName = "variantId")]
+        public string VariantId { get; set; }
+        [XmlElement(ElementName = "productCode")]
+        public string ProductCode { get; set; }
+        [XmlElement(ElementName = "barcode")]
+        public string Barcode { get; set; }
+        [XmlElement(ElementName = "gtin")]
+        public string Gtin { get; set; }
+        [XmlElement(ElementName = "mpn")]
+        public string Mpn { get; set; }
+        [XmlElement(ElementName = "rafno")]
+        public string Rafno { get; set; }
+        [XmlElement(ElementName = "depth")]
+        public string Depth { get; set; }
+        [XmlElement(ElementName = "height")]
+        public string Height { get; set; }
+        [XmlElement(ElementName = "width")]
+        public string Width { get; set; }
+        [XmlElement(ElementName = "agirlik")]
+        public string Agirlik { get; set; }
+        [XmlElement(ElementName = "desi")]
+        public string Desi { get; set; }
+        [XmlElement(ElementName = "quantity")]
+        public string Quantity { get; set; }
+        [XmlElement(ElementName = "price")]
+        public string Price { get; set; }
+        [XmlElement(ElementName = "hbSaticiStokKodu")]
+        public string HbSaticiStokKodu { get; set; }
+        [XmlElement(ElementName = "hbKodu")]
+        public string HbKodu { get; set; }
     }
+
+    public class Spec
+    {
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlText]
+        public string Value { get; set; }
+    }
+
 }
