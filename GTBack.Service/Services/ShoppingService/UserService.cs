@@ -1,9 +1,11 @@
 using System.Net;
 using System.Security.Claims;
+using System.Xml.Serialization;
 using AutoMapper;
 using Google.Apis.Auth;
 using GTBack.Core.DTO;
 using GTBack.Core.DTO.Restourant.Request;
+using GTBack.Core.DTO.Shopping;
 using GTBack.Core.Entities.Shopping;
 using GTBack.Core.Results;
 using GTBack.Core.Services;
@@ -54,6 +56,35 @@ public class ShoppingUserService:IShoppingUserService
         client.IsDeleted = true;
         await _service.UpdateAsync(client);
         return new SuccessResult();
+    }
+    
+    
+    public  List<ProductTarzYeri> XmlConverter(string xmlContent)
+    {
+
+        // XML'i Deserialize et
+        XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
+        using (StringReader reader = new StringReader(xmlContent))
+        {
+            ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
+          var elem =  myObject.ProductList.Where(x =>Int32.Parse(x.quantity)!= 0).ToList();
+           
+            return elem;
+        }
+    }
+    
+    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent)
+    {
+
+        // XML'i Deserialize et
+        XmlSerializer serializer = new XmlSerializer(typeof(ProductBPM.ProductBpms));
+        using (StringReader reader = new StringReader(xmlContent))
+        {
+            ProductBPM.ProductBpms myObject = (ProductBPM.ProductBpms)serializer.Deserialize(reader);
+           var elem= myObject.ProductList.Where(x =>Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
+           
+            return elem;
+        }
     }
     
     

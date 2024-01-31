@@ -12,6 +12,8 @@ using GTBack.Service.Services;
 using GTBack.Service.Services.RestourantServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Serialization;
+using GTBack.Core.DTO.Shopping;
 
 namespace GTBack.WebAPI.Controllers.Shopping
 {
@@ -37,21 +39,23 @@ namespace GTBack.WebAPI.Controllers.Shopping
             
             return ApiResult(await _userService.Me());
         }
-        
+
         [HttpGet("BPM")]
         public async Task<IActionResult> BPM()
         {
             using var httpClient = new HttpClient();
 
-            httpClient.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
+            httpClient.BaseAddress =
+                new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+  
+            var response = await httpClient.SendAsync(request);
+            var json = response.Content.ReadAsStringAsync().Result;
 
-            var result = httpClient.GetAsync("").Result;
-            var json = result.Content.ReadAsStringAsync().Result;
-            
-            return ApiResult(new SuccessDataResult<string>(json));
+            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(_userService.XmlConverterBpm(json)));
+
         }
-        
-           
+
         [HttpGet("TarzYeri")]
         public async Task<IActionResult> TarzYeri()
         {
@@ -64,8 +68,11 @@ namespace GTBack.WebAPI.Controllers.Shopping
             var response = await httpClient.SendAsync(request);
             var json = response.Content.ReadAsStringAsync().Result;
             
-            return ApiResult(new SuccessDataResult<string>(json));
+            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(_userService.XmlConverter(json)));
         }
+        
+     
+     
             
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto log)
