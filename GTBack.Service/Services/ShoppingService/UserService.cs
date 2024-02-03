@@ -124,7 +124,7 @@ public class ShoppingUserService:IShoppingUserService
             
            if (!filter.SubCategory.IsNullOrEmpty())
            {
-               elem = elem.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)||x.Category.ToLower().Contains(filter.MainCategory)).ToList();
+               elem = elem.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)||x.Category.ToLower().Contains(filter.SubCategory)).ToList();
            }
 
             return elem;
