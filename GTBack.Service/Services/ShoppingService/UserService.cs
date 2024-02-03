@@ -71,6 +71,10 @@ public class ShoppingUserService:IShoppingUserService
             
             var elem= myObject.ProductList.Where(x=>float.Parse(x.price)!= 0).ToList();
 
+            if (filter.MainCategory == "kadin")
+            {
+                filter.MainCategory = "kadın";
+            }
             if (!filter.Id.IsNullOrEmpty())
             {
                 elem = elem.Where(x => x.id.ToLower().Equals(filter.Id)).ToList();
@@ -88,7 +92,6 @@ public class ShoppingUserService:IShoppingUserService
                 elem = elem.Where(x => x.sub_category.ToLower().Contains(filter.SubCategory)).ToList();
             }
 
-            // elem  = elem.Take(filter.Take).ToList();
             
             return elem;
         }
@@ -101,11 +104,14 @@ public class ShoppingUserService:IShoppingUserService
         using (StringReader reader = new StringReader(xmlContent))
         {
             ProductBPM.ProductBpms myObject = (ProductBPM.ProductBpms)serializer.Deserialize(reader);
+            
+            
             if (filter.MainCategory == "kadin")
             {
                 filter.MainCategory = "kadın";
             }
            var elem= myObject.ProductList.Where(x =>Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
+           
            if (!filter.Id.IsNullOrEmpty())
            {
                elem = elem.Where(x => x.Product_id.ToLower().Equals(filter.Id)).ToList();
@@ -118,9 +124,8 @@ public class ShoppingUserService:IShoppingUserService
             
            if (!filter.SubCategory.IsNullOrEmpty())
            {
-               elem = elem.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)).ToList();
+               elem = elem.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)||x.Category.ToLower().Contains(filter.MainCategory)).ToList();
            }
-          // elem  = elem.Take(filter.Take).ToList();
 
             return elem;
         }
