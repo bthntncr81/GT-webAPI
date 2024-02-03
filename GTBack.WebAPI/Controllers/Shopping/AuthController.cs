@@ -41,7 +41,7 @@ namespace GTBack.WebAPI.Controllers.Shopping
         }
 
         [HttpGet("BPM")]
-        public async Task<IActionResult> BPM([FromQuery]string mainCategory,string subCategory)
+        public async Task<IActionResult> BPM([FromQuery]string? mainCategory,string? subCategory,string? id)
         {
             using var httpClient = new HttpClient();
 
@@ -52,12 +52,12 @@ namespace GTBack.WebAPI.Controllers.Shopping
             var response = await httpClient.SendAsync(request);
             var json = response.Content.ReadAsStringAsync().Result;
 
-            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(_userService.XmlConverterBpm(json, mainCategory, subCategory)));
+            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(_userService.XmlConverterBpm(json, mainCategory, subCategory,id)));
 
         }
 
         [HttpGet("TarzYeri")]
-        public async Task<IActionResult> TarzYeri()
+        public async Task<IActionResult> TarzYeri([FromQuery]string? mainCategory,string? subCategory,string? id)
         {
             using var httpClient = new HttpClient();
 
@@ -68,7 +68,7 @@ namespace GTBack.WebAPI.Controllers.Shopping
             var response = await httpClient.SendAsync(request);
             var json = response.Content.ReadAsStringAsync().Result;
             
-            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(_userService.XmlConverter(json)));
+            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(_userService.XmlConverter(json,mainCategory,subCategory,id)));
         }
         
      

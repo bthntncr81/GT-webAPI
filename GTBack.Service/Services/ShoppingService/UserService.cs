@@ -16,6 +16,7 @@ using GTBack.Service.Validation.Restourant;
 using GTBack.Service.Validation.Tool;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using XAct;
 
 namespace GTBack.Service.Services.ShoppingService;
 
@@ -59,24 +60,42 @@ public class ShoppingUserService:IShoppingUserService
     }
     
     
-    public  List<ProductTarzYeri> XmlConverter(string xmlContent)
+    public  List<ProductTarzYeri> XmlConverter(string xmlContent,string? mainCategory,string? subCategory,string? id)
     {
 
-        // XML'i Deserialize et
         XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
         using (StringReader reader = new StringReader(xmlContent))
         {
             ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
-          var elem =  myObject.ProductList.Where(x =>Int32.Parse(x.quantity)!= 0).ToList();
-           
+            
+            var elem= myObject.ProductList.Where(x=>float.Parse(x.price)!= 0).ToList();
+
+            if (!id.IsNullOrEmpty())
+            {
+                elem = elem.Where(x => x.id.ToLower().Equals(id)).ToList();
+
+            }
+            
+            if (!mainCategory.IsNullOrEmpty())
+            {
+                elem = elem.Where(x => x.main_category.ToLower().Contains(mainCategory)).ToList();
+
+            }
+            
+            if (!subCategory.IsNullOrEmpty())
+            {
+                elem = elem.Where(x => x.sub_category.ToLower().Contains(subCategory)).ToList();
+
+            }
+            
+            
             return elem;
         }
     }
     
-    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent,string mainCategory,string subCategory)
+    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent,string? mainCategory,string? subCategory,string? id)
     {
 
-        // XML'i Deserialize et
         XmlSerializer serializer = new XmlSerializer(typeof(ProductBPM.ProductBpms));
         using (StringReader reader = new StringReader(xmlContent))
         {
@@ -85,8 +104,26 @@ public class ShoppingUserService:IShoppingUserService
             {
                 mainCategory = "kadın";
             }
-           var elem= myObject.ProductList.Where(x =>x.MainCategory.ToLower().Contains(mainCategory)&&(x.SubCategory.ToLower().Contains(subCategory)||x.Category.ToLower().Contains(subCategory))&&Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
+           var elem= myObject.ProductList.Where(x =>Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
+           if (!id.IsNullOrEmpty())
+           {
+               elem = elem.Where(x => x.Product_id.ToLower().Equals(id)).ToList();
+
+           }
            
+
+            
+           if (!mainCategory.IsNullOrEmpty())
+           {
+               elem = elem.Where(x => x.MainCategory.ToLower().Contains(mainCategory)).ToList();
+
+           }
+            
+           if (!subCategory.IsNullOrEmpty())
+           {
+               elem = elem.Where(x => x.SubCategory.ToLower().Contains(subCategory)).ToList();
+
+           }
             return elem;
         }
     }
