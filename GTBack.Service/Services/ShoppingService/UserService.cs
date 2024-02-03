@@ -6,6 +6,7 @@ using Google.Apis.Auth;
 using GTBack.Core.DTO;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Shopping;
+using GTBack.Core.DTO.Shopping.Filter;
 using GTBack.Core.Entities.Shopping;
 using GTBack.Core.Results;
 using GTBack.Core.Services;
@@ -60,7 +61,7 @@ public class ShoppingUserService:IShoppingUserService
     }
     
     
-    public  List<ProductTarzYeri> XmlConverter(string xmlContent,string? mainCategory,string? subCategory,string? id)
+    public  List<ProductTarzYeri> XmlConverter(string xmlContent,BpmFilter filter)
     {
 
         XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
@@ -70,60 +71,57 @@ public class ShoppingUserService:IShoppingUserService
             
             var elem= myObject.ProductList.Where(x=>float.Parse(x.price)!= 0).ToList();
 
-            if (!id.IsNullOrEmpty())
+            if (!filter.Id.IsNullOrEmpty())
             {
-                elem = elem.Where(x => x.id.ToLower().Equals(id)).ToList();
+                elem = elem.Where(x => x.id.ToLower().Equals(filter.Id)).ToList();
 
             }
             
-            if (!mainCategory.IsNullOrEmpty())
+            if (!filter.MainCategory.IsNullOrEmpty())
             {
-                elem = elem.Where(x => x.main_category.ToLower().Contains(mainCategory)).ToList();
+                elem = elem.Where(x => x.main_category.ToLower().Contains(filter.MainCategory)).ToList();
 
             }
             
-            if (!subCategory.IsNullOrEmpty())
+            if (!filter.SubCategory.IsNullOrEmpty())
             {
-                elem = elem.Where(x => x.sub_category.ToLower().Contains(subCategory)).ToList();
-
+                elem = elem.Where(x => x.sub_category.ToLower().Contains(filter.SubCategory)).ToList();
             }
-            
+
+            // elem  = elem.Take(filter.Take).ToList();
             
             return elem;
         }
     }
     
-    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent,string? mainCategory,string? subCategory,string? id)
+    public  List<ProductBPM.ElementBpm> XmlConverterBpm(string xmlContent,BpmFilter filter)
     {
 
         XmlSerializer serializer = new XmlSerializer(typeof(ProductBPM.ProductBpms));
         using (StringReader reader = new StringReader(xmlContent))
         {
             ProductBPM.ProductBpms myObject = (ProductBPM.ProductBpms)serializer.Deserialize(reader);
-            if (mainCategory == "kadin")
+            if (filter.MainCategory == "kadin")
             {
-                mainCategory = "kadın";
+                filter.MainCategory = "kadın";
             }
            var elem= myObject.ProductList.Where(x =>Int32.Parse(x.Stock)!= 0&&!(float.Parse(x.Price)== 0&&float.Parse(x.Price2)== 0)).ToList();
-           if (!id.IsNullOrEmpty())
+           if (!filter.Id.IsNullOrEmpty())
            {
-               elem = elem.Where(x => x.Product_id.ToLower().Equals(id)).ToList();
-
+               elem = elem.Where(x => x.Product_id.ToLower().Equals(filter.Id)).ToList();
            }
            
-
-            
-           if (!mainCategory.IsNullOrEmpty())
+           if (!filter.MainCategory.IsNullOrEmpty())
            {
-               elem = elem.Where(x => x.MainCategory.ToLower().Contains(mainCategory)).ToList();
-
+               elem = elem.Where(x => x.MainCategory.ToLower().Contains(filter.MainCategory)).ToList();
            }
             
-           if (!subCategory.IsNullOrEmpty())
+           if (!filter.SubCategory.IsNullOrEmpty())
            {
-               elem = elem.Where(x => x.SubCategory.ToLower().Contains(subCategory)).ToList();
-
+               elem = elem.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)).ToList();
            }
+          // elem  = elem.Take(filter.Take).ToList();
+
             return elem;
         }
     }
