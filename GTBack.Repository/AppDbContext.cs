@@ -48,8 +48,6 @@ namespace GTBack.Repository
 
         
         //Shopping
-        public DbSet<Basket> Basket { get; set; }
-        public DbSet<Favorite> Favorite { get; set; }
         public DbSet<Image> Image { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<ShoppingCompany> ShoppingCompany { get; set; }
