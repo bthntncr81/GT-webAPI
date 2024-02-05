@@ -127,7 +127,6 @@ builder.Services.AddAutoMapper(typeof(ShoppingMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
-builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 if (FirebaseApp.DefaultInstance == null)
 {
    
