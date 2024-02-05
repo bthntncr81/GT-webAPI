@@ -28,10 +28,12 @@ using GTBack.Service.Services.SharedServices;
 using GTBack.Service.Services.ShoppingService;
 using GTBack.WebAPI;
 using GTBack.WebAPI.Controllers.Shopping;
+using GTBack.WebAPI.Middlewares;
 using Hangfire;
 using Hangfire.Common;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.Data.SqlClient;
+using XAct;
 using IClientService = Google.Apis.Services.IClientService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -125,6 +127,7 @@ builder.Services.AddAutoMapper(typeof(ShoppingMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 if (FirebaseApp.DefaultInstance == null)
 {
    
@@ -175,6 +178,8 @@ app.UseCors(builder =>
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
