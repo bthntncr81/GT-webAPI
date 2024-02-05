@@ -14,7 +14,7 @@ public interface IShoppingUserService
     Task<IDataResults<AuthenticatedUserResponseDto>> Register(ClientRegisterRequestDTO registerDto);
     Task<IDataResults<AuthenticatedUserResponseDto>> GoogleLogin(GoogleLoginDTO model);
 
-    List<ProductTarzYeri> XmlConverter(string xmlContent,BpmFilter filter);
-    List<ProductBPM.ElementBpm>XmlConverterBpm(string xmlContent,BpmFilter filter);
+    Task< List<ProductTarzYeri>>XmlConverter(string xmlContent,BpmFilter filter);
+    Task<List<ProductBPM.ElementBpm>> XmlConverterBpm(string xmlContent, BpmFilter filter);
 
 }

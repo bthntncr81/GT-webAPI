@@ -53,23 +53,27 @@ namespace GTBack.WebAPI.Controllers.Shopping
             var response = await httpClient.SendAsync(request);
             var json = response.Content.ReadAsStringAsync().Result;
 
-            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(_userService.XmlConverterBpm(json,filter)));
+            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(await _userService.XmlConverterBpm(json,filter)));
 
         }
 
         [HttpGet("TarzYeri")]
         public async Task<IActionResult> TarzYeri([FromQuery] BpmFilter filter)
         {
+            DateTime startTime = DateTime.Now;
+
             using var httpClient = new HttpClient();
 
             httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");
             var request = new HttpRequestMessage(HttpMethod.Get, "");
-            request.Headers.Add("ApiKey","5f0c7e38d8a9c61b23770399fbcfadb4OHOmr3xKK8ByUauzyVbYcqWBVRywRSCa62A9UDkbsyxDHKYHAvxLbw==");
-            // request.Headers.Add("Content-Type", "application/json");
             var response = await httpClient.SendAsync(request);
+            DateTime endTime = DateTime.Now;
+            TimeSpan elapsed = endTime - startTime;
+            Console.WriteLine("Execution time: " + elapsed.TotalMilliseconds + "ms");
+
             var json = response.Content.ReadAsStringAsync().Result;
             
-            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(_userService.XmlConverter(json,filter)));
+            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(json,filter)));
         }
         
      
