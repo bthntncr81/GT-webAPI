@@ -53,6 +53,7 @@ namespace GTBack.Repository
         public DbSet<ShoppingCompany> ShoppingCompany { get; set; }
         public DbSet<ShoppingOrder> ShoppingOrder { get; set; }
         public DbSet<ShoppingUser> ShoppingUser { get; set; }
+        public DbSet<XmlFiles> XmlFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 

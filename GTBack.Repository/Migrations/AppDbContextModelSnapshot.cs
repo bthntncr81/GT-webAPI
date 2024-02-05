@@ -1374,6 +1374,27 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("ShoppingUser");
                 });
 
+            modelBuilder.Entity("GTBack.Core.Entities.Shopping.XmlFiles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("file")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("XmlFiles");
+                });
+
             modelBuilder.Entity("GTBack.Core.Entities.SpecialAttributeRelation", b =>
                 {
                     b.Property<long>("AdminUserId")

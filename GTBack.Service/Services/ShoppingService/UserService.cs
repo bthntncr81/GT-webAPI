@@ -72,12 +72,14 @@ public class ShoppingUserService:IShoppingUserService
             XmlContent = xmlContent,
             filter = filter
         };
-
- 
+        var resource = await _cache.GetOrCreateAsync(control, async entry =>
+        {
 
             XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
             using (StringReader reader = new StringReader(xmlContent))
             {
+
+
                 ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
 
                 var elem = myObject.ProductList.Where(x => float.Parse(x.price) != 0).ToList();
@@ -107,7 +109,8 @@ public class ShoppingUserService:IShoppingUserService
 
                 return elem;
             }
-
+        });
+        return resource;
     }
     
     public async  Task<List<ProductBPM.ElementBpm>> XmlConverterBpm(string xmlContent,BpmFilter filter)
@@ -118,8 +121,9 @@ public class ShoppingUserService:IShoppingUserService
     XmlContent = xmlContent,
     filter = filter
         };
-        
-      
+        var resource = await _cache.GetOrCreateAsync(control, async entry =>
+        {
+
             XmlSerializer serializer = new XmlSerializer(typeof(ProductBPM.ProductBpms));
             using (StringReader reader = new StringReader(xmlContent))
             {
@@ -153,8 +157,10 @@ public class ShoppingUserService:IShoppingUserService
 
                 return elem;
             }
-     
 
+        });
+        ;
+        return resource;
 
     }
     

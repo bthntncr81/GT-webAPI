@@ -16,6 +16,8 @@ using System.Xml.Serialization;
 using GTBack.Core.DTO.Shopping;
 using GTBack.Core.DTO.Shopping.Filter;
 using Hangfire;
+using LinqToDB;
+using Microsoft.EntityFrameworkCore;
 
 namespace GTBack.WebAPI.Controllers.Shopping
 {
@@ -23,15 +25,17 @@ namespace GTBack.WebAPI.Controllers.Shopping
     {
         private readonly IMapper _mapper;
         private readonly IService<ShoppingUser> _service;
+        private readonly IService<XmlFiles> _xmlService;
         private readonly IShoppingUserService _userService;
         private readonly IShoppingCompany _company;
 
-        public AuthController(IShoppingCompany company,IService<ShoppingUser> service, IMapper mapper,IShoppingUserService userService)
+        public AuthController(IService<XmlFiles> xmlService,IShoppingCompany company,IService<ShoppingUser> service, IMapper mapper,IShoppingUserService userService)
         {
             _userService = userService;
             _service = service;
             _mapper = mapper;
             _company = company;
+            _xmlService = xmlService;
         }
 
         [Authorize]
@@ -45,80 +49,45 @@ namespace GTBack.WebAPI.Controllers.Shopping
         [HttpGet("BPM")]
         public async Task<IActionResult> BPM([FromQuery] BpmFilter filter)
         {
+            DateTime startTime = DateTime.Now;
 
-            try
-            {
-                var writer = System.IO.File.ReadAllText("Controllers/Shopping/bpm.txt");
-
-                return ApiResult(
-                    new SuccessDataResult<List<ProductBPM.ElementBpm>>(
-                        await _userService.XmlConverterBpm(writer, filter)));
-            }
-            catch (Exception e)
-            {
-
-                return ApiResult(new ErrorDataResults<Exception>(e));
-            }
-
-
-
-        }
-
-        [HttpGet("jobAdd")]
-        public  void AddJobs()
-        {
-            
-            RecurringJob.AddOrUpdate(
-                "myrecurringjob",
-                () => createFileTarz(),
-                "0 */30 * * * *");
-            RecurringJob.AddOrUpdate(
-                "myrecurringjob2",
-                () => createFileBPM(),
-                "0 */30 * * * *");
            
-        }
-        
-        
-        [HttpGet("WriteTarz")]
-        public async Task<IActionResult> createFileTarz()
-        {
-            using var httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");
-            var request = new HttpRequestMessage(HttpMethod.Get, "");
-            var response = await httpClient.SendAsync(request);
-            var json = response.Content.ReadAsStringAsync().Result;
-            System.IO.File.WriteAllText("Controllers/Shopping/tarzyeri.txt",json);
-            return ApiResult(new SuccessResult());
-        }
-        
-        [HttpGet("WriteBPM")]
-        public async Task<IActionResult> createFileBPM()
-        {
             using var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
             var request = new HttpRequestMessage(HttpMethod.Get, "");
             var response = await httpClient.SendAsync(request);
-            var json = response.Content.ReadAsStringAsync().Result;
-            
-            System.IO.File.WriteAllText("Controllers/Shopping/bpm.txt",json);
-            return ApiResult(new SuccessResult());
+            DateTime endTime = DateTime.Now;
+            TimeSpan elapsed = endTime - startTime;
+            Console.WriteLine("Execution time: bpm" + elapsed.TotalMilliseconds + "ms");
+            var json = response.Content.ReadAsStringAsync().Result;             
+            return ApiResult(
+                new SuccessDataResult<List<ProductBPM.ElementBpm>>(
+                        await _userService.XmlConverterBpm(json, filter)));
+          
+
+
+
         }
+
+        
+      
         [HttpGet("TarzYeri")]
         public async Task<IActionResult> TarzYeri([FromQuery] BpmFilter filter)
         {   
-            try
-            {
-                var writer =  System.IO.File.ReadAllText("Controllers/Shopping/tarzyeri.txt");
-                
-                return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(writer,filter)));            }
-            catch(Exception e)
-            {
+            DateTime startTime = DateTime.Now;
 
-                return ApiResult(new ErrorDataResults<Exception>(e));
-            }
-        
-                
+            using var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            var response = await httpClient.SendAsync(request);
+            DateTime endTime = DateTime.Now;
+            TimeSpan elapsed = endTime - startTime;
+            Console.WriteLine("Execution time: " + elapsed.TotalMilliseconds + "ms");
+            var json = response.Content.ReadAsStringAsync().Result;
+            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(json, filter)));
+
+
+
         }
         
      
