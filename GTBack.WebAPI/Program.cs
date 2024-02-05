@@ -27,7 +27,9 @@ using GTBack.Service.Services.RestourantServices;
 using GTBack.Service.Services.SharedServices;
 using GTBack.Service.Services.ShoppingService;
 using GTBack.WebAPI;
+using GTBack.WebAPI.Controllers.Shopping;
 using Hangfire;
+using Hangfire.Common;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.Data.SqlClient;
 using IClientService = Google.Apis.Services.IClientService;
@@ -162,7 +164,6 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     }
 });
 app.UseAuthentication();
-
 
 app.UseCors(builder =>
 {

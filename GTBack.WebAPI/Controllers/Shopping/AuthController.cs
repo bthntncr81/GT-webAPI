@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Xml.Serialization;
 using GTBack.Core.DTO.Shopping;
 using GTBack.Core.DTO.Shopping.Filter;
+using Hangfire;
 
 namespace GTBack.WebAPI.Controllers.Shopping
 {
@@ -44,36 +45,59 @@ namespace GTBack.WebAPI.Controllers.Shopping
         [HttpGet("BPM")]
         public async Task<IActionResult> BPM([FromQuery] BpmFilter filter)
         {
-            using var httpClient = new HttpClient();
+            var writer =  System.IO.File.ReadAllText("Controllers/Shopping/bpm.txt");
 
-            httpClient.BaseAddress =
-                new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
-            var request = new HttpRequestMessage(HttpMethod.Get, "");
-  
-            var response = await httpClient.SendAsync(request);
-            var json = response.Content.ReadAsStringAsync().Result;
 
-            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(await _userService.XmlConverterBpm(json,filter)));
+            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(await _userService.XmlConverterBpm(writer,filter)));
 
         }
 
-        [HttpGet("TarzYeri")]
-        public async Task<IActionResult> TarzYeri([FromQuery] BpmFilter filter)
+        [HttpGet("jobAdd")]
+        public  void AddJobs()
         {
-            DateTime startTime = DateTime.Now;
-
+            
+            RecurringJob.AddOrUpdate(
+                "myrecurringjob",
+                () => createFileTarz(),
+                "0 */30 * * * *");
+            RecurringJob.AddOrUpdate(
+                "myrecurringjob2",
+                () => createFileBPM(),
+                "0 */30 * * * *");
+           
+        }
+        
+        
+        [HttpGet("WriteTarz")]
+        public async Task<IActionResult> createFileTarz()
+        {
             using var httpClient = new HttpClient();
-
             httpClient.BaseAddress = new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");
             var request = new HttpRequestMessage(HttpMethod.Get, "");
             var response = await httpClient.SendAsync(request);
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime - startTime;
-            Console.WriteLine("Execution time: " + elapsed.TotalMilliseconds + "ms");
-
+            var json = response.Content.ReadAsStringAsync().Result;
+            System.IO.File.WriteAllText("Controllers/Shopping/tarzyeri.txt",json);
+            return ApiResult(new SuccessResult());
+        }
+        
+        [HttpGet("WriteBPM")]
+        public async Task<IActionResult> createFileBPM()
+        {
+            using var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
+            var request = new HttpRequestMessage(HttpMethod.Get, "");
+            var response = await httpClient.SendAsync(request);
             var json = response.Content.ReadAsStringAsync().Result;
             
-            return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(json,filter)));
+            System.IO.File.WriteAllText("Controllers/Shopping/bpm.txt",json);
+            return ApiResult(new SuccessResult());
+        }
+        [HttpGet("TarzYeri")]
+        public async Task<IActionResult> TarzYeri([FromQuery] BpmFilter filter)
+        {   
+                var writer =  System.IO.File.ReadAllText("Controllers/Shopping/tarzyeri.txt");
+                
+                return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(writer,filter)));
         }
         
      

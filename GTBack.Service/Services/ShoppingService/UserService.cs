@@ -73,9 +73,7 @@ public class ShoppingUserService:IShoppingUserService
             filter = filter
         };
 
-        var resource = await _cache.GetOrCreateAsync(control, async entry =>
-        {
-
+ 
 
             XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
             using (StringReader reader = new StringReader(xmlContent))
@@ -109,8 +107,7 @@ public class ShoppingUserService:IShoppingUserService
 
                 return elem;
             }
-        });
-        return resource;
+
     }
     
     public async  Task<List<ProductBPM.ElementBpm>> XmlConverterBpm(string xmlContent,BpmFilter filter)
@@ -122,8 +119,7 @@ public class ShoppingUserService:IShoppingUserService
     filter = filter
         };
         
-        var resource = await _cache.GetOrCreateAsync(control, async entry =>
-        {
+      
             XmlSerializer serializer = new XmlSerializer(typeof(ProductBPM.ProductBpms));
             using (StringReader reader = new StringReader(xmlContent))
             {
@@ -157,9 +153,7 @@ public class ShoppingUserService:IShoppingUserService
 
                 return elem;
             }
-        });
-
-        return resource;
+     
 
 
     }
