@@ -45,10 +45,22 @@ namespace GTBack.WebAPI.Controllers.Shopping
         [HttpGet("BPM")]
         public async Task<IActionResult> BPM([FromQuery] BpmFilter filter)
         {
-            var writer =  System.IO.File.ReadAllText("Controllers/Shopping/bpm.txt");
+
+            try
+            {
+                var writer = System.IO.File.ReadAllText("Controllers/Shopping/bpm.txt");
+
+                return ApiResult(
+                    new SuccessDataResult<List<ProductBPM.ElementBpm>>(
+                        await _userService.XmlConverterBpm(writer, filter)));
+            }
+            catch (Exception e)
+            {
+
+                return ApiResult(new ErrorDataResults<Exception>(e));
+            }
 
 
-            return ApiResult(new SuccessDataResult<List<ProductBPM.ElementBpm>>(await _userService.XmlConverterBpm(writer,filter)));
 
         }
 
@@ -95,9 +107,18 @@ namespace GTBack.WebAPI.Controllers.Shopping
         [HttpGet("TarzYeri")]
         public async Task<IActionResult> TarzYeri([FromQuery] BpmFilter filter)
         {   
+            try
+            {
                 var writer =  System.IO.File.ReadAllText("Controllers/Shopping/tarzyeri.txt");
                 
-                return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(writer,filter)));
+                return ApiResult(new SuccessDataResult<List<ProductTarzYeri>>(await _userService.XmlConverter(writer,filter)));            }
+            catch(Exception e)
+            {
+
+                return ApiResult(new ErrorDataResults<Exception>(e));
+            }
+        
+                
         }
         
      
