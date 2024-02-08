@@ -25,17 +25,16 @@ namespace GTBack.WebAPI.Controllers.Shopping
     {
         private readonly IMapper _mapper;
         private readonly IService<ShoppingUser> _service;
-        private readonly IService<XmlFiles> _xmlService;
+     
         private readonly IShoppingUserService _userService;
         private readonly IShoppingCompany _company;
 
-        public AuthController(IService<XmlFiles> xmlService,IShoppingCompany company,IService<ShoppingUser> service, IMapper mapper,IShoppingUserService userService)
+        public AuthController(IShoppingCompany company,IService<ShoppingUser> service, IMapper mapper,IShoppingUserService userService)
         {
             _userService = userService;
             _service = service;
             _mapper = mapper;
             _company = company;
-            _xmlService = xmlService;
         }
 
         [Authorize]
@@ -63,9 +62,6 @@ namespace GTBack.WebAPI.Controllers.Shopping
             return ApiResult(
                 new SuccessDataResult<List<ProductBPM.ElementBpm>>(
                         await _userService.XmlConverterBpm(json, filter)));
-          
-
-
 
         }
 
@@ -99,6 +95,12 @@ namespace GTBack.WebAPI.Controllers.Shopping
             return ApiResult(await _userService.Login(log));
         }
             
+        [HttpPost("ResetPasswordLink")]
+        public async Task<IActionResult> Login([FromBody] string userMail)
+        {
+            return ApiResult(await _userService.ResetPasswordLink(userMail));
+        }
+
         [HttpPost("RegisterCompany")]
         public async Task<IActionResult> RegisterCompany(ShoppingCompanyAddDTO log)
         {

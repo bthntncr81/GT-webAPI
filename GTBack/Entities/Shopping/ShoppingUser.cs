@@ -15,4 +15,5 @@ public class ShoppingUser:BaseEntity
     public UserTypeShopping? UserTypeId { get; set; }
     public virtual ShoppingCompany ShoppingCompany { get; set; }
     public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
+    public virtual ICollection<Address> Addresses { get; set; }
 }

@@ -17,4 +17,6 @@ public interface IShoppingUserService
     Task< List<ProductTarzYeri>>XmlConverter(string xmlContent,BpmFilter filter);
     Task<List<ProductBPM.ElementBpm>> XmlConverterBpm(string xmlContent, BpmFilter filter);
 
+    Task<IResults> ResetPasswordLink(string userMail);
+
 }
