@@ -116,6 +116,7 @@ builder.Services.AddScoped(typeof(IShoppingCompany), typeof(ShoppingCompanyServi
 builder.Services.AddScoped(typeof(ITableAndAreaService), typeof(TableAndAreaService));
 builder.Services.AddScoped(typeof(IShoppingUserService), typeof(ShoppingUserService));
 builder.Services.AddScoped(typeof(IProductService), typeof(ProductService));
+builder.Services.AddScoped(typeof(IShoppingOrderService), typeof(ShoppinOrderService));
 builder.Services.AddScoped(typeof(IRoleService<RoleCreateDTO, RoleListDTO>), typeof(RoleService));
 builder.Services.AddScoped(typeof(IRestoCompanyService<CompanyAddDTO, CompanyListDTO>), typeof(CompanyService));
 builder.Services.AddScoped(typeof(IDepartmentService<DepartmentAddDTO, DepartmentListDTO>), typeof(DepartmentService));

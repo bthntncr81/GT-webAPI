@@ -23,6 +23,11 @@ public class ShoppingMapProfile:Profile
             
             CreateMap<ImageAddDTO, Image>().ReverseMap();
             // CreateMap<List<ImageAddDTO>, IList<Image>>().ReverseMap();
+            
+            
+            CreateMap<Address, AddressAddDTO>().ReverseMap();
+            CreateMap<ShoppingOrder, OrderConfirmDTO>().ReverseMap();
+
         }
     
 }
