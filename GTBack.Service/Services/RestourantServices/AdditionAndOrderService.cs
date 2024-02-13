@@ -33,7 +33,6 @@ public class AdditionAndOrderService : IAdditionAndOrderService
     private readonly IService<MenuItem> _menuItemService;
     private readonly IService<TableArea> _tableAreaService;
     private readonly ITableAndAreaService _tableAndAreaService;
-    public readonly IBackgroundJobClient _backgroundJobClient;
     private readonly IMapper _mapper;
     private readonly ClaimsPrincipal? _loggedUser;
 
@@ -49,13 +48,12 @@ public class AdditionAndOrderService : IAdditionAndOrderService
         IMapper mapper,
         IService<MenuItem> menuItemService,
         IService<ExtraMenuItem> extraMenuService,
-        IService<Employee> employeeService,
-        IBackgroundJobClient backgroundJobClient)
+        IService<Employee> employeeService
+        )
     {
         _mapper = mapper;
         _orderService = orderService;
         _employeeService = employeeService;
-        _backgroundJobClient = backgroundJobClient;
         _tableAndAreaService = tableAndAreaService;
         _menuItemService = menuItemService;
         _extraMenuService = extraMenuService;
@@ -141,9 +139,6 @@ public class AdditionAndOrderService : IAdditionAndOrderService
                 await _orderProcessService.AddAsync(orderProcess);
 
 
-                _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                        selectedAddition.Id+" nolu adisyonun "+extra.Name+ " adlı ürününün "+" tahmini teslim süresine son 10 dakika ", employee.ApiKey,addedOrder.Id)
-                    , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
 
             }
             else
@@ -208,10 +203,7 @@ public class AdditionAndOrderService : IAdditionAndOrderService
                 
                     await _orderProcessService.AddAsync(orderProcess);
                 
-                
-                    _backgroundJobClient.Schedule(() => SendOrderNotification("Teslimat Alarmı",
-                            selectedAddition.Id+" "+" nolu adisyonun  " + " " +extra.Name+ " "+"  adlı ürününün  tahmini teslim süresine son 10 dakika", employee.ApiKey,addedOrder.Id)
-                        , TimeSpan.FromMinutes(extra.EstimatedTime - 11));
+            
                 
                     
                 }

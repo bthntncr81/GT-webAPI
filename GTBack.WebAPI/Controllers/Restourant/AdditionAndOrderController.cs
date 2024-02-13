@@ -20,7 +20,7 @@ public class AdditionAndOrderController: CustomRestourantBaseController
     private readonly IService<ExtraMenuItem> _extraMenuService;
     private readonly IAdditionAndOrderService _service;
 
-    public AdditionAndOrderController(IService<ExtraMenuItem> extraMenuService,IBackgroundJobClient backgroundJobClient, IMapper mapper,IAdditionAndOrderService service)
+    public AdditionAndOrderController(IService<ExtraMenuItem> extraMenuService, IMapper mapper,IAdditionAndOrderService service)
     {
         _service = service;
         _mapper = mapper;
