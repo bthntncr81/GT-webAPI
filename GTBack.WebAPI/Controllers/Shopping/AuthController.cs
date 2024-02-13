@@ -16,7 +16,6 @@ using System.Xml.Serialization;
 using GTBack.Core.DTO.Shopping;
 using GTBack.Core.DTO.Shopping.Filter;
 using Hangfire;
-using LinqToDB;
 using Microsoft.EntityFrameworkCore;
 
 namespace GTBack.WebAPI.Controllers.Shopping
