@@ -1,3 +1,4 @@
+using System.Configuration;
 using FluentValidation;
 using GTBack.Core.Entities;
 using GTBack.Core.Repositories;
@@ -31,6 +32,7 @@ using GTBack.WebAPI.Controllers.Shopping;
 using GTBack.WebAPI.Middlewares;
 using Hangfire;
 using Hangfire.Common;
+using Hangfire.PostgreSql;
 using HangfireBasicAuthenticationFilter;
 using Microsoft.Data.SqlClient;
 using XAct;
@@ -77,23 +79,13 @@ builder.Services.AddSwaggerGen(c =>
     
     
 });
-SqlConnectionStringBuilder mySql = new SqlConnectionStringBuilder();
-mySql.DataSource = "database-2.ctgyyookmwdo.eu-central-1.rds.amazonaws.com";
-mySql.UserID = "admin";
-mySql.Password = "bthntncr81";
-mySql.InitialCatalog = "database-2";
+Console.WriteLine(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
+builder.Services.AddHangfire((config) =>
+{
+    config.UsePostgreSqlStorage(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
+});
 
-builder.Services.AddHangfire((sp, config) =>
-{
-    config.UseSqlServerStorage(mySql.ConnectionString).SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-        .UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings();
-});
-FirebaseApp.Create(new AppOptions()
-{
-    Credential =
-        GoogleCredential.FromFile(
-            "private_key.json")
-});
+
 builder.Services.AddHangfireServer();
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -136,10 +128,10 @@ if (FirebaseApp.DefaultInstance == null)
 var appConfig = builder.Configuration.Get<GoThereAppConfig>();
 
 
+
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
-    x.UseSqlServer(mySql.ConnectionString,
-        option => { option.MigrationsAssembly(Assembly.GetAssembly(typeof(AppDbContext)).GetName().Name); });
+   x.UseNpgsql(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
 });
 
 
@@ -147,6 +139,12 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
+FirebaseApp.Create(new AppOptions()
+{
+    Credential =
+        GoogleCredential.FromFile(
+            "private_key.json")
+});
 
 app.UseSwagger();
 
@@ -155,6 +153,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "GoThere API v1");
     c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
 });
+app.UseHangfireServer();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[]
