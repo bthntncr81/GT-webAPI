@@ -30,7 +30,8 @@ using GTBack.Service.Services.ShoppingService;
 using GTBack.WebAPI;
 using GTBack.WebAPI.Controllers.Shopping;
 using GTBack.WebAPI.Middlewares;
-
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.Data.SqlClient;
 using XAct;
 using IClientService = Google.Apis.Services.IClientService;
@@ -77,10 +78,10 @@ builder.Services.AddSwaggerGen(c =>
     
 });
 // Console.WriteLine(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
-// builder.Services.AddHangfire((config) =>
-// {
-//     config.UsePostgreSqlStorage(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
-// });
+builder.Services.AddHangfire((config) =>
+{
+    config.UsePostgreSqlStorage(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
+});
 
 
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
@@ -149,18 +150,10 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "GoThere API v1");
     c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
 });
-// app.UseHangfireServer();
-// app.UseHangfireDashboard("/hangfire", new DashboardOptions
-// {
-//     Authorization = new[]
-//     {
-//         new HangfireCustomBasicAuthenticationFilter
-//         {
-//             User = app.Configuration.GetSection("HangfireOptions:User").Value,
-//             Pass = app.Configuration.GetSection("HangfireOptions:Pass").Value
-//         }
-//     }
-// });
+app.UseHangfireServer();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+});
 app.UseAuthentication();
 
 app.UseCors(builder =>
