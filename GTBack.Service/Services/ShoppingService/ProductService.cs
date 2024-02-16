@@ -131,10 +131,10 @@ public class ProductService:IProductService
         var productRepo =  _globalProductService.Where(x => !x.IsDeleted);
         var variantRepo =  _variantService.Where(x => !x.IsDeleted);
 
-        if (filter.MainCategory == "kadin")
-        {
-            filter.MainCategory = "kadın";
-        }
+        // if (filter.MainCategory == "kadin")
+        // {
+        //     filter.MainCategory = "kadın";
+        // }
         
 
         if (!filter.MainCategory.IsNullOrEmpty())
