@@ -1,6 +1,7 @@
 ﻿using GTBack.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using GTBack.Core.DTO.Shopping;
 using GTBack.Core.Entities.Restourant;
 using GTBack.Core.Entities.Shopping;
 using Company = GTBack.Core.Entities.Company;
@@ -53,6 +54,8 @@ namespace GTBack.Repository
         public DbSet<ShoppingCompany> ShoppingCompany { get; set; }
         public DbSet<ShoppingOrder> ShoppingOrder { get; set; }
         public DbSet<ShoppingUser> ShoppingUser { get; set; }
+        public DbSet<GlobalProductModel> GlobalProductModels { get; set; }
+        public DbSet<MyVariant> Variants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 
@@ -80,6 +83,7 @@ namespace GTBack.Repository
             modelBuilder.Entity<SpecialAttributeRelation>()
                 .HasKey(e => new { e.AdminUserId, e.ClientUserId });
 
+            
             modelBuilder.Entity<SpecialAttributeRelation>()
                 .HasOne(e => e.AdminUser)
                 .WithMany(e => e.BlackListUserRelationsClient)

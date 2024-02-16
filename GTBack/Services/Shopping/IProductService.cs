@@ -1,5 +1,6 @@
 using GTBack.Core.DTO;
 using GTBack.Core.DTO.Restourant.Response;
+using GTBack.Core.DTO.Shopping;
 using GTBack.Core.DTO.Shopping.Filter;
 using GTBack.Core.DTO.Shopping.Request;
 using GTBack.Core.DTO.Shopping.Response;
@@ -13,4 +14,8 @@ public interface IProductService
         BaseListFilterDTO<ProductFilter> model);
 
     Task<IResults> AddProduct(ProductAddDTO model);
+
+    Task<IResults> TarzYeriJobs(ProductsTarzYeri model);
+
+    Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter);
 }

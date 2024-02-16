@@ -10,6 +10,8 @@ public class OrderConfirmDTO
     public string CardNumber { get; set; }
     public string Phone { get; set; }
     public string Mail { get; set; }
+    public string Name { get; set; }
+    public string Surname { get; set; }
     public string? OrderGuid { get; set; }
     public int TotalPrice { get; set; }
     public string IyzicoTransactionId { get; set; }

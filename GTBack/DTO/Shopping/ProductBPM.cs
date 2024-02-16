@@ -11,7 +11,7 @@ public class ProductBPM
         public ElementBpm[] ProductList { get; set; }
     }
 
-    public class ElementBpm
+    public class ElementBpm:BaseEntity
     {
         [XmlElement(ElementName = "Product_code")]
         public string Product_code { get; set; }

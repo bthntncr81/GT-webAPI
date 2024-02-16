@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216130051_idglobal")]
+    partial class idglobal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,54 +37,69 @@ namespace GTBack.Repository.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BrandId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Category")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Detail")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Images")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("MainCategory")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("NotDiscountedPrice")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Price")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ProductCode")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ProductId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Quantity")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SubCategory")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("TopCategory")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")

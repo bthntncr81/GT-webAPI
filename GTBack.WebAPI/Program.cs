@@ -74,8 +74,6 @@ builder.Services.AddSwaggerGen(c =>
             new List<string>()
         }
     });
-    
-    
 });
 // Console.WriteLine(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
 builder.Services.AddHangfire((config) =>
@@ -151,6 +149,7 @@ app.UseSwaggerUI(c =>
     c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
 });
 app.UseHangfireServer();
+
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
 });

@@ -9,6 +9,10 @@ public class ShoppingOrder:BaseEntity
     public long? ShoppingUserId { get; set; }
     public string CardNumber { get; set; }
     public int TotalPrice { get; set; }
+    
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    
     public string IyzicoTransactionId { get; set; }
     public string Phone { get; set; }
     public string OrderNote{ get; set; }

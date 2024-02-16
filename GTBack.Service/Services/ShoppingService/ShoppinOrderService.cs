@@ -70,11 +70,13 @@ public class ShoppinOrderService:IShoppingOrderService
            select new ShoppingOrderListDTO()
            {        
                BasketJsonDetail = order.BasketJsonDetail,
-               ShoppingUserId = order.ShoppingUserId,
+               ShoppingUserId = order.ShoppingUserId.IsNull() ? order.ShoppingUserId:null,
                OrderGuid = order.OrderGuid,
                TotalPrice = order.TotalPrice,
                OrderNote = order.OrderNote,
                Status = order.Status,
+               Name = order.Name,
+               Surname = order.Surname,
                OrderDate = order.OrderDate,
                Phone = order.Phone,
                Mail = order.Mail,

@@ -11,7 +11,7 @@ namespace GTBack.Core.DTO.Shopping;
         public ProductTarzYeri[] ProductList { get; set; }
     }
 
-    public class ProductTarzYeri
+    public class ProductTarzYeri:BaseEntity
     {
         public string id { get; set; }
         public string productCode { get; set; }

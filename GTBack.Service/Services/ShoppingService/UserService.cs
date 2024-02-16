@@ -17,6 +17,7 @@ using GTBack.Service.Utilities;
 using GTBack.Service.Utilities.Jwt;
 using GTBack.Service.Validation.Restourant;
 using GTBack.Service.Validation.Tool;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -33,6 +34,7 @@ public class ShoppingUserService:IShoppingUserService
     private readonly IMapper _mapper;
     private readonly  IJwtTokenService<BaseRegisterDTO> _tokenService;
     private readonly IMemoryCache _cache;
+    private readonly IBackgroundJobClient _backgroundJobClient;
 
     public ShoppingUserService(IMemoryCache cache,IRefreshTokenService refreshTokenService,  IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<ShoppingUser> service,
@@ -80,8 +82,6 @@ public class ShoppingUserService:IShoppingUserService
             XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
             using (StringReader reader = new StringReader(xmlContent))
             {
-
-
                 ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
 
                 var elem = myObject.ProductList.Where(x => float.Parse(x.price) != 0).ToList();

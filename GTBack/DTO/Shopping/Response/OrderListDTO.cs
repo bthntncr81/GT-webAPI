@@ -13,6 +13,9 @@ public class ShoppingOrderListDTO
     public string IyzicoTransactionId { get; set; }
     public string OrderDate { get; set; }
     public string OrderNote{ get; set; }
+    
+    public string Name { get; set; }
+    public string Surname { get; set; }
 
     public OrderStatusEnum Status { get; set; }
     public AddressResponseDTO Address { get; set; }

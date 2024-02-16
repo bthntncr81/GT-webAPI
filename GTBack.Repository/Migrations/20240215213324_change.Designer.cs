@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240215213324_change")]
+    partial class change
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,116 +23,6 @@ namespace GTBack.Repository.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("GTBack.Core.DTO.Shopping.GlobalProductModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Barcode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Brand")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BrandId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Category")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Detail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Images")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("MainCategory")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("NotDiscountedPrice")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Price")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProductCode")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Quantity")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubCategory")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TopCategory")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GlobalProductModels");
-                });
-
-            modelBuilder.Entity("GTBack.Core.DTO.Shopping.MyVariant", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("GlobalProductModelId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Quantity")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("VariantId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GlobalProductModelId");
-
-                    b.ToTable("Variants");
-                });
 
             modelBuilder.Entity("GTBack.Core.Entities.Company", b =>
                 {
@@ -1643,17 +1535,6 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("GTBack.Core.DTO.Shopping.MyVariant", b =>
-                {
-                    b.HasOne("GTBack.Core.DTO.Shopping.GlobalProductModel", "GlobalProductModel")
-                        .WithMany("Variants")
-                        .HasForeignKey("GlobalProductModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GlobalProductModel");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Event", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.User", "AdminUser")
@@ -2079,11 +1960,6 @@ namespace GTBack.Repository.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("GTBack.Core.DTO.Shopping.GlobalProductModel", b =>
-                {
-                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Company", b =>

@@ -267,7 +267,6 @@ public class MenuAndCategoryService : IMenuAndCategoryService
                 Image = menuItem.Image,
                 Description = menuItem.Description,
                 Contains = menuItem.Contains,
-                CategoryId = category.Id,
             };
 
         var myCheckList = await query.ToListAsync();

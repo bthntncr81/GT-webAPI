@@ -58,6 +58,7 @@ namespace GTBack.Repository.Repositories
         public void RemoveRange(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
+            _context.SaveChanges();
         }
 
         public  T Update(T entity)
