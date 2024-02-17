@@ -25,32 +25,34 @@ public class ProductService:IProductService
     private readonly IService<Product> _productService;
     private readonly IService<Image> _imageService;
     private readonly IService<GlobalProductModel> _globalProductService;
+    private readonly IService<LastUpdated> _lastUpdatedService;
     private readonly IService<MyVariant> _variantService;
     private readonly IMapper _mapper;
     private readonly IBackgroundJobClient _backgroundJobClient;
 
 
 
-    public ProductService( IService<MyVariant> variantService, IService<GlobalProductModel> globalProductService,IService<Product> productService,IService<Image> imageService,  IMapper mapper)
+    public ProductService( IService<LastUpdated> lastUpdatedService,IService<MyVariant> variantService, IService<GlobalProductModel> globalProductService,IService<Product> productService,IService<Image> imageService,  IMapper mapper)
     {
         _productService = productService;
         _imageService = imageService;
         _mapper = mapper;
         _variantService = variantService;
         _globalProductService = globalProductService;
+        _lastUpdatedService = lastUpdatedService;
 
     }
 
 
     public async Task<IResults> TarzYeriJobs(ProductsTarzYeri myObject)
     {
-        var query = _globalProductService.Where(x => x.Id > 0).ToList();
-         
-        await  _globalProductService.RemoveRangeAsync(query);
+        //
+        // var query = _globalProductService.Where(x => x.Id >0).ToList();
+        // await  _globalProductService.RemoveRangeAsync(query);
+        
         
         foreach (var item in myObject.ProductList)
             {
-                
                 var element = new GlobalProductModel()
                 {
                     ProductId = !item.id.IsNullOrEmpty()? item.id:null,
@@ -93,8 +95,13 @@ public class ProductService:IProductService
                     imageString= imageString +"/clipper/image/"+item.image5.Replace( " ", "" );
         
                 }
-        
+
+                Console.WriteLine(element);
+
                 element.Images = imageString;
+               var updatedProduct=await _globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefaultAsync();
+               
+               
                 var globalProduct= await _globalProductService.AddAsync(element);
                 
                 
@@ -109,11 +116,18 @@ public class ProductService:IProductService
                     };
                    await  _variantService.AddAsync(variantModel);
                 }
+                
+                
         
             }
-        
-        
-        
+
+        var lastUpdate= await  _lastUpdatedService.Where(x => x.Id == 1).FirstOrDefaultAsync();
+        var query = _globalProductService.Where(x => x.Id < lastUpdate.LastUpdatedId).ToList();
+        var lastId = _globalProductService.Where(x => x.Id >0).ToList().LastOrDefault().Id;
+        lastUpdate.LastUpdatedId = lastId;
+        _lastUpdatedService.UpdateAsync(lastUpdate);
+        await  _globalProductService.RemoveRangeAsync(query);
+
 
         // RecurringJob.AddOrUpdate(
         //     "TarzYeri Kayıt",
@@ -128,7 +142,8 @@ public class ProductService:IProductService
     public async Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter)
     {
 
-        var productRepo =  _globalProductService.Where(x => !x.IsDeleted);
+     var lastUpdated=  await  _lastUpdatedService.Where(x => x.Id==1).FirstOrDefaultAsync();
+        var productRepo =  _globalProductService.Where(x => !x.IsDeleted&&x.Id<lastUpdated.LastUpdatedId);
         var variantRepo =  _variantService.Where(x => !x.IsDeleted);
 
         // if (filter.MainCategory == "kadin")

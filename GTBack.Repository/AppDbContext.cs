@@ -55,6 +55,7 @@ namespace GTBack.Repository
         public DbSet<ShoppingOrder> ShoppingOrder { get; set; }
         public DbSet<ShoppingUser> ShoppingUser { get; set; }
         public DbSet<GlobalProductModel> GlobalProductModels { get; set; }
+        public DbSet<LastUpdated> LastUpdated { get; set; }
         public DbSet<MyVariant> Variants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
