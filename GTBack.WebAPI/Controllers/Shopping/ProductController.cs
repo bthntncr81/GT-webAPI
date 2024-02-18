@@ -45,8 +45,8 @@ public class ProductController : CustomShoppingBaseController
 
         httpClientBpm.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
         var requestBpm = new HttpRequestMessage(HttpMethod.Get, "");
-        var responseBpm = await httpClientBpm.SendAsync(request);
-        var jsonBpm = response.Content.ReadAsStringAsync().Result;    
+        var responseBpm = await httpClientBpm.SendAsync(requestBpm);
+        var jsonBpm = responseBpm.Content.ReadAsStringAsync().Result;    
         
         
         
@@ -57,7 +57,7 @@ public class ProductController : CustomShoppingBaseController
         
         XmlSerializer serializerBpm = new XmlSerializer(typeof(ProductBPM.ProductBpms));
         StringReader readerBpm = new StringReader(jsonBpm);
-        ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializer.Deserialize(reader);
+        ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializerBpm.Deserialize(readerBpm);
         
         
         RecurringJob.AddOrUpdate(
