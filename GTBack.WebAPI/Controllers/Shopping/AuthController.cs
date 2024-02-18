@@ -47,16 +47,13 @@ namespace GTBack.WebAPI.Controllers.Shopping
         [HttpGet("BPM")]
         public async Task<IActionResult> BPM([FromQuery] BpmFilter filter)
         {
-            DateTime startTime = DateTime.Now;
 
            
             using var httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
             var request = new HttpRequestMessage(HttpMethod.Get, "");
             var response = await httpClient.SendAsync(request);
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime - startTime;
-            Console.WriteLine("Execution time: bpm" + elapsed.TotalMilliseconds + "ms");
+
             var json = response.Content.ReadAsStringAsync().Result;             
             return ApiResult(
                 new SuccessDataResult<List<ProductBPM.ElementBpm>>(

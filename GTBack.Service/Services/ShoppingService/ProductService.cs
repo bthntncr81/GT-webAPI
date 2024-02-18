@@ -45,13 +45,85 @@ public class ProductService:IProductService
 
      
 
-    public async Task<IResults> TarzYeriJobs(ProductsTarzYeri myObject)
+    public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBpms bpmObject)
     {
         
      
+        foreach (var item in bpmObject.ProductList)
+            {
+                var element = new GlobalProductModel()
+                {
+                    ProductId = !item.Product_id.IsNullOrEmpty()? item.Product_id:null,
+                    ProductCode = !item.Product_code.IsNullOrEmpty()?item.Product_code:null,
+                    MainCategory = !item.MainCategory.IsNullOrEmpty()? item.MainCategory:null,
+                    SubCategory = !item.SubCategory.IsNullOrEmpty()?item.SubCategory:null,
+                    Category = !item.Category.IsNullOrEmpty()?item.Category:null,
+                    Brand = !item.Brand.IsNullOrEmpty()?item.Brand:null,
+                    Name = !item.Name.IsNullOrEmpty()?item.Name:null,
+                    Description = !item.Description.IsNullOrEmpty()?item.Description:null,
+                    NotDiscountedPrice =  !item.Price.IsNullOrEmpty()?item.Price:null,
+                    Price = !item.Price2.IsNullOrEmpty()?item.Price2:null,
+                    Detail = null,
+                    Quantity = !item.Stock.IsNullOrEmpty()?item.Stock:null,
+                };
+                var imageString = "";
+                if (!item.Image1.IsNullOrEmpty())
+                {
+                    imageString= imageString +"/clipper/image/"+item.Image1.Replace( " ", "" );
+                }
+                if (!item.Image2.IsNullOrEmpty())
+                {
+                    imageString= imageString +"/clipper/image/"+item.Image2.Replace( " ", "" );
+        
+                }
+                if (!item.Image3.IsNullOrEmpty())
+                {
+                    imageString= imageString +"/clipper/image/"+item.Image3.Replace( " ", "" );
+        
+                }
+                if (!item.Image4.IsNullOrEmpty())
+                {
+                    imageString= imageString +"/clipper/image/"+item.Image4.Replace( " ", "" );
+        
+                }
+                if (!item.Image5.IsNullOrEmpty())
+                {
+                    imageString= imageString +"/clipper/image/"+item.Image5.Replace( " ", "" );
+        
+                }
+
+                Console.WriteLine(element);
+
+                element.Images = imageString;
+               
+               
+                var globalProduct= await _globalProductService.AddAsync(element);
+                
+                
+                foreach (var variant in item.Variants.Variant)
+                {
+
+                    foreach (var elem in variant.Specs)
+                    {
+                        if (Int32.Parse(variant.Quantity)!= 0 && elem.Name == "Beden") {
+                            var variantModel = new MyVariant()
+                            {
+                                Size = elem.Value,
+                                VariantId = variant.VariantId,
+                                Quantity = variant.Quantity,
+                                GlobalProductModelId = globalProduct.Id
+                            };
+                            await  _variantService.AddAsync(variantModel);
+
+                        }
+                    
+                    }
+                 
+                }
+            }
    
         foreach (var item in myObject.ProductList)
-            {
+        {
                 var element = new GlobalProductModel()
                 {
                     ProductId = !item.id.IsNullOrEmpty()? item.id:null,
@@ -118,7 +190,7 @@ public class ProductService:IProductService
                 
                 
         
-            }
+        }
 
         var lastUpdate= await  _lastUpdatedService.Where(x => x.Id == 1).FirstOrDefaultAsync();
         var query = _globalProductService.Where(x => x.Id < lastUpdate.LastUpdatedId).ToList();

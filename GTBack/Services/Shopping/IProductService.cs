@@ -15,7 +15,6 @@ public interface IProductService
 
     Task<IResults> AddProduct(ProductAddDTO model);
 
-    Task<IResults> TarzYeriJobs(ProductsTarzYeri model);
-
+    Task<IResults> Job(ProductsTarzYeri myObject, ProductBPM.ProductBpms bpmObject);
     Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter);
 }
