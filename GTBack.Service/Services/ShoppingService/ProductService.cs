@@ -43,14 +43,13 @@ public class ProductService:IProductService
 
     }
 
+     
 
     public async Task<IResults> TarzYeriJobs(ProductsTarzYeri myObject)
     {
-        //
-        // var query = _globalProductService.Where(x => x.Id >0).ToList();
-        // await  _globalProductService.RemoveRangeAsync(query);
         
-        
+     
+   
         foreach (var item in myObject.ProductList)
             {
                 var element = new GlobalProductModel()
@@ -123,18 +122,12 @@ public class ProductService:IProductService
 
         var lastUpdate= await  _lastUpdatedService.Where(x => x.Id == 1).FirstOrDefaultAsync();
         var query = _globalProductService.Where(x => x.Id < lastUpdate.LastUpdatedId).ToList();
-        var lastId = _globalProductService.Where(x => x.Id >0).ToList().LastOrDefault().Id;
+        var lastId = _globalProductService.Where(x => x.Id >0).ToList().OrderByDescending(x=>x.Id).FirstOrDefault().Id;
         lastUpdate.LastUpdatedId = lastId;
         _lastUpdatedService.UpdateAsync(lastUpdate);
         await  _globalProductService.RemoveRangeAsync(query);
 
-
-        // RecurringJob.AddOrUpdate(
-        //     "TarzYeri Kayıt",
-        //     () => TarzYeri(xmlContent),
-        // Cron.Daily);
-        //
-        //
+     
 
         return new SuccessResult();
     }
@@ -142,8 +135,8 @@ public class ProductService:IProductService
     public async Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter)
     {
 
-     var lastUpdated=  await  _lastUpdatedService.Where(x => x.Id==1).FirstOrDefaultAsync();
-        var productRepo =  _globalProductService.Where(x => !x.IsDeleted&&x.Id<lastUpdated.LastUpdatedId);
+     // var lastUpdated=  await  _lastUpdatedService.Where(x => x.Id==1).FirstOrDefaultAsync();
+        var productRepo =  _globalProductService.Where(x => !x.IsDeleted);
         var variantRepo =  _variantService.Where(x => !x.IsDeleted);
 
         // if (filter.MainCategory == "kadin")

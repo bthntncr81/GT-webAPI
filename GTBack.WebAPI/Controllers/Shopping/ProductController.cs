@@ -8,6 +8,7 @@ using GTBack.Core.DTO.Shopping.Response;
 using GTBack.Core.Entities.Shopping;
 using GTBack.Core.Results;
 using GTBack.Core.Services.Shopping;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GTBack.WebAPI.Controllers.Shopping;
@@ -43,9 +44,14 @@ public class ProductController : CustomShoppingBaseController
         XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
         StringReader reader = new StringReader(json);
         ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
+        RecurringJob.AddOrUpdate(
+            "TarzYeri Kayıt",
+            () =>  _productService.TarzYeriJobs(myObject),
+            Cron.MinuteInterval(30));
+       
+        
 
-
-        return ApiResult(await _productService.TarzYeriJobs(myObject));
+        return ApiResult(new SuccessResult());
         
     }
            
