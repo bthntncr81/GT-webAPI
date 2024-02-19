@@ -248,7 +248,7 @@ public class ProductService:IProductService
                 Brand = !product.Brand.IsNullOrEmpty() ? product.Brand : null,
                 Name = !product.Name.IsNullOrEmpty() ? product.Name : null,
                 Description = !product.Description.IsNullOrEmpty() ? product.Description : null,
-                NotDiscountedPrice = null,
+                NotDiscountedPrice = !product.NotDiscountedPrice.IsNullOrEmpty() ? product.NotDiscountedPrice : null,
                 Images =  !product.Images.IsNullOrEmpty() ? product.Images : null,
                 Price = !product.Price.IsNullOrEmpty() ? product.Price : null,
                 Detail = !product.Detail.IsNullOrEmpty() ? product.Detail : null,
