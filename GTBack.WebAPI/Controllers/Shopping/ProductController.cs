@@ -58,16 +58,16 @@ public class ProductController : CustomShoppingBaseController
         XmlSerializer serializerBpm = new XmlSerializer(typeof(ProductBPM.ProductBpms));
         StringReader readerBpm = new StringReader(jsonBpm);
         ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializerBpm.Deserialize(readerBpm);
+
         
-        
-        RecurringJob.AddOrUpdate(
-            "TarzYeri Kayıt",
-            () =>  _productService.Job(myObject,myObjectBpm),
-            Cron.MinuteInterval(30));
+        // RecurringJob.AddOrUpdate(
+        //     "TarzYeri Kayıt",
+        //     () =>  _productService.Job(myObject,myObjectBpm),
+        //     Cron.MinuteInterval(30));
        
         
 
-        return ApiResult(new SuccessResult());
+        return ApiResult(await _productService.Job(myObject, myObjectBpm));
         
     }
            

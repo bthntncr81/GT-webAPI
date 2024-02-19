@@ -56,6 +56,7 @@ public class ProductService:IProductService
                     ProductId = !item.Product_id.IsNullOrEmpty()? item.Product_id:null,
                     ProductCode = !item.Product_code.IsNullOrEmpty()?item.Product_code:null,
                     MainCategory = !item.MainCategory.IsNullOrEmpty()? item.MainCategory:null,
+                    Barcode = "null",
                     SubCategory = !item.SubCategory.IsNullOrEmpty()?item.SubCategory:null,
                     Category = !item.Category.IsNullOrEmpty()?item.Category:null,
                     Brand = !item.Brand.IsNullOrEmpty()?item.Brand:null,
@@ -98,28 +99,32 @@ public class ProductService:IProductService
                
                
                 var globalProduct= await _globalProductService.AddAsync(element);
-                
-                
-                foreach (var variant in item.Variants.Variant)
+                Console.WriteLine(element);
+
+                if (!item.Variants.IsNull())
                 {
-
-                    foreach (var elem in variant.Specs)
+                    foreach (var variant in item.Variants.Variant)
                     {
-                        if (Int32.Parse(variant.Quantity)!= 0 && elem.Name == "Beden") {
-                            var variantModel = new MyVariant()
-                            {
-                                Size = elem.Value,
-                                VariantId = variant.VariantId,
-                                Quantity = variant.Quantity,
-                                GlobalProductModelId = globalProduct.Id
-                            };
-                            await  _variantService.AddAsync(variantModel);
 
-                        }
+                        foreach (var elem in variant.Specs)
+                        {
+                            if (Int32.Parse(variant.Quantity)!= 0 && elem.Name == "Beden") {
+                                var variantModel = new MyVariant()
+                                {
+                                    Size = elem.Value,
+                                    VariantId = variant.VariantId,
+                                    Quantity = variant.Quantity,
+                                    GlobalProductModelId = globalProduct.Id
+                                };
+                                await  _variantService.AddAsync(variantModel);
+
+                            }
                     
-                    }
+                        }
                  
+                    }
                 }
+              
             }
    
         foreach (var item in myObject.ProductList)
@@ -170,7 +175,6 @@ public class ProductService:IProductService
                 Console.WriteLine(element);
 
                 element.Images = imageString;
-               var updatedProduct=await _globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefaultAsync();
                
                
                 var globalProduct= await _globalProductService.AddAsync(element);
