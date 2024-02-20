@@ -63,7 +63,7 @@ public class ProductController : CustomShoppingBaseController
         RecurringJob.AddOrUpdate(
             "TarzYeri Kayıt",
             () =>  _productService.Job(myObject,myObjectBpm),
-            Cron.MinuteInterval(10));
+            Cron.Hourly());
        
         
 
