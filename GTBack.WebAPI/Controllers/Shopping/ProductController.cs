@@ -60,14 +60,14 @@ public class ProductController : CustomShoppingBaseController
         ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializerBpm.Deserialize(readerBpm);
 
         
-        // RecurringJob.AddOrUpdate(
-        //     "TarzYeri Kayıt",
-        //     () =>  _productService.Job(myObject,myObjectBpm),
-        //     Cron.MinuteInterval(30));
+        RecurringJob.AddOrUpdate(
+            "TarzYeri Kayıt",
+            () =>  _productService.Job(myObject,myObjectBpm),
+            Cron.MinuteInterval(10));
        
         
 
-        return ApiResult(await _productService.Job(myObject, myObjectBpm));
+        return ApiResult(new SuccessResult());
         
     }
            

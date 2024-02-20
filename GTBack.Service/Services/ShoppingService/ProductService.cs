@@ -46,8 +46,9 @@ public class ProductService:IProductService
      
 
     public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBpms bpmObject)
-    {
+    {       
         
+
      
         foreach (var item in bpmObject.ProductList)
             {
@@ -96,10 +97,30 @@ public class ProductService:IProductService
                 Console.WriteLine(element);
 
                 element.Images = imageString;
+
+                var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefault();
+                var globalProduct = new GlobalProductModel();
+                if (!updatedElement.IsNull())
+                {
+                   
+                     
+                     if (element.Quantity == updatedElement.Quantity && element.Price == updatedElement.Price)
+                     {
+                        
+                     }
+                     else
+                     {
+                         element.Id=updatedElement.Id;
+                         _globalProductService.UpdateAsync(element);
+                     }
+
+                }
+                else
+                {
+                     globalProduct= await _globalProductService.AddAsync(element);
+
+                }
                
-               
-                var globalProduct= await _globalProductService.AddAsync(element);
-                Console.WriteLine(element);
 
                 if (!item.Variants.IsNull())
                 {
@@ -108,16 +129,39 @@ public class ProductService:IProductService
 
                         foreach (var elem in variant.Specs)
                         {
-                            if (Int32.Parse(variant.Quantity)!= 0 && elem.Name == "Beden") {
-                                var variantModel = new MyVariant()
-                                {
-                                    Size = elem.Value,
-                                    VariantId = variant.VariantId,
-                                    Quantity = variant.Quantity,
-                                    GlobalProductModelId = globalProduct.Id
-                                };
-                                await  _variantService.AddAsync(variantModel);
+                            if (Int32.Parse(variant.Quantity)!= 0 && elem.Name == "Beden")
+                            {
+                              var variantElem = _variantService.Where(x => x.VariantId == variant.VariantId).FirstOrDefault();
 
+                              var variantModel = new MyVariant()
+                              {
+                                  
+                                  Size = elem.Value,
+                                  VariantId = variant.VariantId,
+                                  Quantity = variant.Quantity,
+                                  GlobalProductModelId = globalProduct.Id
+                              };
+                              
+                              if (!variantElem.IsNull())
+                              {
+                                  if (variantElem.Quantity == variant.Quantity)
+                                  {
+                            
+                                  }
+                                  else
+                                  {
+                                      variantModel.Id = variantElem.Id;
+                                      _variantService.UpdateAsync(variantModel);
+                                  }
+                               
+
+                              }
+                              else
+                              {
+                                  await  _variantService.AddAsync(variantModel);
+
+                              }
+                              
                             }
                     
                         }
@@ -177,11 +221,33 @@ public class ProductService:IProductService
                 element.Images = imageString;
                
                
-                var globalProduct= await _globalProductService.AddAsync(element);
-                
+
+                var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefault();
+                var globalProduct = new GlobalProductModel();
+                if (!updatedElement.IsNull())
+                {
+                    if (element.Quantity == updatedElement.Quantity && element.Price == updatedElement.Price)
+                    {
+                        
+                    }
+                    else
+                    {
+                        element.Id=updatedElement.Id;
+                        _globalProductService.UpdateAsync(element);
+                    }
+              
+                }
+                else
+                {
+                    globalProduct= await _globalProductService.AddAsync(element);
+
+                }                
                 
                 foreach (var variant in item.variants.VariantList)
                 {
+                    
+                    var variantElem = _variantService.Where(x => x.VariantId == variant.barcode).FirstOrDefault();
+
                     var variantModel = new MyVariant()
                     {
                         Size = variant.value2,
@@ -189,29 +255,39 @@ public class ProductService:IProductService
                         Quantity = variant.quantity,
                         GlobalProductModelId = globalProduct.Id
                     };
-                   await  _variantService.AddAsync(variantModel);
+                              
+                    if (!variantElem.IsNull())
+                    {
+                        if (variantElem.Quantity == variant.quantity)
+                        {
+                            
+                        }
+                        else
+                        {
+                            variantModel.Id = variantElem.Id;
+                            _variantService.UpdateAsync(variantModel);
+                        }
+                   
+
+                    }
+                    else
+                    {
+                        await  _variantService.AddAsync(variantModel);
+
+                    }
+                 
                 }
                 
                 
         
         }
-
-        var lastUpdate= await  _lastUpdatedService.Where(x => x.Id == 1).FirstOrDefaultAsync();
-        var query = _globalProductService.Where(x => x.Id < lastUpdate.LastUpdatedId).ToList();
-        var lastId = _globalProductService.Where(x => x.Id >0).ToList().OrderByDescending(x=>x.Id).FirstOrDefault().Id;
-        lastUpdate.LastUpdatedId = lastId;
-        _lastUpdatedService.UpdateAsync(lastUpdate);
-        await  _globalProductService.RemoveRangeAsync(query);
-
-     
-
+        
         return new SuccessResult();
     }
 
     public async Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter)
     {
 
-     // var lastUpdated=  await  _lastUpdatedService.Where(x => x.Id==1).FirstOrDefaultAsync();
         var productRepo =  _globalProductService.Where(x => !x.IsDeleted);
         var variantRepo =  _variantService.Where(x => !x.IsDeleted);
 
