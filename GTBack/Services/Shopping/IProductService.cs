@@ -17,4 +17,5 @@ public interface IProductService
 
     Task<IResults> Job(ProductsTarzYeri myObject, ProductBPM.ProductBpms bpmObject);
     Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter);
+    Task<IResults> ParseJob();
 }

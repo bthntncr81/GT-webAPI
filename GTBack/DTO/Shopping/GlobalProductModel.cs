@@ -18,14 +18,13 @@ public class GlobalProductModel:BaseEntity
     public string?  NotDiscountedPrice { get; set; }
     public string?  Price { get; set; }
     public string?  Quantity { get; set; }
-    public ICollection<MyVariant>?  Variants { get; set; }
+    
+    public string?  Variants { get; set; }
     public string?  Detail { get; set; }
 }
 
    public class MyVariant:BaseEntity
 {
-    public virtual GlobalProductModel GlobalProductModel { get; set; }
-    public virtual long GlobalProductModelId { get; set; }
     public string Size { get; set; }
     public string Quantity { get; set; }
     public string VariantId { get; set; }

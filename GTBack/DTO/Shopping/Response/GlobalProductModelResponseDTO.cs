@@ -18,6 +18,6 @@ public class GlobalProductModelResponseDTO
     public string?  NotDiscountedPrice { get; set; }
     public string?  Price { get; set; }
     public string?  Quantity { get; set; }
-    public IList<MyVariant>?  Variants { get; set; }
+    public string  Variants { get; set; }
     public string?  Detail { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Xml.Serialization;
 using AutoMapper;
 using GTBack.Core.DTO;
@@ -19,9 +20,9 @@ using XAct;
 
 namespace GTBack.Service.Services.ShoppingService;
 
-public class ProductService:IProductService
+public class ProductService : IProductService
 {
-    
+
     private readonly IService<Product> _productService;
     private readonly IService<Image> _imageService;
     private readonly IService<GlobalProductModel> _globalProductService;
@@ -32,7 +33,9 @@ public class ProductService:IProductService
 
 
 
-    public ProductService( IService<LastUpdated> lastUpdatedService,IService<MyVariant> variantService, IService<GlobalProductModel> globalProductService,IService<Product> productService,IService<Image> imageService,  IMapper mapper)
+    public ProductService(IService<LastUpdated> lastUpdatedService, IService<MyVariant> variantService,
+        IService<GlobalProductModel> globalProductService, IService<Product> productService,
+        IService<Image> imageService, IMapper mapper)
     {
         _productService = productService;
         _imageService = imageService;
@@ -43,13 +46,45 @@ public class ProductService:IProductService
 
     }
 
-     
+    public async Task<IResults> ParseJob()
+    {
 
-    public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBpms bpmObject)
+        using var httpClient = new HttpClient();
+        httpClient.BaseAddress =
+            new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");
+        var request = new HttpRequestMessage(HttpMethod.Get, "");
+        var response = await httpClient.SendAsync(request);
+        var json = response.Content.ReadAsStringAsync().Result;
+
+        using var httpClientBpm = new HttpClient();
+
+        httpClientBpm.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
+        var requestBpm = new HttpRequestMessage(HttpMethod.Get, "");
+        var responseBpm = await httpClientBpm.SendAsync(requestBpm);
+        var jsonBpm = responseBpm.Content.ReadAsStringAsync().Result;
+
+
+
+        XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
+        StringReader reader = new StringReader(json);
+        ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
+
+
+        XmlSerializer serializerBpm = new XmlSerializer(typeof(ProductBPM.ProductBpms));
+        StringReader readerBpm = new StringReader(jsonBpm);
+        ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializerBpm.Deserialize(readerBpm);
+
+       await Job(myObject, myObjectBpm);
+        return new SuccessResult();
+
+    }
+
+
+public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBpms bpmObject)
     {       
         
 
-     
+        
         foreach (var item in bpmObject.ProductList)
             {
                 var element = new GlobalProductModel()
@@ -93,11 +128,42 @@ public class ProductService:IProductService
                     imageString= imageString +"/clipper/image/"+item.Image5.Replace( " ", "" );
         
                 }
-
+        
                 Console.WriteLine(element);
-
+        
                 element.Images = imageString;
+                
+                var variantString = "";
 
+                if (!item.Variants.IsNull())
+                {
+                    foreach (var variant in item.Variants.Variant)
+                    {
+
+                        foreach (var elem in variant.Specs)
+                        {
+                            if (Int32.Parse(variant.Quantity) != 0 && elem.Name == "Beden")
+                            {
+                                var variantElem = _variantService.Where(x => x.VariantId == variant.VariantId)
+                                    .FirstOrDefault();
+
+                                var variantModel = new MyVariant()
+                                {
+
+                                    Size = elem.Value,
+                                    VariantId = variant.VariantId,
+                                    Quantity = variant.Quantity,
+                                };
+                                variantString = variantString + "/clipper/variant/" + JsonSerializer.Serialize(variantModel);
+
+                            }
+                        }
+
+                    }
+
+                    
+                }
+               
                 var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefault();
                 var globalProduct = new GlobalProductModel();
                 if (!updatedElement.IsNull())
@@ -113,66 +179,19 @@ public class ProductService:IProductService
                          element.Id=updatedElement.Id;
                          _globalProductService.UpdateAsync(element);
                      }
-
+        
                 }
                 else
                 {
                      globalProduct= await _globalProductService.AddAsync(element);
-
+        
                 }
-               
-
-                if (!item.Variants.IsNull())
-                {
-                    foreach (var variant in item.Variants.Variant)
-                    {
-
-                        foreach (var elem in variant.Specs)
-                        {
-                            if (Int32.Parse(variant.Quantity)!= 0 && elem.Name == "Beden")
-                            {
-                              var variantElem = _variantService.Where(x => x.VariantId == variant.VariantId).FirstOrDefault();
-
-                              var variantModel = new MyVariant()
-                              {
-                                  
-                                  Size = elem.Value,
-                                  VariantId = variant.VariantId,
-                                  Quantity = variant.Quantity,
-                                  GlobalProductModelId = globalProduct.Id
-                              };
-                              
-                              if (!variantElem.IsNull())
-                              {
-                                  if (variantElem.Quantity == variant.Quantity)
-                                  {
-                            
-                                  }
-                                  else
-                                  {
-                                      variantModel.Id = variantElem.Id;
-                                      _variantService.UpdateAsync(variantModel);
-                                  }
-                               
-
-                              }
-                              else
-                              {
-                                  await  _variantService.AddAsync(variantModel);
-
-                              }
-                              
-                            }
-                    
-                        }
-                 
-                    }
-                }
-              
+                
             }
-   
+        
         foreach (var item in myObject.ProductList)
         {
+            
                 var element = new GlobalProductModel()
                 {
                     ProductId = !item.id.IsNullOrEmpty()? item.id:null,
@@ -220,10 +239,27 @@ public class ProductService:IProductService
 
                 element.Images = imageString;
                
-               
+              
 
+                var variantString = "";
+                
+                foreach (var variant in item.variants.VariantList)
+                {
+                    
+                    var variantModel = new MyVariant()
+                    {
+                        Size = variant.value2,
+                        VariantId = variant.barcode,
+                        Quantity = variant.quantity,
+                        
+                    };
+                    variantString = variantString + "/clipper/variant/" + JsonSerializer.Serialize(variantModel);
+                }
+
+                element.Variants = variantString.IsNull() ? variantString : "empty";
                 var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefault();
                 var globalProduct = new GlobalProductModel();
+
                 if (!updatedElement.IsNull())
                 {
                     if (element.Quantity == updatedElement.Quantity && element.Price == updatedElement.Price)
@@ -243,44 +279,10 @@ public class ProductService:IProductService
 
                 }                
                 
-                foreach (var variant in item.variants.VariantList)
-                {
-                    
-                    var variantElem = _variantService.Where(x => x.VariantId == variant.barcode).FirstOrDefault();
-
-                    var variantModel = new MyVariant()
-                    {
-                        Size = variant.value2,
-                        VariantId = variant.barcode,
-                        Quantity = variant.quantity,
-                        GlobalProductModelId = globalProduct.Id
-                    };
-                              
-                    if (!variantElem.IsNull())
-                    {
-                        if (variantElem.Quantity == variant.quantity)
-                        {
-                            
-                        }
-                        else
-                        {
-                            variantModel.Id = variantElem.Id;
-                            _variantService.UpdateAsync(variantModel);
-                        }
-                   
-
-                    }
-                    else
-                    {
-                        await  _variantService.AddAsync(variantModel);
-
-                    }
-                 
-                }
-                
-                
-        
+           
         }
+        
+        
         
         return new SuccessResult();
     }
@@ -329,17 +331,10 @@ public class ProductService:IProductService
                 Price = !product.Price.IsNullOrEmpty() ? product.Price : null,
                 Detail = !product.Detail.IsNullOrEmpty() ? product.Detail : null,
                 Quantity = !product.Quantity.IsNullOrEmpty() ? product.Quantity : null,
-                Variants = (from variant in variantRepo.Where(x => x.GlobalProductModelId == product.Id)
-                    select new MyVariant()
-                    {
-                        VariantId = variant.VariantId,
-                        Size = variant.Size,
-                        Quantity = variant.Quantity,
-                        GlobalProductModelId = variant.GlobalProductModelId,
-                    }).ToList()
+                Variants =  product.Variants
             });
 
-
+    
 
 
       query= query.Skip(filter.Skip).Take(filter.Take);
@@ -349,6 +344,7 @@ public class ProductService:IProductService
         
         return new SuccessDataResult<List<GlobalProductModelResponseDTO>>(query.ToList());
     }
+    
 
     public async Task<IResults> AddProduct(ProductAddDTO model)
     {
