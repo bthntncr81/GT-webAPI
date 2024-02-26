@@ -35,12 +35,12 @@ public class ProductController : CustomShoppingBaseController
     public async Task<IActionResult> TarzYeri()
     {   
         
-        // RecurringJob.AddOrUpdate(
-        //     "listProduct",
-        //     () =>  _productService.ParseJob(),
-        //     "*/20 * * * *");
+        RecurringJob.AddOrUpdate(
+            "listProduct",
+            () =>  _productService.ParseJob(),
+            "*/30 * * * *");
        
-        return ApiResult( await _productService.ParseJob());
+        return ApiResult(new SuccessResult());
         
     }
 

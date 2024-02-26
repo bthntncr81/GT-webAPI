@@ -129,12 +129,9 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
         
                 }
         
-                Console.WriteLine(element);
         
                 element.Images = imageString;
-                
                 var variantString = "";
-
                 if (!item.Variants.IsNull())
                 {
                     foreach (var variant in item.Variants.Variant)
@@ -142,11 +139,8 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
 
                         foreach (var elem in variant.Specs)
                         {
-                            if (Int32.Parse(variant.Quantity) != 0 && elem.Name == "Beden")
+                            if (Int32.Parse(variant.Quantity) != 0 && (elem.Name == "Beden"||elem.Name=="Numara"))
                             {
-                                var variantElem = _variantService.Where(x => x.VariantId == variant.VariantId)
-                                    .FirstOrDefault();
-
                                 var variantModel = new MyVariant()
                                 {
 
@@ -163,23 +157,24 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
 
                     
                 }
-               
-                var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefault();
+                
+            
+                element.Variants = !variantString.IsNull() ? variantString : "empty";
+                var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).AsNoTracking().FirstOrDefault();
                 var globalProduct = new GlobalProductModel();
                 if (!updatedElement.IsNull())
                 {
                    
-                     
-                     if (element.Quantity == updatedElement.Quantity && element.Price == updatedElement.Price)
-                     {
-                        
-                     }
-                     else
-                     {
+                    if (element.ProductId == "19702")
+                    {
+                        Console.WriteLine();
+                    }
                          element.Id=updatedElement.Id;
-                         _globalProductService.UpdateAsync(element);
-                     }
-        
+                    await   _globalProductService.UpdateAsync(element);
+                     
+
+                       
+                         
                 }
                 else
                 {
@@ -241,7 +236,7 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
                
               
 
-                var variantString = "";
+                var myVariantString = "";
                 
                 foreach (var variant in item.variants.VariantList)
                 {
@@ -253,24 +248,19 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
                         Quantity = variant.quantity,
                         
                     };
-                    variantString = variantString + "/clipper/variant/" + JsonSerializer.Serialize(variantModel);
+                    myVariantString = myVariantString + "/clipper/variant/" + JsonSerializer.Serialize(variantModel);
                 }
 
-                element.Variants = variantString.IsNull() ? variantString : "empty";
+                element.Variants = !myVariantString.IsNull() ? myVariantString : "empty";
                 var updatedElement=_globalProductService.Where(x => x.ProductId == element.ProductId).FirstOrDefault();
                 var globalProduct = new GlobalProductModel();
 
                 if (!updatedElement.IsNull())
                 {
-                    if (element.Quantity == updatedElement.Quantity && element.Price == updatedElement.Price)
-                    {
-                        
-                    }
-                    else
-                    {
+                  
                         element.Id=updatedElement.Id;
                         _globalProductService.UpdateAsync(element);
-                    }
+                    
               
                 }
                 else
