@@ -291,13 +291,14 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
 
         if (!filter.MainCategory.IsNullOrEmpty())
         {
-            productRepo = productRepo.Where(x => x.MainCategory.ToUpper().Contains(filter.MainCategory.ToUpper()));
+            
+            productRepo = productRepo.Where(x => x.MainCategory.ToUpper().Contains(filter.MainCategory.Replace('i','ı').ToUpper()));
         
         }
 
         if (!filter.SubCategory.IsNullOrEmpty())
         {
-            productRepo = productRepo.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory));
+            productRepo = productRepo.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)||x.Category.ToLower().Contains(filter.SubCategory));
         }
         
         
