@@ -281,13 +281,6 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
     {
 
         var productRepo =  _globalProductService.Where(x => !x.IsDeleted);
-        var variantRepo =  _variantService.Where(x => !x.IsDeleted);
-
-        // if (filter.MainCategory == "kadin")
-        // {
-        //     filter.MainCategory = "kadın";
-        // }
-        
 
         if (!filter.MainCategory.IsNullOrEmpty())
         {
@@ -300,6 +293,13 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
         {
             productRepo = productRepo.Where(x => x.SubCategory.ToLower().Contains(filter.SubCategory)||x.Category.ToLower().Contains(filter.SubCategory));
         }
+        
+        
+        if (!filter.Id.IsNullOrEmpty())
+        {
+            productRepo = productRepo.Where(x => x.ProductId==filter.Id);
+        }
+
         
         
 
