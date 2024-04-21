@@ -272,8 +272,6 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
            
         }
         
-        
-        
         return new SuccessResult();
     }
 
@@ -299,6 +297,9 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
         {
             productRepo = productRepo.Where(x => x.ProductId==filter.Id);
         }
+
+        
+        productRepo = productRepo.Where(x => x.Quantity!="0");
 
         
         

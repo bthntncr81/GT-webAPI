@@ -38,7 +38,7 @@ public class ProductController : CustomShoppingBaseController
         RecurringJob.AddOrUpdate(
             "listProduct",
             () =>  _productService.ParseJob(),
-            "*/30 * * * *");
+            "0 */3 * * *");
        
         return ApiResult(new SuccessResult());
         
