@@ -48,7 +48,6 @@ public class ProductService : IProductService
 
     public async Task<IResults> ParseJob()
     {
-
         using var httpClient = new HttpClient();
         httpClient.BaseAddress =
             new Uri("https://www.tarzyeri.com/export/ea6554eec9c42fa9dee93dbcbb7ee4d49UzdFk0LbWJOoD0Q==");

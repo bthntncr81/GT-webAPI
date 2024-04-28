@@ -34,11 +34,13 @@ public class ProductController : CustomShoppingBaseController
     [HttpGet("TarzYeri")]
     public async Task<IActionResult> TarzYeri()
     {   
+
         
         RecurringJob.AddOrUpdate(
             "listProduct",
             () =>  _productService.ParseJob(),
-            "0 */3 * * *");
+            "0 */3 * * *"
+            );
        
         return ApiResult(new SuccessResult());
         
