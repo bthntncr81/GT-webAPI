@@ -88,11 +88,23 @@ namespace GTBack.WebAPI.Controllers.Shopping
         {
             return ApiResult(await _userService.Login(log));
         }
+        
+        [HttpPost("UpdateAccount")]
+        public async Task<IActionResult> UpdateAccount(ClientUpdateDTO log)
+        {
+            return ApiResult(await _userService.UpdateUser(log));
+        }
             
         [HttpPost("ResetPasswordLink")]
-        public async Task<IActionResult> Login([FromBody] string userMail)
+        public async Task<IActionResult> Login([FromBody] ResetPasswordLinkDTO userMail)
         {
             return ApiResult(await _userService.ResetPasswordLink(userMail));
+        }
+        
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO password)
+        {
+            return ApiResult(await _userService.ResetPassword(password));
         }
 
         [HttpPost("RegisterCompany")]

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Text;
 using System.Xml.Serialization;
 using AutoMapper;
 using Google.Apis.Auth;
@@ -8,6 +9,7 @@ using GTBack.Core.DTO;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Shopping;
 using GTBack.Core.DTO.Shopping.Filter;
+using GTBack.Core.DTO.Shopping.Request;
 using GTBack.Core.Entities;
 using GTBack.Core.Entities.Shopping;
 using GTBack.Core.Results;
@@ -20,6 +22,7 @@ using GTBack.Service.Validation.Tool;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using XAct;
 
@@ -209,6 +212,24 @@ public class ShoppingUserService:IShoppingUserService
         var response = await Authenticate(_mapper.Map<ClientRegisterRequestDTO>(user));
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response, HttpStatusCode.OK);
     }
+    
+    public async Task<IDataResults<ClientUpdateDTO>> UpdateUser (ClientUpdateDTO registerDto)
+    {
+        var mail = registerDto.Mail.ToLower().Trim();
+        //BURAYA FLUENT VALİDASYON YAPIALCAK
+        // var valResult =
+        //     FluentValidationTool.ValidateModelWithKeyResult<ClientRegisterRequestDTO>(new ClientRegisterValidator(), registerDto);
+        
+        var user = await _service.GetByIdAsync((x => x.Id == registerDto.Id && !x.IsDeleted)); //get by mail eklenecek
+            user.UpdatedDate = DateTime.UtcNow;
+            user.Mail = user.Mail;
+            user.Address = registerDto.Address;
+            user.Surname = registerDto.Surname;
+            user.Phone = registerDto.Phone;
+            user.Name = registerDto.Name;
+        await _service.UpdateAsync(user);
+        return new SuccessDataResult<ClientUpdateDTO>(registerDto, HttpStatusCode.OK);
+    }
 
     public long? GetLoggedUserId()
     {
@@ -221,23 +242,22 @@ public class ShoppingUserService:IShoppingUserService
         return null;
     }
 
-    public async Task<IDataResults<UserDTO>> Me()
+    public async Task<IDataResults<ClientUpdateDTO>> Me()
     {
         var userId = GetLoggedUserId();
 
-        UserDTO? user = null;
-
-
+        ClientUpdateDTO? user = null;
+        
         var userModel = await _service.FindAsNoTrackingAsync(x => !x.IsDeleted && x.Id == userId);
-        user = _mapper.Map<UserDTO>(userModel);
+        user = _mapper.Map<ClientUpdateDTO>(userModel);
 
 
         if (user == null)
         {
-            return new ErrorDataResults<UserDTO>(Messages.User_NotFound_Message, HttpStatusCode.NotFound);
+            return new ErrorDataResults<ClientUpdateDTO>(Messages.User_NotFound_Message, HttpStatusCode.NotFound);
         }
 
-        return new SuccessDataResult<UserDTO>(user);
+        return new SuccessDataResult<ClientUpdateDTO>(user,"Succesful",HttpStatusCode.OK);
     }
 
   
@@ -318,18 +338,42 @@ public class ShoppingUserService:IShoppingUserService
         var response = await Authenticate(_mapper.Map<ClientRegisterRequestDTO>(user));
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response);
     }
-
-    public async Task<IResults> ResetPasswordLink(string userMail)
+    public async Task<IResults> ResetPassword(ResetPasswordDTO password)
     {
+        var user = await _service.Where(x => x.ActiveForgotLink == password.ActiveLink).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            return new ErrorResult("Süresi bitmiş yenileme link  veya  hiç böyle link var olmadı ");
+        }
 
+        user.PasswordHash = SHA1.Generate(password.NewPassword);
+        user.ActiveForgotLink = "";
+       await 
+           _service.UpdateAsync(user);
+
+            return new SuccessResult("Şifre Başarıyla yenilendi");
+    }
+
+    public async Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO userMail)
+    {
+        
+        string randomString = GenerateRandomString(40);
         string mailBody =
-            "<!doctype html>\n<html lang=\"en-US\">\n\n<head>\n    <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n    <title>Reset Password Email Template</title>\n    <meta name=\"description\" content=\"Reset Password Email Template.\">\n    <style type=\"text/css\">\n        a:hover {\n            text-decoration: underline !important;\n        }\n    </style>\n</head>\n\n<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">\n    <!--100% body table-->\n    <table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\"\n        style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">\n        <tr>\n            <td>\n                <table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\"\n                    align=\"center\" cellpadding=\"0\" cellspacing=\"0\">\n                    <tr>\n                        <td style=\"height:80px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td style=\"text-align:center;\">\n                            <a href=\"https://rakeshmandal.com\" title=\"logo\" target=\"_blank\">\n                                <img width=\"60\" src=\"https://i.ibb.co/hL4XZp2/android-chrome-192x192.png\" title=\"logo\"\n                                    alt=\"logo\">\n                            </a>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td style=\"height:20px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td>\n                            <table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\"\n                                style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">\n                                <tr>\n                                    <td style=\"height:40px;\">&nbsp;</td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding:0 35px;\">\n                                        <h1\n                                            style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">\n                                            Şifrenizi sıfırlama talebinde bulundunuz</h1>\n                                        <span\n                                            style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>\n                                        <p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">\n                                            Size eski şifrenizi öylece gönderemeyiz. Şifrenizi sıfırlamak için benzersiz\n                                            bir bağlantı sizin için oluşturuldu. Şifrenizi sıfırlamak için aşağıdaki\n                                            bağlantıya tıklayın ve talimatları izleyin.\n                                        </p>\n                                        <a href=\"javascript:void(0);\"\n                                            style=\"background:#20e277;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">\n                                            Şifremi Yenile\n                                        </a>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"height:40px;\">&nbsp;</td>\n                                </tr>\n                            </table>\n                        </td>\n                    <tr>\n                        <td style=\"height:20px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td style=\"text-align:center;\">\n                            <p\n                                style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">\n                                &copy; <strong>www.rakeshmandal.com</strong></p>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td style=\"height:80px;\">&nbsp;</td>\n                    </tr>\n                </table>\n            </td>\n        </tr>\n    </table>\n    <!--/100% body table-->\n</body>\n\n</html>"; 
+            "<!doctype html>\n<html lang=\"en-US\">\n\n<head>\n    <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n    <title>Reset Password Email Template</title>\n    <meta name=\"description\" content=\"Reset Password Email Template.\">\n    <style type=\"text/css\">\n        a:hover {\n            text-decoration: underline !important;\n        }\n    </style>\n</head>\n\n<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">\n    <!--100% body table-->\n    <table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\"\n        style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">\n        <tr>\n            <td>\n                <table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\"\n                    align=\"center\" cellpadding=\"0\" cellspacing=\"0\">\n                    <tr>\n                        <td style=\"height:80px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td style=\"text-align:center;\">\n                            <a href=\"https://www.boğabutik.com\" title=\"logo\" target=\"_blank\">\n                                <img width=\"150\" src=\"https://www.xn--boabutik-7fb.com/assets/images/logo-no-back.png\" title=\"logo\"\n                                    alt=\"logo\">\n                            </a>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td style=\"height:20px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td>\n                            <table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\"\n                                style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">\n                                <tr>\n                                    <td style=\"height:40px;\">&nbsp;</td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding:0 35px;\">\n                                        <h1\n                                            style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">\n                                            Şifrenizi sıfırlama talebinde bulundunuz</h1>\n                                        <span\n                                            style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>\n                                        <p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">\n                                            Size eski şifrenizi öylece gönderemeyiz. Şifrenizi sıfırlamak için benzersiz\n                                            bir bağlantı sizin için oluşturuldu. Şifrenizi sıfırlamak için aşağıdaki\n                                            bağlantıya tıklayın ve talimatları izleyin.\n                                        </p>\n                                        <a href=\"https://www.boğabutik.com/reset-password?key=" + randomString +"\"\n                                            style=\"background:#2d2e2d;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">\n                                            Şifremi Yenile\n                                        </a>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"height:40px;\">&nbsp;</td>\n                                </tr>\n                            </table>\n                        </td>\n                    <tr>\n                        <td style=\"height:20px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td style=\"text-align:center;\">\n                            <p\n                                style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">\n                                &copy; <strong>www.boğabutik.com</strong></p>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td style=\"height:80px;\">&nbsp;</td>\n                    </tr>\n                </table>\n            </td>\n        </tr>\n    </table>\n    <!--/100% body table-->\n</body>\n\n</html>";
+       var user =  _service.Where(x => x.Mail==userMail.mail).FirstOrDefault();
+       if (user == null)
+       {
+           return new  ErrorResult("Bu e posta hesabı bir kullanıcıya ait değil");
+       }
 
+       user.ActiveForgotLink = randomString;
+
+       _service.UpdateAsync(user);
           var  mail = new MailData()
             {
-                SenderMail = "info@boğabutik.com",
-                RecieverMail = userMail,
-                EmailSubject = "Randevu Detayı",
+                SenderMail = "bogabutik@hotmail.com",
+                RecieverMail = userMail.mail,
+                EmailSubject = "Birileri Şifresini Unutmuş!",
                 EmailBody = mailBody
             };
 
@@ -338,28 +382,34 @@ public class ShoppingUserService:IShoppingUserService
     }
     public async Task<IResults> SendMail(MailData mail)
     {
-        try
+        var client = new SmtpClient("smtp-mail.outlook.com", 587)
         {
+            EnableSsl =true,
+            Credentials = new NetworkCredential("bogabutik@hotmail.com","Bthntncr81.")
+        };
+        MailMessage message = new MailMessage(mail.SenderMail, mail.RecieverMail, mail.EmailSubject, mail.EmailBody);
 
-            var client = new SmtpClient("relay-hosting.secureserver.net", 25)
-            {
-                EnableSsl = true,
-                Credentials = new NetworkCredential("info@boğabutik.com", "Bthntncr81.")
-            };
-            MailMessage message = new MailMessage(mail.SenderMail, mail.RecieverMail, mail.EmailSubject, mail.EmailBody);
+        message.IsBodyHtml = true;
+
+        client.SendMailAsync(message);
+
+        
+        return new SuccessDataResult<MailMessage>(message);
+    }
     
-            message.IsBodyHtml = true;
-            client.Send(message);
-            return new SuccessDataResult<MailMessage>(message);
+    static string GenerateRandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // Define the character set
+        Random random = new Random(); // Create a new instance of the Random class
+        StringBuilder result = new StringBuilder(length);
 
-        }
-        catch (Exception e)
+        // Generate the random string
+        for (int i = 0; i < length; i++)
         {
-            Console.WriteLine(e);
-            throw;
+            // Get a random index in the range of the character set and append the character at that index to the result
+            result.Append(chars[random.Next(chars.Length)]);
         }
-        MailMessage message2 = new MailMessage(mail.SenderMail, mail.RecieverMail, mail.EmailSubject, mail.EmailBody);
 
-        return new SuccessDataResult<MailMessage>(message2);
+        return result.ToString(); // Convert the StringBuilder to a string and return it
     }
 }

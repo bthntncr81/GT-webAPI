@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GTBack.Core.DTO.Shopping.Request;
+using GTBack.Core.Entities.Shopping;
 
 namespace GTBack.Service.Mapping
 {
@@ -20,6 +22,8 @@ namespace GTBack.Service.Mapping
             CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
             CreateMap<UserRegisterDTO, User>().ReverseMap();
             CreateMap<UserDTO, User>().ReverseMap();
+            CreateMap<ClientUpdateDTO, ShoppingUser>().ReverseMap();
+            CreateMap<ClientUpdateDTO, User>().ReverseMap();
             CreateMap<UserForDropdownDTO, User>().ReverseMap();
             CreateMap<Event, EventAddRequestDTO>().ReverseMap();
             CreateMap<ICollection<EventListClientResponseDto>, Event>().ReverseMap();

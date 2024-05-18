@@ -19,6 +19,11 @@ namespace GTBack.Core.Results
         {
 
         }
+
+        public SuccessResult(string message) : base(false, message, HttpStatusCode.OK)
+        {
+        }
+
         public SuccessResult(HttpStatusCode statusCode) : base(true, statusCode)
         {
 
