@@ -297,8 +297,24 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
             productRepo = productRepo.Where(x => x.ProductId==filter.Id);
         }
 
-        
-        productRepo = productRepo.Where(x => x.Quantity!="0");
+        if (!filter.OrderPrice.IsNull())
+        {
+            if (filter.OrderPrice==1)
+            {
+                
+                 
+                productRepo = productRepo.AsQueryable().OrderBy(p =>p.Price == "0" &&  p.NotDiscountedPrice != "0" ? p.NotDiscountedPrice : p.Price);
+
+            }
+            else if(filter.OrderPrice==0)
+            {
+                productRepo = productRepo.AsQueryable().OrderByDescending(p =>p.Price == "0" &&  p.NotDiscountedPrice != "0" ? p.NotDiscountedPrice : p.Price);
+
+            }
+        }
+
+
+        productRepo = productRepo.Where(x => x.Quantity != "0");
 
         
         
@@ -324,11 +340,11 @@ public async Task<IResults> Job(ProductsTarzYeri myObject,  ProductBPM.ProductBp
                 Quantity = !product.Quantity.IsNullOrEmpty() ? product.Quantity : null,
                 Variants =  product.Variants
             });
+        
 
-    
 
-
-      query= query.Skip(filter.Skip).Take(filter.Take);
+        query = query.Skip(filter.Skip).Take(filter.Take);
+      
        
 
         

@@ -45,6 +45,17 @@ public class ProductController : CustomShoppingBaseController
         return ApiResult(new SuccessResult());
         
     }
+    
+    [HttpGet("Fetch")]
+    public async Task<IActionResult> Fetch()
+    {
+        
+        
+    
+        return ApiResult(await _productService.ParseJob());
+        
+    }
+
 
 
            
