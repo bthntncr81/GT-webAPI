@@ -24,11 +24,18 @@ public class ProductController : CustomShoppingBaseController
         _productService = productService;
     }
 
-    [HttpPost("AddProduct")]
-    public async Task<IActionResult> AddProduct(ProductAddDTO model)
+    [HttpPost("AddOrUpdateProduct")]
+    public async Task<IActionResult> AddOrUpdateProduct(ProductAddDTO model)
     {
             
-        return ApiResult(await _productService.AddProduct(model));
+        return ApiResult(await _productService.AddOrUpdateProduct(model));
+    }
+    
+    [HttpPost("RemoveProducts")]
+    public async Task<IActionResult> RemoveProducts(List<long> model)
+    {
+            
+        return ApiResult(await _productService.RemoveProducts(model));
     }
     
     [HttpGet("TarzYeri")]

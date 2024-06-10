@@ -8,10 +8,12 @@ public class Product:BaseEntity
     public virtual ICollection<Image> Image { get; set; }
     public int Price { get; set; }
     public int Stock { get; set; }
-    public CategoryEnum CategoryId { get; set; }
+    public string Description { get; set; }
+    public string MainCategory { get; set; }
+    public string SubCategory { get; set; }
+    public string TopCategory { get; set; }
     public ShoppingCompany ShoppingCompany { get; set; }
     public long ShoppingCompanyId { get; set; }
 
 
-    public CollectionEnum CollectionId { get; set; }
 }

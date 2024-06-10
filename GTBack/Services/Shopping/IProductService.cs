@@ -13,8 +13,8 @@ public interface IProductService
     Task<IDataResults<BaseListDTO<ProductListDTO, ProductListFilterRepresent>>> GetProducts(
         BaseListFilterDTO<ProductFilter> model);
 
-    Task<IResults> AddProduct(ProductAddDTO model);
-
+    Task<IResults> AddOrUpdateProduct(ProductAddDTO model);
+    Task<IResults> RemoveProducts(IList<long> idArray);
     Task<IResults> Job(ProductsTarzYeri myObject, ProductBPM.ProductBpms bpmObject);
     Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter);
     Task<IResults> ParseJob();
