@@ -33,6 +33,7 @@ using GTBack.WebAPI.Middlewares;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Data.SqlClient;
+using Server.Hubs;
 using XAct;
 using IClientService = Google.Apis.Services.IClientService;
 
@@ -115,6 +116,8 @@ builder.Services.AddAutoMapper(typeof(ShoppingMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
+builder.Services.AddSignalR();
+
 if (FirebaseApp.DefaultInstance == null)
 {
    
@@ -166,6 +169,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapHub<PayHub>("/pay-hub");
 
 app.MapControllers();
 

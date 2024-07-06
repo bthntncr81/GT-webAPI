@@ -24,4 +24,6 @@ public interface IShoppingUserService
 
     Task<IResults> ResetPassword(ResetPasswordDTO password);
 
+    Task<IDataResults<string>> AddFavoirte(string favorites);
+
 }

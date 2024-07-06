@@ -412,4 +412,16 @@ public class ShoppingUserService:IShoppingUserService
 
         return result.ToString(); // Convert the StringBuilder to a string and return it
     }
+    
+    public async Task<IDataResults<string>> AddFavoirte(string favorites)
+    {
+        
+        var userId = GetLoggedUserId();
+     var user=  await  _service.Where(x => x.Id == userId).FirstOrDefaultAsync();
+    user.Favorites = favorites;
+    _service.UpdateAsync(user);
+        
+        return new SuccessDataResult<string>(favorites,"FAVORITE_ADDED",HttpStatusCode.OK);
+    }
+
 }

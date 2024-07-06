@@ -10,6 +10,7 @@ public class ShoppingUser:BaseEntity
     public string Address { get; set; }
     public string Mail { get; set; }
     public string PasswordHash { get; set; }
+    public string Favorites { get; set; }
     public long? ActiveBasketId { get; set; }
     public long ShoppingCompanyId { get; set; }
     

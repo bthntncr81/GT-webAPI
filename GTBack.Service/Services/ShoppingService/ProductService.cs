@@ -369,6 +369,8 @@ public class ProductService : IProductService
         
         return new SuccessResult("PRODUCT_REMOVED");
     }
+    
+ 
 
 
     public async Task<IDataResults<BaseListDTO<ProductListDTO, ProductListFilterRepresent>>> GetProducts(

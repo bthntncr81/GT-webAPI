@@ -12,7 +12,10 @@
     <PackageReference Include="Hangfire" Version="1.8.10" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.10" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.20.5" />
+    <PackageReference Include="Iyzipay" Version="2.1.61" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
+    <PackageReference Include="Square" Version="37.1.0" />
+    <PackageReference Include="Square.Connect" Version="2.25.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
