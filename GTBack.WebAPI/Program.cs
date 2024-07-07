@@ -117,6 +117,13 @@ builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
 builder.Services.AddSignalR();
+builder.Services.AddCors(cfr =>
+{
+    cfr.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader().AllowCredentials().AllowAnyMethod().SetIsOriginAllowed(policy => true);
+    });
+});
 
 if (FirebaseApp.DefaultInstance == null)
 {
@@ -165,6 +172,8 @@ app.UseCors(builder =>
         .AllowAnyMethod()
         .AllowAnyHeader();
 });
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

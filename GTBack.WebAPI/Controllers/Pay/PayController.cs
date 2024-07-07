@@ -31,8 +31,8 @@ public class PaymentsController : ControllerBase
     {
         Options options = new()
         {
-            ApiKey = "AxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
-            SecretKey = "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
+            ApiKey = "sandbox-ifkcjkaPdtshoWkt36gjOwpZ9Z5XsUZM",
+            SecretKey = "sandbox-0PfKYCdPshA2ZhqfdGq6JxfB5dXQWeqa",
             BaseUrl = "https://sandbox-api.iyzipay.com"
         };
 
