@@ -144,6 +144,21 @@ public class PaymentsController : ControllerBase
     }
 }
 
+public class PaymentRequest
+{
+    public string locale { get; set; }
+    public string conversationId { get; set; }
+    public decimal price { get; set; }
+    public decimal paidPrice { get; set; }
+    public string currency { get; set; }
+    public string basketId { get; set; }
+    public string paymentGroup { get; set; }
+    public PaymentCard paymentCard { get; set; }
+    public Buyer buyer { get; set; }
+    public List<BasketItem> basketItems { get; set; }
+}
+
+
 public sealed record CallbackData(
     string Status,
     string PaymentId,

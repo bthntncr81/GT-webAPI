@@ -42,6 +42,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddSignalR();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -83,6 +98,7 @@ builder.Services.AddHangfire((config) =>
 });
 
 
+
 builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -116,14 +132,7 @@ builder.Services.AddAutoMapper(typeof(ShoppingMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
-builder.Services.AddSignalR();
-builder.Services.AddCors(cfr =>
-{
-    cfr.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyHeader().AllowCredentials().AllowAnyMethod().SetIsOriginAllowed(policy => true);
-    });
-});
+
 
 if (FirebaseApp.DefaultInstance == null)
 {
@@ -165,21 +174,17 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 });
 app.UseAuthentication();
 
-app.UseCors(builder =>
-{
-    builder
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-});
 
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapHub<PayHub>("/pay-hub");
 
 app.MapControllers();
+
+app.MapHub<PayHub>("/pay-hub");
+
 
 app.Run();
