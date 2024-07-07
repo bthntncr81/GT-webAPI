@@ -33,6 +33,7 @@ using GTBack.WebAPI.Middlewares;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Data.SqlClient;
+using Server.Controllers;
 using Server.Hubs;
 using XAct;
 using IClientService = Google.Apis.Services.IClientService;
@@ -54,6 +55,8 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
+
+
 
 builder.Services.AddSignalR();
 
@@ -178,13 +181,15 @@ app.UseAuthentication();
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseAuthorization();
 
 
+
 app.MapControllers();
 
-app.MapHub<PayHub>("/pay-hub");
+app.MapHub<PayHub>("/pay-hub").RequireCors("AllowAll");;
 
 
 app.Run();

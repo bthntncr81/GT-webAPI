@@ -99,24 +99,9 @@ public class PaymentsController : ControllerBase
         firstBasketItem.Price = "0.3";
         basketItems.Add(firstBasketItem);
 
-        BasketItem secondBasketItem = new BasketItem();
-        secondBasketItem.Id = "BI102";
-        secondBasketItem.Name = "Game code";
-        secondBasketItem.Category1 = "Game";
-        secondBasketItem.Category2 = "Online Game Items";
-        secondBasketItem.ItemType = BasketItemType.VIRTUAL.ToString();
-        secondBasketItem.Price = "0.5";
-        basketItems.Add(secondBasketItem);
+       
 
-        BasketItem thirdBasketItem = new BasketItem();
-        thirdBasketItem.Id = "BI103";
-        thirdBasketItem.Name = "Usb";
-        thirdBasketItem.Category1 = "Electronics";
-        thirdBasketItem.Category2 = "Usb / Cable";
-        thirdBasketItem.ItemType = BasketItemType.PHYSICAL.ToString();
-        thirdBasketItem.Price = "0.2";
-        basketItems.Add(thirdBasketItem);
-        request.BasketItems = basketItems;
+       
 
         ThreedsInitialize threedsInitialize = ThreedsInitialize.Create(request, options);
 
