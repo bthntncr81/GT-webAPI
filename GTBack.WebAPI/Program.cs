@@ -184,12 +184,16 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<PayHub>("/pay-hub");
+    endpoints.MapControllers();
+});
 
 
-
-app.MapControllers();
-
-app.MapHub<PayHub>("/pay-hub").RequireCors("AllowAll");;
+// app.MapControllers();
+//
+// app.MapHub<PayHub>("/pay-hub").RequireCors("AllowAll");;
 
 
 app.Run();

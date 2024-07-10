@@ -14,8 +14,7 @@ public class ProductAddDTO
     public string Description { get; set; }
     public int Price { get; set; }
     public int Stock { get; set; }
-    public CategoryEnum CategoryId { get; set; }
-    public CollectionEnum CollectionId { get; set; }
+
     public long ShoppingCompanyId { get; set; }
     public Collection<ImageAddDTO> Image { get; set; }
 }

@@ -31,9 +31,9 @@ namespace GTBack.WebAPI.Controllers.Pay
     {
         Options options = new()
         {
-            ApiKey = "sandbox-ifkcjkaPdtshoWkt36gjOwpZ9Z5XsUZM",
-            SecretKey = "sandbox-0PfKYCdPshA2ZhqfdGq6JxfB5dXQWeqa",
-            BaseUrl = "https://sandbox-api.iyzipay.com"
+            ApiKey = "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
+            SecretKey = "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
+            BaseUrl = "https://api.iyzipay.com"
         };
         
         CreatePaymentRequest request = new CreatePaymentRequest();
@@ -46,7 +46,7 @@ namespace GTBack.WebAPI.Controllers.Pay
         request.BasketId = req.basketId;
         request.PaymentChannel = req.paymentChannel;
         request.PaymentGroup = req.paymentGroup;
-        request.CallbackUrl = "https://localhost:5213/api/Payments/PayCallBack";
+        request.CallbackUrl = "https://localhost:5213/api/Payments/Payment/PayCallBack";
         
         PaymentCard paymentCard = new PaymentCard();
         paymentCard.CardHolderName = req.paymentCard.cardHolderName;
@@ -115,9 +115,16 @@ namespace GTBack.WebAPI.Controllers.Pay
     }
 
         
-        [HttpPost]
+        [Microsoft.AspNetCore.Mvc.HttpPost("PayCallBack")]
         public async Task<IActionResult> PayCallBack([FromForm] IFormCollection collections)
         {
+            
+            Options options = new()
+            {
+                ApiKey = "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
+                SecretKey = "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
+                BaseUrl = "https://api.iyzipay.com"
+            };
             CallbackData data = new(
                 Status: collections["status"],
                 PaymentId: collections["paymentId"],
@@ -129,6 +136,14 @@ namespace GTBack.WebAPI.Controllers.Pay
             {
                 return BadRequest("Ödeme başarısız oldu!");
             }
+            
+            CreateThreedsPaymentRequest request = new CreateThreedsPaymentRequest();
+            request.Locale = Locale.TR.ToString();
+            request.ConversationId =collections["conversationId"] ;
+            request.PaymentId = collections["paymentId"];
+            request.ConversationData =collections["conversationData"];
+
+            ThreedsPayment threedsPayment = ThreedsPayment.Create(request, options);
 
             await _hubContext.Clients.Client(PayHub.TransactionConnections[data.ConversationId]).SendAsync("Receive", data);
 
