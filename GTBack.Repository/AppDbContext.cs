@@ -70,10 +70,7 @@ namespace GTBack.Repository
                 .WithMany(t => t.AdminEvent)
                 .HasForeignKey(m => m.AdminUserId);
 
-            modelBuilder.Entity<Address>()
-                .HasOne(m => m.ShoppingOrder)
-                .WithOne(t => t.Address)
-                .HasForeignKey<ShoppingOrder>(m => m.AddressId);
+         
 
             modelBuilder.Entity<Event>()
                 .HasOne(m => m.ClientUser)

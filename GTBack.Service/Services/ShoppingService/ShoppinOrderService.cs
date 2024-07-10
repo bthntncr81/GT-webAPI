@@ -51,7 +51,8 @@ public class ShoppinOrderService:IShoppingOrderService
           var addressElement= await  _addressService.AddAsync(address);
           model.AddressId = addressElement.Id;
         }
-        var data = _mapper.Map<ShoppingOrder>(model);  
+        var data = _mapper.Map<ShoppingOrder>(model); 
+        
         await  _service.AddAsync(data);
         
         return new SuccessDataResult<OrderConfirmDTO>(model);
@@ -77,7 +78,7 @@ public class ShoppinOrderService:IShoppingOrderService
                Status = order.Status,
                Name = order.Name,
                Surname = order.Surname,
-               OrderDate = order.OrderDate,
+               // OrderDate = order.OrderDate,
                Phone = order.Phone,
                Mail = order.Mail,
                Address = new AddressResponseDTO
@@ -86,6 +87,7 @@ public class ShoppinOrderService:IShoppingOrderService
                    City = address.City,
                    District = address.District,
                    OpenAddress = address.OpenAddress,
+                   Country = address.Country,
                }
                
            };

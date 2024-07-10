@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240710123915_order_date")]
+    partial class order_date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1287,10 +1289,6 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -1308,6 +1306,9 @@ namespace GTBack.Repository.Migrations
                     b.Property<string>("OpenAddress")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<long?>("ShoppingOrderId")
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("ShoppingUserId")
                         .HasColumnType("bigint");
@@ -1511,7 +1512,8 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
+                    b.HasIndex("AddressId")
+                        .IsUnique();
 
                     b.HasIndex("ShoppingUserId");
 
@@ -2040,8 +2042,8 @@ namespace GTBack.Repository.Migrations
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingOrder", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.Shopping.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
+                        .WithOne("ShoppingOrder")
+                        .HasForeignKey("GTBack.Core.Entities.Shopping.ShoppingOrder", "AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2193,6 +2195,11 @@ namespace GTBack.Repository.Migrations
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.TableArea", b =>
                 {
                     b.Navigation("Table");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Shopping.Address", b =>
+                {
+                    b.Navigation("ShoppingOrder");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Product", b =>

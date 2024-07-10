@@ -102,7 +102,7 @@ namespace GTBack.WebAPI.Controllers.Pay
             basketItem.Category2 = item.category2;
             basketItem.ItemType =item.itemType;
             basketItem.Price = item.price;
-            basketItem.ItemType=BasketItemType.VIRTUAL.ToString();
+            basketItem.ItemType=BasketItemType.PHYSICAL.ToString();
             basketItems.Add(basketItem);
         }
 
