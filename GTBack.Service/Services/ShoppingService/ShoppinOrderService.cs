@@ -70,6 +70,7 @@ public class ShoppinOrderService:IShoppingOrderService
            from address in addressLeft.DefaultIfEmpty()
            select new ShoppingOrderListDTO()
            {        
+               Id=order.Id,
                BasketJsonDetail = order.BasketJsonDetail,
                ShoppingUserId = order.ShoppingUserId.IsNull() ? order.ShoppingUserId:null,
                OrderGuid = order.OrderGuid,
@@ -78,7 +79,7 @@ public class ShoppinOrderService:IShoppingOrderService
                Status = order.Status,
                Name = order.Name,
                Surname = order.Surname,
-               // OrderDate = order.OrderDate,
+               CreatedDate = order.CreatedDate,
                Phone = order.Phone,
                Mail = order.Mail,
                Address = new AddressResponseDTO
@@ -95,6 +96,51 @@ public class ShoppinOrderService:IShoppingOrderService
 
 
        var orderList = await query.ToListAsync();
+
+
+
+        
+        return new SuccessDataResult<ICollection<ShoppingOrderListDTO>>(orderList);
+    }
+
+    
+    public async Task<IDataResults<ICollection<ShoppingOrderListDTO>>> GetOrderByOrderId(int id)
+    {
+     
+        var orderRepo=   _service.Where(x=>x.Id==id);
+        var addressRepo=   _addressService.Where(x=>!x.IsDeleted);
+
+        var query = from order in orderRepo
+            join address in addressRepo on order.AddressId equals address.Id into addressLeft
+            from address in addressLeft.DefaultIfEmpty()
+            select new ShoppingOrderListDTO()
+            {        
+                Id=order.Id,
+                BasketJsonDetail = order.BasketJsonDetail,
+                ShoppingUserId = order.ShoppingUserId.IsNull() ? order.ShoppingUserId:null,
+                OrderGuid = order.OrderGuid,
+                TotalPrice = order.TotalPrice,
+                OrderNote = order.OrderNote,
+                Status = order.Status,
+                Name = order.Name,
+                Surname = order.Surname,
+                CreatedDate = order.CreatedDate,
+                Phone = order.Phone,
+                Mail = order.Mail,
+                Address = new AddressResponseDTO
+                {
+                    Name = address.Name,
+                    City = address.City,
+                    District = address.District,
+                    OpenAddress = address.OpenAddress,
+                    Country = address.Country,
+                }
+               
+            };
+       
+
+
+        var orderList = await query.ToListAsync();
 
 
 

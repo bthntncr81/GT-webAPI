@@ -28,4 +28,11 @@ public class ShoppingOrderController : CustomShoppingBaseController
         return ApiResult(await _orderService.GetOrdersByUserId(userId));
     }
 
+                
+    [HttpGet("OrderbyOrderId")]
+    public async Task<IActionResult> ListByOrderId([FromQuery]int orderId)
+    {
+        return ApiResult(await _orderService.GetOrderByOrderId(orderId));
+    }
+
 }

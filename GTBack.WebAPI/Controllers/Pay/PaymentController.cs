@@ -28,13 +28,24 @@ namespace GTBack.WebAPI.Controllers.Pay
         
         [Microsoft.AspNetCore.Mvc.HttpPost("Pay")]
         public async Task<IActionResult> Pay(PaymentRequestDTO req)
-    {
-        Options options = new()
         {
-            ApiKey = "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
-            SecretKey = "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
-            BaseUrl = "https://api.iyzipay.com"
-        };
+            Options options = new Options();
+            if (req.isDevelopment)
+            {
+               options=new Options() {
+                    ApiKey = "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
+                    SecretKey = "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
+                    BaseUrl = "https://api.iyzipay.com"
+                };
+            }
+            else
+            {
+                options=new Options() {
+                    ApiKey = "sandbox-ifkcjkaPdtshoWkt36gjOwpZ9Z5XsUZM",
+                    SecretKey = "sandbox-0PfKYCdPshA2ZhqfdGq6JxfB5dXQWeqa",
+                    BaseUrl = "https://sandbox-api.iyzipay.com"
+                };
+            }
         
         CreatePaymentRequest request = new CreatePaymentRequest();
         request.Locale = req.locale;

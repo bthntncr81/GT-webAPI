@@ -5,11 +5,13 @@ namespace GTBack.Core.DTO.Shopping.Response;
 
 public class ShoppingOrderListDTO
 {
+    public long Id { get; set; }
     public string BasketJsonDetail { get; set; }
     public long? ShoppingUserId { get; set; }
     public string CardNumber { get; set; }
     public string? OrderGuid { get; set; }
     public int TotalPrice { get; set; }
+    public DateTime CreatedDate { get; set; }
     public string IyzicoTransactionId { get; set; }
     // public DateTime OrderDate { get; set; }
     public string OrderNote{ get; set; }

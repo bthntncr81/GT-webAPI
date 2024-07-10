@@ -8,6 +8,7 @@ public class PaymentRequestDTO
     public string conversationId { get; set; }
     public string price { get; set; }
     public int installment { get; set; }
+    public bool isDevelopment { get; set; }
     public string paidPrice { get; set; }
     public string currency { get; set; }
     public string basketId { get; set; }
