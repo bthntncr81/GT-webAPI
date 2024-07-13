@@ -126,7 +126,25 @@ namespace GTBack.WebAPI.Controllers.Shopping
             return ApiResult(await _userService.GoogleLogin(request));
         }
 
+        
+        
+        [HttpGet("Navlungo")]
+        public async Task<IActionResult> TakeNavlongoAccess()
+        {
+            var verifier = "cb2cd18e-4d8e-4af3-995a-1923ef5dae41"; //buraya kendi örnek verifier'ınızı girerek oluşan hash'i görebilirsiniz
+            var verifierBytes = System.Text.Encoding.UTF8.GetBytes(verifier);
+			
+            var sha256 = System.Security.Cryptography.SHA256.Create();
+            var sha256ComputedVerifierHashBytes = sha256.ComputeHash(verifierBytes);
+			
+            string verifierHashedBase64String = Convert.ToBase64String(sha256ComputedVerifierHashBytes);
+            Console.WriteLine($"Verifier: {verifier}");
+            Console.WriteLine($"Hashed Verifier: {verifierHashedBase64String}");
+            var result = new SuccessDataResult<string>(verifierHashedBase64String);
+            return ApiResult(result);
+        }
 
+     
             
 
     }

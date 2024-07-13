@@ -54,10 +54,10 @@ public class ProductService : IProductService
 
         using var httpClientBpm = new HttpClient();
 
-        httpClientBpm.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
-        var requestBpm = new HttpRequestMessage(HttpMethod.Get, "");
-        var responseBpm = await httpClientBpm.SendAsync(requestBpm);
-        var jsonBpm = responseBpm.Content.ReadAsStringAsync().Result;
+        // httpClientBpm.BaseAddress = new Uri("http://cdn1.xmlbankasi.com/p1/bpmticaret/image/data/xml/Boabutik.xml");
+        // var requestBpm = new HttpRequestMessage(HttpMethod.Get, "");
+        // var responseBpm = await httpClientBpm.SendAsync(requestBpm);
+        // var jsonBpm = responseBpm.Content.ReadAsStringAsync().Result;
 
 
         XmlSerializer serializer = new XmlSerializer(typeof(ProductsTarzYeri));
@@ -65,105 +65,105 @@ public class ProductService : IProductService
         ProductsTarzYeri myObject = (ProductsTarzYeri)serializer.Deserialize(reader);
 
 
-        XmlSerializer serializerBpm = new XmlSerializer(typeof(ProductBPM.ProductBpms));
-        StringReader readerBpm = new StringReader(jsonBpm);
-        ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializerBpm.Deserialize(readerBpm);
+        // XmlSerializer serializerBpm = new XmlSerializer(typeof(ProductBPM.ProductBpms));
+        // StringReader readerBpm = new StringReader(jsonBpm);
+        // ProductBPM.ProductBpms myObjectBpm = (ProductBPM.ProductBpms)serializerBpm.Deserialize(readerBpm);
 
-        await Job(myObject, myObjectBpm);
+        await Job(myObject);
         return new SuccessResult();
     }
 
 
-    public async Task<IResults> Job(ProductsTarzYeri myObject, ProductBPM.ProductBpms bpmObject)
+    public async Task<IResults> Job(ProductsTarzYeri myObject)
     {
-        foreach (var item in bpmObject.ProductList)
-        {
-            var element = new GlobalProductModel()
-            {
-                ProductId = !item.Product_id.IsNullOrEmpty() ? item.Product_id : null,
-                ProductCode = !item.Product_code.IsNullOrEmpty() ? item.Product_code : null,
-                MainCategory = !item.MainCategory.IsNullOrEmpty() ? item.MainCategory : null,
-                Barcode = "null",
-                SubCategory = !item.SubCategory.IsNullOrEmpty() ? item.SubCategory : null,
-                Category = !item.Category.IsNullOrEmpty() ? item.Category : null,
-                Brand = !item.Brand.IsNullOrEmpty() ? item.Brand : null,
-                Name = !item.Name.IsNullOrEmpty() ? item.Name : null,
-                Description = !item.Description.IsNullOrEmpty() ? item.Description : null,
-                NotDiscountedPrice = !item.Price.IsNullOrEmpty() ? item.Price : null,
-                Price = !item.Price2.IsNullOrEmpty() ? item.Price2 : null,
-                Detail = null,
-                Quantity = !item.Stock.IsNullOrEmpty() ? item.Stock : null,
-            };
-            var imageString = "";
-            if (!item.Image1.IsNullOrEmpty())
-            {
-                imageString = imageString + "/clipper/image/" + item.Image1.Replace(" ", "");
-            }
-
-            if (!item.Image2.IsNullOrEmpty())
-            {
-                imageString = imageString + "/clipper/image/" + item.Image2.Replace(" ", "");
-            }
-
-            if (!item.Image3.IsNullOrEmpty())
-            {
-                imageString = imageString + "/clipper/image/" + item.Image3.Replace(" ", "");
-            }
-
-            if (!item.Image4.IsNullOrEmpty())
-            {
-                imageString = imageString + "/clipper/image/" + item.Image4.Replace(" ", "");
-            }
-
-            if (!item.Image5.IsNullOrEmpty())
-            {
-                imageString = imageString + "/clipper/image/" + item.Image5.Replace(" ", "");
-            }
-
-
-            element.Images = imageString;
-            var variantString = "";
-            if (!item.Variants.IsNull())
-            {
-                foreach (var variant in item.Variants.Variant)
-                {
-                    foreach (var elem in variant.Specs)
-                    {
-                        if (Int32.Parse(variant.Quantity) != 0 && (elem.Name == "Beden" || elem.Name == "Numara"))
-                        {
-                            var variantModel = new MyVariant()
-                            {
-                                Size = elem.Value,
-                                VariantId = variant.VariantId,
-                                Quantity = variant.Quantity,
-                            };
-                            variantString = variantString + "/clipper/variant/" +
-                                            JsonSerializer.Serialize(variantModel);
-                        }
-                    }
-                }
-            }
-
-
-            element.Variants = !variantString.IsNull() ? variantString : "empty";
-            var updatedElement = _globalProductService.Where(x => x.ProductId == element.ProductId).AsNoTracking()
-                .FirstOrDefault();
-            var globalProduct = new GlobalProductModel();
-            if (!updatedElement.IsNull())
-            {
-                if (element.ProductId == "19702")
-                {
-                    Console.WriteLine();
-                }
-
-                element.Id = updatedElement.Id;
-                await _globalProductService.UpdateAsync(element);
-            }
-            else
-            {
-                globalProduct = await _globalProductService.AddAsync(element);
-            }
-        }
+        // foreach (var item in bpmObject.ProductList)
+        // {
+        //     var element = new GlobalProductModel()
+        //     {
+        //         ProductId = !item.Product_id.IsNullOrEmpty() ? item.Product_id : null,
+        //         ProductCode = !item.Product_code.IsNullOrEmpty() ? item.Product_code : null,
+        //         MainCategory = !item.MainCategory.IsNullOrEmpty() ? item.MainCategory : null,
+        //         Barcode = "null",
+        //         SubCategory = !item.SubCategory.IsNullOrEmpty() ? item.SubCategory : null,
+        //         Category = !item.Category.IsNullOrEmpty() ? item.Category : null,
+        //         Brand = !item.Brand.IsNullOrEmpty() ? item.Brand : null,
+        //         Name = !item.Name.IsNullOrEmpty() ? item.Name : null,
+        //         Description = !item.Description.IsNullOrEmpty() ? item.Description : null,
+        //         NotDiscountedPrice = !item.Price.IsNullOrEmpty() ? item.Price : null,
+        //         Price = !item.Price2.IsNullOrEmpty() ? item.Price2 : null,
+        //         Detail = null,
+        //         Quantity = !item.Stock.IsNullOrEmpty() ? item.Stock : null,
+        //     };
+        //     var imageString = "";
+        //     if (!item.Image1.IsNullOrEmpty())
+        //     {
+        //         imageString = imageString + "/clipper/image/" + item.Image1.Replace(" ", "");
+        //     }
+        //
+        //     if (!item.Image2.IsNullOrEmpty())
+        //     {
+        //         imageString = imageString + "/clipper/image/" + item.Image2.Replace(" ", "");
+        //     }
+        //
+        //     if (!item.Image3.IsNullOrEmpty())
+        //     {
+        //         imageString = imageString + "/clipper/image/" + item.Image3.Replace(" ", "");
+        //     }
+        //
+        //     if (!item.Image4.IsNullOrEmpty())
+        //     {
+        //         imageString = imageString + "/clipper/image/" + item.Image4.Replace(" ", "");
+        //     }
+        //
+        //     if (!item.Image5.IsNullOrEmpty())
+        //     {
+        //         imageString = imageString + "/clipper/image/" + item.Image5.Replace(" ", "");
+        //     }
+        //
+        //
+        //     element.Images = imageString;
+        //     var variantString = "";
+        //     if (!item.Variants.IsNull())
+        //     {
+        //         foreach (var variant in item.Variants.Variant)
+        //         {
+        //             foreach (var elem in variant.Specs)
+        //             {
+        //                 if (Int32.Parse(variant.Quantity) != 0 && (elem.Name == "Beden" || elem.Name == "Numara"))
+        //                 {
+        //                     var variantModel = new MyVariant()
+        //                     {
+        //                         Size = elem.Value,
+        //                         VariantId = variant.VariantId,
+        //                         Quantity = variant.Quantity,
+        //                     };
+        //                     variantString = variantString + "/clipper/variant/" +
+        //                                     JsonSerializer.Serialize(variantModel);
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        //
+        //     element.Variants = !variantString.IsNull() ? variantString : "empty";
+        //     var updatedElement = _globalProductService.Where(x => x.ProductId == element.ProductId).AsNoTracking()
+        //         .FirstOrDefault();
+        //     var globalProduct = new GlobalProductModel();
+        //     if (!updatedElement.IsNull())
+        //     {
+        //         if (element.ProductId == "19702")
+        //         {
+        //             Console.WriteLine();
+        //         }
+        //
+        //         element.Id = updatedElement.Id;
+        //         await _globalProductService.UpdateAsync(element);
+        //     }
+        //     else
+        //     {
+        //         globalProduct = await _globalProductService.AddAsync(element);
+        //     }
+        // }
 
         foreach (var item in myObject.ProductList)
         {
@@ -245,6 +245,7 @@ public class ProductService : IProductService
 
         return new SuccessResult();
     }
+
 
     public async Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter)
     {

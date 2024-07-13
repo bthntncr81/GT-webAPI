@@ -15,7 +15,7 @@ public interface IProductService
 
     Task<IResults> AddOrUpdateProduct(ProductAddDTO model);
     Task<IResults> RemoveProducts(IList<long> idArray);
-    Task<IResults> Job(ProductsTarzYeri myObject, ProductBPM.ProductBpms bpmObject);
+    Task<IResults> Job(ProductsTarzYeri myObject);
     Task<IDataResults<List<GlobalProductModelResponseDTO>>> GetTarzYeri(BpmFilter filter);
     Task<IResults> ParseJob();
 }
