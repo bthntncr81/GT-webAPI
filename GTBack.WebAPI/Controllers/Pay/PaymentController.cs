@@ -10,7 +10,6 @@ using Currency = Iyzipay.Model.Currency;
 using Locale = Iyzipay.Model.Locale;
 using Options = Iyzipay.Options;
 using Microsoft.AspNetCore.SignalR;
-using Server.Controllers;
 using Server.Hubs;
 
 

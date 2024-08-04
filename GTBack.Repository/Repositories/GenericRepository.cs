@@ -63,8 +63,9 @@ namespace GTBack.Repository.Repositories
 
         public  T Update(T entity)
         {
+
             _dbSet.Update(entity);
-                      
+
              _context.SaveChanges();
 
             return entity;

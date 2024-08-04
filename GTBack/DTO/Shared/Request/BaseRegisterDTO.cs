@@ -1,6 +1,7 @@
 using GTBack.Core.DTO.Restourant;
 using GTBack.Core.DTO.Restourant.Response;
 using GTBack.Core.Enums;
+using GTBack.Core.Enums.Ecommerce;
 
 namespace GTBack.Core.DTO;
 
@@ -13,9 +14,7 @@ public class BaseRegisterDTO
     public string Address { get; set; }
     public string Phone { get; set; }
     public string Mail { get; set; }
-    public int? UserTypeId { get; set; }
-    public UserTypeShopping? UserTypeShoppingId { get; set; }
+    public EcommerceUserType UserTypeId { get; set; }
     public long CompanyId { get; set; }
-    public ICollection<RoleList>? RoleList { get; set; }
     
 }

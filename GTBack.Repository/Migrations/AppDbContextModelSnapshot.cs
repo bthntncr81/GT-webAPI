@@ -96,23 +96,7 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("GlobalProductModels");
                 });
 
-            modelBuilder.Entity("GTBack.Core.DTO.Shopping.LastUpdated", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("LastUpdatedId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LastUpdated");
-                });
-
-            modelBuilder.Entity("GTBack.Core.DTO.Shopping.MyVariant", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasket", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -123,30 +107,134 @@ namespace GTBack.Repository.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Quantity")
+                    b.Property<string>("Guid")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Size")
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EcommerceBasket");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasketProductRelation", b =>
+                {
+                    b.Property<long>("EcommerceBasketId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EcommerceVariantId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("EcommerceBasketId", "EcommerceVariantId");
+
+                    b.HasIndex("EcommerceVariantId");
+
+                    b.ToTable("EcommerceBasketProductRelation");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceClient", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ActiveForgotLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<long>("BasketId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("EcommerceCompanyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("VariantId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Variants");
+                    b.HasIndex("EcommerceCompanyId");
+
+                    b.ToTable("EcommerceClient");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Company", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceClientFavoriteRelation", b =>
+                {
+                    b.Property<long>("EcommerceClientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EcommerceProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("EcommerceClientId", "EcommerceProductId");
+
+                    b.HasIndex("EcommerceProductId");
+
+                    b.ToTable("EcommerceClientFavoriteRelation");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceCompany", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,26 +243,37 @@ namespace GTBack.Repository.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("CompanyTypeId")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("DeliveredAndReturnPolicy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DistanceSellingContract")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GeoCodeX")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GeoCodeY")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<float>("Latitude")
-                        .HasColumnType("real");
+                    b.Property<string>("IyzicoClientId")
+                        .HasColumnType("text");
 
-                    b.Property<float>("Longtitude")
-                        .HasColumnType("real");
+                    b.Property<string>("IyzicoSecretId")
+                        .HasColumnType("text");
 
-                    b.Property<string>("Mail")
-                        .IsRequired()
+                    b.Property<string>("Logo")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -185,68 +284,30 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Company");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Event", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AdminUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ClientUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CurrencyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<string>("PrimaryColor")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("EndDateTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("PrivacyPolicy")
+                        .HasColumnType("text");
 
-                    b.Property<long>("EventTypeId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("SecondaryColor")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("StartDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("StatusId")
+                    b.Property<int>("ThemeId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("VergiNumber")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminUserId");
-
-                    b.HasIndex("ClientUserId");
-
-                    b.HasIndex("EventTypeId");
-
-                    b.ToTable("Events");
+                    b.ToTable("EcommerceCompany");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.EventType", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -254,226 +315,8 @@ namespace GTBack.Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<string>("ActiveForgotLink")
                         .HasColumnType("text");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EventTypes");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.EventTypeCompanyRelation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EventTypeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("EventTypeId");
-
-                    b.ToTable("EventTypeCompanyRelations");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.FAQ", b =>
-                {
-                    b.Property<long>("SenderUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("AnsweredUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("CompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Like")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("SenderUserId", "AnsweredUserId");
-
-                    b.HasIndex("AnsweredUserId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("FAQs");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<long?>("ClientId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ShoppingUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("customerId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("ShoppingUserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshToken");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Addition", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("ClientId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("ClosedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("TableId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("TableId");
-
-                    b.ToTable("Addition");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Category", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("MenuId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuId");
-
-                    b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Client", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("text");
@@ -481,12 +324,15 @@ namespace GTBack.Repository.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                    b.Property<long>("EcommerceCompanyId")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("Mail")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -507,9 +353,275 @@ namespace GTBack.Repository.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("UserType")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Client");
+                    b.HasIndex("EcommerceCompanyId");
+
+                    b.ToTable("EcommerceEmployee");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceImage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<long>("EcommerceVariantId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EcommerceVariantId");
+
+                    b.ToTable("EcommerceImage");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceOrder", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("EcommerceClientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("IyzicoTransactionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OpenAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OrderGuid")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EcommerceClientId");
+
+                    b.ToTable("EcommerceOrder");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceProduct", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Brand")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category1")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category2")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category3")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("EcommerceCompanyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EcommerceEmployeeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EcommerceCompanyId");
+
+                    b.HasIndex("EcommerceEmployeeId");
+
+                    b.ToTable("EcommerceProduct");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceProductOrderRelation", b =>
+                {
+                    b.Property<long>("EcommerceProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EcommerceOrderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("EcommerceProductId", "EcommerceOrderId");
+
+                    b.HasIndex("EcommerceOrderId");
+
+                    b.ToTable("EcommerceProductOrderRelation");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("EcommerceClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<long?>("EcommerceClientId1")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("EcommerceEmployeeId")
+                        .HasColumnType("integer");
+
+                    b.Property<long?>("EcommerceEmployeeId1")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EcommerceClientId1");
+
+                    b.HasIndex("EcommerceEmployeeId1");
+
+                    b.ToTable("EcommerceRefreshToken");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceVariant", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("EcommerceProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("VariantIndicator")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EcommerceProductId");
+
+                    b.ToTable("EcommerceVariant");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("EcommerceClientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("EcommerceEmployeeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("customerId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EcommerceClientId");
+
+                    b.HasIndex("EcommerceEmployeeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Restourant.Currency", b =>
@@ -544,735 +656,6 @@ namespace GTBack.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Currency");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Department", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Mail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("text");
-
-                    b.Property<long>("RestoCompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RestoCompanyId");
-
-                    b.ToTable("Department");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Device", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DeviceCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Device");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Employee", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ApiKey")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CurrencyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("DepartmentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeviceId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Mail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Salary")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SalaryType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ShiftEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ShiftStart")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TempPasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("Employee");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.EmployeeOrderRelation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AdditionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdditionId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("EmployeeOrderRelation");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.EmployeeRoleRelation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("EmployeeRoleRelation");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.ExtraMenuItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Contains")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("EstimatedTime")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("MenuItemId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("ExtraMenuItem");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Menu", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("RestoCompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RestoCompanyId")
-                        .IsUnique();
-
-                    b.ToTable("Menu");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.MenuItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Contains")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("EstimatedTime")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("MenuItem");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Order", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AdditionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ExtraMenuItemId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("OrderDeliveredDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("OrderNote")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("OrderStartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("OrderStatus")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdditionId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("ExtraMenuItemId");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.OrderProcess", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("ChangeDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ChangeNote")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("FinishedOrderStatus")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("InitialOrderStatus")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderProcess");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Payment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AdditionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("AmountPaid")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdditionId");
-
-                    b.ToTable("Payment");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Reservation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("ClientId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("Deposit")
-                        .HasColumnType("integer");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("ReservationCancelDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ReservationDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("TableId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("TableId");
-
-                    b.ToTable("Reservation");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.RestoCompany", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<double?>("Lat")
-                        .HasColumnType("double precision");
-
-                    b.Property<double?>("Lng")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Mail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("MenuId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RestoCompany");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Role");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.ShiftControl", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("EnterDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("LeaveDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("ShiftControl");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Table", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("ActiveAdditionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ActiveClientId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ColumnId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("RowId")
-                        .HasColumnType("integer");
-
-                    b.Property<long>("TableAreaId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("TableNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TableAreaId");
-
-                    b.ToTable("Table");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.TableArea", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int?>("ColumnCount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("DepartmentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("RestoCompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("RowCount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("RestoCompanyId");
-
-                    b.ToTable("TableArea");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Address", b =>
@@ -1582,428 +965,167 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("ShoppingUser");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.SpecialAttributeRelation", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasketProductRelation", b =>
                 {
-                    b.Property<long>("AdminUserId")
-                        .HasColumnType("bigint");
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceBasket", "Basket")
+                        .WithMany("EcommerceBasketProductRelations")
+                        .HasForeignKey("EcommerceBasketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<long>("ClientUserId")
-                        .HasColumnType("bigint");
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceVariant", "EcommerceVariant")
+                        .WithMany("BasketProductRelations")
+                        .HasForeignKey("EcommerceVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Navigation("Basket");
 
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("SpecialAttributeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("AdminUserId", "ClientUserId");
-
-                    b.HasIndex("ClientUserId");
-
-                    b.ToTable("SpecialAttributeRelations");
+                    b.Navigation("EcommerceVariant");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.User", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceClient", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceCompany", "EcommerceCompany")
+                        .WithMany("EcommerceClients")
+                        .HasForeignKey("EcommerceCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("CompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Mail")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("UserTypeId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Users");
+                    b.Navigation("EcommerceCompany");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Event", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceClientFavoriteRelation", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.User", "AdminUser")
-                        .WithMany("AdminEvent")
-                        .HasForeignKey("AdminUserId")
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceClient", "Client")
+                        .WithMany("EcommerceClientFavoriteRelations")
+                        .HasForeignKey("EcommerceClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GTBack.Core.Entities.User", "ClientUser")
-                        .WithMany("ClientEvent")
-                        .HasForeignKey("ClientUserId")
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceProduct", "Product")
+                        .WithMany("ClientFavoriteRelations")
+                        .HasForeignKey("EcommerceProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GTBack.Core.Entities.EventType", "EventType")
-                        .WithMany("Event")
-                        .HasForeignKey("EventTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Client");
 
-                    b.Navigation("AdminUser");
-
-                    b.Navigation("ClientUser");
-
-                    b.Navigation("EventType");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.EventTypeCompanyRelation", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.Company", "Company")
-                        .WithMany("EventTypeCompanyRelation")
-                        .HasForeignKey("CompanyId")
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceCompany", "EcommerceCompany")
+                        .WithMany("EcommerceEmployees")
+                        .HasForeignKey("EcommerceCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GTBack.Core.Entities.EventType", "EventType")
-                        .WithMany("EventTypeCompanyRelation")
-                        .HasForeignKey("EventTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("EventType");
+                    b.Navigation("EcommerceCompany");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.FAQ", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceImage", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.User", "AnsweredUser")
-                        .WithMany("Faq")
-                        .HasForeignKey("AnsweredUserId")
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceVariant", "EcommerceVariant")
+                        .WithMany("EcommerceImages")
+                        .HasForeignKey("EcommerceVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GTBack.Core.Entities.Company", "Company")
-                        .WithMany("Faq")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("EcommerceVariant");
+                });
 
-                    b.HasOne("GTBack.Core.Entities.User", "SenderUser")
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceOrder", b =>
+                {
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceClient", "EcommerceClient")
                         .WithMany()
-                        .HasForeignKey("SenderUserId")
+                        .HasForeignKey("EcommerceClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AnsweredUser");
+                    b.Navigation("EcommerceClient");
+                });
 
-                    b.Navigation("Company");
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceProduct", b =>
+                {
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceCompany", "EcommerceCompany")
+                        .WithMany()
+                        .HasForeignKey("EcommerceCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("SenderUser");
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", "EcommerceEmployee")
+                        .WithMany("EcommerceProducts")
+                        .HasForeignKey("EcommerceEmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EcommerceCompany");
+
+                    b.Navigation("EcommerceEmployee");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceProductOrderRelation", b =>
+                {
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceOrder", "EcommerceOrder")
+                        .WithMany("ProductOrderRelations")
+                        .HasForeignKey("EcommerceOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceProduct", "EcommerceProduct")
+                        .WithMany("ProductOrderRelations")
+                        .HasForeignKey("EcommerceProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EcommerceOrder");
+
+                    b.Navigation("EcommerceProduct");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceRefreshToken", b =>
+                {
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceClient", "EcommerceClient")
+                        .WithMany()
+                        .HasForeignKey("EcommerceClientId1");
+
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", "EcommerceEmployee")
+                        .WithMany()
+                        .HasForeignKey("EcommerceEmployeeId1");
+
+                    b.Navigation("EcommerceClient");
+
+                    b.Navigation("EcommerceEmployee");
+                });
+
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceVariant", b =>
+                {
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceProduct", "EcommerceProduct")
+                        .WithMany("Variants")
+                        .HasForeignKey("EcommerceProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EcommerceProduct");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Client", null)
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceClient", null)
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("EcommerceClientId");
 
-                    b.HasOne("GTBack.Core.Entities.Shopping.ShoppingUser", null)
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", null)
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("ShoppingUserId");
+                        .HasForeignKey("EcommerceEmployeeId");
 
-                    b.HasOne("GTBack.Core.Entities.User", "User")
+                    b.HasOne("GTBack.Core.Entities.Shopping.ShoppingUser", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Addition", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Table", "Table")
-                        .WithMany("Addition")
-                        .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Table");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Category", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Menu", "Menu")
-                        .WithMany("Category")
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Department", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.RestoCompany", "RestoCompany")
-                        .WithMany("Department")
-                        .HasForeignKey("RestoCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RestoCompany");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Employee", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId");
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Department", "Department")
-                        .WithMany("Employee")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Device", "Device")
-                        .WithMany("Employee")
-                        .HasForeignKey("DeviceId");
-
-                    b.Navigation("Currency");
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Device");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.EmployeeOrderRelation", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Addition", "Addition")
-                        .WithMany()
-                        .HasForeignKey("AdditionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Addition");
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.EmployeeRoleRelation", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Employee", "Employee")
-                        .WithMany("EmployeeRoleRelation")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Role", "Role")
-                        .WithMany("EmployeeRoleRelation")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.ExtraMenuItem", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.MenuItem", "MenuItem")
-                        .WithMany("ExtraMenuItem")
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MenuItem");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Menu", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.RestoCompany", "RestoCompany")
-                        .WithOne("Menu")
-                        .HasForeignKey("GTBack.Core.Entities.Restourant.Menu", "RestoCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RestoCompany");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.MenuItem", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Category", "Category")
-                        .WithMany("MenuItem")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Order", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Addition", "Addition")
-                        .WithMany("Order")
-                        .HasForeignKey("AdditionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Employee", "Employee")
-                        .WithMany("Order")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.ExtraMenuItem", "ExtraMenuItem")
-                        .WithMany()
-                        .HasForeignKey("ExtraMenuItemId");
-
-                    b.Navigation("Addition");
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("ExtraMenuItem");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.OrderProcess", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Employee", "Employee")
-                        .WithMany("OrderProcess")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Order", "Order")
-                        .WithMany("OrderProcess")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Payment", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Addition", "Addition")
-                        .WithMany("Payment")
-                        .HasForeignKey("AdditionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Addition");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Reservation", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Client", "Client")
-                        .WithMany("Reservation")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Employee", "Employee")
-                        .WithMany("Reservation")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.Table", "Table")
-                        .WithMany("Reservation")
-                        .HasForeignKey("TableId");
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Table");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.ShiftControl", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Employee", "Employee")
-                        .WithMany("ShiftControl")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Table", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.TableArea", "TableArea")
-                        .WithMany("Table")
-                        .HasForeignKey("TableAreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TableArea");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.TableArea", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Restourant.Department", null)
-                        .WithMany("TableArea")
-                        .HasForeignKey("DepartmentId");
-
-                    b.HasOne("GTBack.Core.Entities.Restourant.RestoCompany", "RestoCompany")
-                        .WithMany("TableArea")
-                        .HasForeignKey("RestoCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RestoCompany");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Address", b =>
@@ -2065,134 +1187,51 @@ namespace GTBack.Repository.Migrations
                     b.Navigation("ShoppingCompany");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.SpecialAttributeRelation", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasket", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.User", "AdminUser")
-                        .WithMany("BlackListUserRelationsClient")
-                        .HasForeignKey("AdminUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.User", "ClientUser")
-                        .WithMany("BlackListUserRelationsAdmin")
-                        .HasForeignKey("ClientUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AdminUser");
-
-                    b.Navigation("ClientUser");
+                    b.Navigation("EcommerceBasketProductRelations");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.User", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceClient", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.Company", "Company")
-                        .WithMany("User")
-                        .HasForeignKey("CompanyId");
+                    b.Navigation("EcommerceClientFavoriteRelations");
 
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Company", b =>
-                {
-                    b.Navigation("EventTypeCompanyRelation");
-
-                    b.Navigation("Faq");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.EventType", b =>
-                {
-                    b.Navigation("Event");
-
-                    b.Navigation("EventTypeCompanyRelation");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Addition", b =>
-                {
-                    b.Navigation("Order");
-
-                    b.Navigation("Payment");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Category", b =>
-                {
-                    b.Navigation("MenuItem");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Client", b =>
-                {
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("Reservation");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Department", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceCompany", b =>
                 {
-                    b.Navigation("Employee");
+                    b.Navigation("EcommerceClients");
 
-                    b.Navigation("TableArea");
+                    b.Navigation("EcommerceEmployees");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Device", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", b =>
                 {
-                    b.Navigation("Employee");
+                    b.Navigation("EcommerceProducts");
+
+                    b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Employee", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceOrder", b =>
                 {
-                    b.Navigation("EmployeeRoleRelation");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("OrderProcess");
-
-                    b.Navigation("Reservation");
-
-                    b.Navigation("ShiftControl");
+                    b.Navigation("ProductOrderRelations");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Menu", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceProduct", b =>
                 {
-                    b.Navigation("Category");
+                    b.Navigation("ClientFavoriteRelations");
+
+                    b.Navigation("ProductOrderRelations");
+
+                    b.Navigation("Variants");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.MenuItem", b =>
+            modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceVariant", b =>
                 {
-                    b.Navigation("ExtraMenuItem");
-                });
+                    b.Navigation("BasketProductRelations");
 
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Order", b =>
-                {
-                    b.Navigation("OrderProcess");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.RestoCompany", b =>
-                {
-                    b.Navigation("Department");
-
-                    b.Navigation("Menu")
-                        .IsRequired();
-
-                    b.Navigation("TableArea");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Role", b =>
-                {
-                    b.Navigation("EmployeeRoleRelation");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.Table", b =>
-                {
-                    b.Navigation("Addition");
-
-                    b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Restourant.TableArea", b =>
-                {
-                    b.Navigation("Table");
+                    b.Navigation("EcommerceImages");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.Product", b =>
@@ -2210,21 +1249,6 @@ namespace GTBack.Repository.Migrations
             modelBuilder.Entity("GTBack.Core.Entities.Shopping.ShoppingUser", b =>
                 {
                     b.Navigation("Addresses");
-
-                    b.Navigation("RefreshTokens");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.User", b =>
-                {
-                    b.Navigation("AdminEvent");
-
-                    b.Navigation("BlackListUserRelationsAdmin");
-
-                    b.Navigation("BlackListUserRelationsClient");
-
-                    b.Navigation("ClientEvent");
-
-                    b.Navigation("Faq");
 
                     b.Navigation("RefreshTokens");
                 });

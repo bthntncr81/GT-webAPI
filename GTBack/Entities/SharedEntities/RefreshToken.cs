@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GTBack.Core.Entities.Shopping;
 
 namespace GTBack.Core.Entities
 {
@@ -10,7 +11,7 @@ namespace GTBack.Core.Entities
     {
         public Guid Id { get; set; }
         public string Token { get; set; }
-        public User? User { get; set; }
+        public ShoppingUser? User { get; set; }
         public int? customerId { get; set; }
       
     }

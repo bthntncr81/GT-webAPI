@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using GTBack.Core.Entities.Shopping;
 
 namespace GTBack.Service.Services
 {
@@ -29,7 +30,7 @@ namespace GTBack.Service.Services
         }
 
 
-        public string CreateToken(User data)
+        public string CreateToken(ShoppingUser data)
         {
             List<Claim> claims = new List<Claim>
             {

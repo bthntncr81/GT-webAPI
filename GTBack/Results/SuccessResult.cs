@@ -20,7 +20,7 @@ namespace GTBack.Core.Results
 
         }
 
-        public SuccessResult(string message) : base(false, message, HttpStatusCode.OK)
+        public SuccessResult(string message) : base(true, message, HttpStatusCode.OK)
         {
         }
 

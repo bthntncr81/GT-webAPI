@@ -25,13 +25,12 @@ public class ProductService : IProductService
     private readonly IService<Product> _productService;
     private readonly IService<Image> _imageService;
     private readonly IService<GlobalProductModel> _globalProductService;
-    private readonly IService<LastUpdated> _lastUpdatedService;
     private readonly IService<MyVariant> _variantService;
     private readonly IMapper _mapper;
     private readonly IBackgroundJobClient _backgroundJobClient;
 
 
-    public ProductService(IService<LastUpdated> lastUpdatedService, IService<MyVariant> variantService,
+    public ProductService( IService<MyVariant> variantService,
         IService<GlobalProductModel> globalProductService, IService<Product> productService,
         IService<Image> imageService, IMapper mapper)
     {
@@ -40,7 +39,6 @@ public class ProductService : IProductService
         _mapper = mapper;
         _variantService = variantService;
         _globalProductService = globalProductService;
-        _lastUpdatedService = lastUpdatedService;
     }
 
     public async Task<IResults> ParseJob()

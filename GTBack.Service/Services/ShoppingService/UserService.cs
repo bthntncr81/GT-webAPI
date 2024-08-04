@@ -203,7 +203,6 @@ public class ShoppingUserService:IShoppingUserService
             IsDeleted = false,
             Name = registerDto.Name,
             ShoppingCompanyId = registerDto.CompanyId,
-            UserTypeId = registerDto.UserTypeShoppingId,
             PasswordHash = SHA1.Generate(registerDto.Password)
         };
 

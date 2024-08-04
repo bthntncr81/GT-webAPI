@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GTBack.WebAPI.Controllers
 {
-    [Route("api/Shopping/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CustomShoppingBaseController : ControllerBase
     {

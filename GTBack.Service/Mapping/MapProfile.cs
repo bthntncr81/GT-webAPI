@@ -7,8 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GTBack.Core.DTO.Ecommerce.Response;
+using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Shopping.Request;
+using GTBack.Core.Entities.Ecommerce;
 using GTBack.Core.Entities.Shopping;
+using CompanyAddDTO = GTBack.Core.DTO.Ecommerce.CompanyAddDTO;
 
 namespace GTBack.Service.Mapping
 {
@@ -20,30 +24,28 @@ namespace GTBack.Service.Mapping
             
           
             CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
-            CreateMap<UserRegisterDTO, User>().ReverseMap();
-            CreateMap<UserDTO, User>().ReverseMap();
+            CreateMap<UserRegisterDTO, ShoppingUser>().ReverseMap();
+            CreateMap<UserDTO, ShoppingUser>().ReverseMap();
             CreateMap<ClientUpdateDTO, ShoppingUser>().ReverseMap();
-            CreateMap<ClientUpdateDTO, User>().ReverseMap();
-            CreateMap<UserForDropdownDTO, User>().ReverseMap();
-            CreateMap<Event, EventAddRequestDTO>().ReverseMap();
-            CreateMap<ICollection<EventListClientResponseDto>, Event>().ReverseMap();
-            CreateMap<EventListClientResponseDto, Event>().ReverseMap();
-            CreateMap<EventToMonthDTO, Event>().ReverseMap();
-            CreateMap<ICollection<EventListClientResponseDto>, IQueryable<Event>>().ReverseMap();
-            CreateMap<ICollection<EventListClientResponseDto>, IQueryable<EventListClientResponseDto>>().ReverseMap();
-            CreateMap<ICollection<EventToMonthDTO>, IQueryable<Event>>().ReverseMap();
-            CreateMap<ICollection<Event>, IQueryable<EventToMonthDTO>>().ReverseMap();
-            CreateMap<ICollection<UserForDropdownDTO>, IQueryable<User>>().ReverseMap();
-            CreateMap<ICollection<UserForDropdownDTO>, User>().ReverseMap();
-            CreateMap<ICollection<User>, IQueryable<User>>().ReverseMap();
-            CreateMap<ICollection<EventTypeForDropdown>, IQueryable<EventType>>().ReverseMap();
-            CreateMap<ICollection<EventTypeForDropdown>, EventType>().ReverseMap();
-            CreateMap<EventTypeForDropdown, EventType>().ReverseMap();
-            CreateMap<ICollection<EventByEventId>, IQueryable<Event>>().ReverseMap();
-            CreateMap<ICollection<EventByEventId>, Event>().ReverseMap();
-            CreateMap<EventByEventId, Event>().ReverseMap();
-            CreateMap<CreateCompanyDTO, Company>().ReverseMap();
-            CreateMap<EventByEventId, IQueryable<Event>>().ReverseMap();
+            CreateMap<UserForDropdownDTO, ShoppingUser>().ReverseMap();
+            CreateMap<ICollection<UserForDropdownDTO>, IQueryable<ShoppingUser>>().ReverseMap();
+            CreateMap<ICollection<UserForDropdownDTO>, ShoppingUser>().ReverseMap();
+            CreateMap<ICollection<ShoppingUser>, IQueryable<ShoppingUser>>().ReverseMap();
+ 
+            CreateMap<ClientUpdateDTO, EcommerceClient>().ReverseMap();
+            CreateMap<ClientUpdateDTO, EcommerceEmployee>().ReverseMap();
+            CreateMap<ClientRegisterRequestDTO, EcommerceClient>().ReverseMap();
+            CreateMap<ClientRegisterRequestDTO, EcommerceEmployee>().ReverseMap();
+            CreateMap<UserForDropdownDTO, EcommerceClient>().ReverseMap();
+            CreateMap<UserRegisterDTO, EcommerceClient>().ReverseMap();
+            CreateMap<UserRegisterDTO, EcommerceEmployee>().ReverseMap();
+            CreateMap<UserDTO, EcommerceClient>().ReverseMap();
+            CreateMap<UserDTO, EcommerceEmployee>().ReverseMap();
+            CreateMap<EcommerceCompany, CompanyAddDTO>().ReverseMap();
+            CreateMap<EcommerceProduct, EcommerceProductListDTO>().ReverseMap();
+            CreateMap<EcommerceVariant, EcommerceVariantListDTO>().ReverseMap();
+
+
 
             
 
