@@ -4,6 +4,7 @@ namespace GTBack.Core.DTO.Ecommerce.Request;
 
 public class EcommerceProductFilter
 {
+    public long Id { get; set; }
     public string? Category1 { get; set; }
     public string? Category2 { get; set; }
     public string? Category3 { get; set; }

@@ -36,12 +36,12 @@ namespace GTBack.Service.Utilities.Jwt
                 new(ClaimTypes.Expiration, expirationTime.ToString()),
                 new(ClaimTypes.Surname, userDto.Surname),
                 new("UserType", userDto.UserTypeId.ToString()),
-                new("CompanyId", userDto.CompanyId.ToString()),
+                new("CompanyId", userDto.EcommerceCompanyId.ToString()),
             };
             claims.Add(new Claim("name", userDto.Name));
             claims.Add(new Claim("surname", userDto.Surname));
             claims.Add(new Claim("userType", userDto.UserTypeId.ToString()));
-            claims.Add(new Claim("companyId", userDto.CompanyId.ToString()));
+            claims.Add(new Claim("companyId", userDto.EcommerceCompanyId.ToString()));
 
 
             claims.Add(new Claim("ExpTime", expirationTime.ToString()));

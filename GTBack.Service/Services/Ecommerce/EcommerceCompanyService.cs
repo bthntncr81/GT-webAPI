@@ -29,6 +29,7 @@ public class EcommerceCompanyService:IEcommerceCompanyService
     {
         var shoppingCompany = new EcommerceCompany()
         {
+            Id = model.Id,
             Logo = model.Logo,
             Name = model.Name,
             Address = model.Address,

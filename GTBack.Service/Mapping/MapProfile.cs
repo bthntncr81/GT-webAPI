@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GTBack.Core.DTO.Ecommerce.Request;
 using GTBack.Core.DTO.Ecommerce.Response;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Shopping.Request;
@@ -44,6 +45,7 @@ namespace GTBack.Service.Mapping
             CreateMap<EcommerceCompany, CompanyAddDTO>().ReverseMap();
             CreateMap<EcommerceProduct, EcommerceProductListDTO>().ReverseMap();
             CreateMap<EcommerceVariant, EcommerceVariantListDTO>().ReverseMap();
+            CreateMap<EcommerceVariant, EcommerceVariantUpdateDTO>().ReverseMap();
 
 
 

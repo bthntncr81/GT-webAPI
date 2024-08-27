@@ -6,7 +6,9 @@ public enum OrderStatusEnum
     PENDING = 1,
     SHIPMENT = 2,
     SUCCESS = 3,
-    DECLİNE = 4,
-    CANCELED = 5
+    RETURN_REQUEST = 4,
+    RETURNED = 5,
+    DECLİNE = 6,
+    CANCELED = 7
 
 }

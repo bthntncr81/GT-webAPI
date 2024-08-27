@@ -16,5 +16,6 @@ public class BaseRegisterDTO
     public string Mail { get; set; }
     public EcommerceUserType UserTypeId { get; set; }
     public long CompanyId { get; set; }
+    public long EcommerceCompanyId { get; set; }
     
 }

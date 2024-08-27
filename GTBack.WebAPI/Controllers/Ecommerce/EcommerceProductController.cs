@@ -4,6 +4,7 @@ using GTBack.Core.DTO.Ecommerce.Request;
 using GTBack.Core.DTO.Shopping.Filter;
 using GTBack.Core.DTO.Shopping.Request;
 using GTBack.Core.Services.Ecommerce;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GTBack.WebAPI.Controllers.Ecommerce;
@@ -25,6 +26,13 @@ public class EcommerceProductController : CustomEcommerceBaseController
         return ApiResult(await _productService.AddOrUpdateProduct(model));
     }
     
+    [Microsoft.AspNetCore.Mvc.HttpPost("UpdateVariant")]
+    public async Task<IActionResult> UpdateVariant(EcommerceVariantUpdateDTO model)
+    {
+            
+        return ApiResult(await _productService.UpdateVariant(model));
+    }
+    
 
     
     [Microsoft.AspNetCore.Mvc.HttpPost("ProductList")]
@@ -40,15 +48,28 @@ public class EcommerceProductController : CustomEcommerceBaseController
     }
     
     
-    [Microsoft.AspNetCore.Mvc.HttpPost("AddBasket")]
-    public async Task<IActionResult> AddBasket(int variantId,string guid)
+    [Microsoft.AspNetCore.Mvc.HttpGet("AddBasket")]
+    public async Task<IActionResult> AddBasket(int variantId,string guid,long? clientId)
     {
-        return ApiResult(await _productService.AddBasket(variantId,guid));
+        return ApiResult(await _productService.AddBasket(variantId,guid,clientId));
     }
     
-    [Microsoft.AspNetCore.Mvc.HttpPost("GetBasket")]
+    [Microsoft.AspNetCore.Mvc.HttpGet("GetBasket")]
     public async Task<IActionResult> GetBasket(string guid)
     {
         return ApiResult(await _productService.GetBasket(guid));
+    }
+    
+      
+    [Microsoft.AspNetCore.Mvc.HttpGet("RemoveBasket")]
+    public async Task<IActionResult> RemoveBasket(int variantId,string guid,long? clientId)
+    {
+        return ApiResult(await _productService.RemoveBasket(variantId,guid,clientId));
+    }
+    [Authorize]
+    [Microsoft.AspNetCore.Mvc.HttpGet("GetBasketClient")]
+    public async Task<IActionResult> GetBasketClient()
+    {
+        return ApiResult(await _productService.GetBasketLogged());
     }
 }
