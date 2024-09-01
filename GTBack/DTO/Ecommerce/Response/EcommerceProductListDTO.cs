@@ -8,6 +8,8 @@ public class EcommerceProductListDTO
     public string Category3 { get; set; }
     public long CompanyId { get; set; }
     public long EmployeeId { get; set; }
+    public string Brand { get; set; }
+    public string VariantName { get; set; }
     
     public List<EcommerceVariantListDTO> Variants { get; set; }
 

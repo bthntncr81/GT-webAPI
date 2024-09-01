@@ -66,6 +66,13 @@ public class EcommerceProductController : CustomEcommerceBaseController
     {
         return ApiResult(await _productService.RemoveBasket(variantId,guid,clientId));
     }
+    
+    [Authorize]
+    [Microsoft.AspNetCore.Mvc.HttpDelete("RemoveVariantById/{id}")]
+    public async Task<IActionResult> RemoveSingleVariant(long id )
+    {
+        return ApiResult(await _productService.RemoveSingleVariant(id));
+    }
     [Authorize]
     [Microsoft.AspNetCore.Mvc.HttpGet("GetBasketClient")]
     public async Task<IActionResult> GetBasketClient()

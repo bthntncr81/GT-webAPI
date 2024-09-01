@@ -11,6 +11,7 @@ public class EcommerceProductAddDto
     public long CompanyId { get; set; }
     public long EmployeeId { get; set; }
     public string? Brand { get; set; }
+    public string? VariantsName { get; set; }
 
     
     public List<EcommerceVariantAddDTO> Variants { get; set; }

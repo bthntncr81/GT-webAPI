@@ -54,25 +54,37 @@ public class EcommerceProductService : IEcommerceProductService
 
     public async Task<SuccessDataResult<List<Category>>> GetCategories(int id)
     {
-        var productRepo = _productService.Where(x => !x.IsDeleted&&x.EcommerceCompanyId==id); 
+        var productRepo = _productService.Where(x => !x.IsDeleted && x.EcommerceCompanyId == id).ToList(); 
         var categories = productRepo
-            .GroupBy(p => p.Category1)
+            .Where(p => p != null && p.Category1 != null) // Check if the product and Category1 are not null
+            .GroupBy(p => p.Category1.ToLower().Trim())
+            .Where(g1 => !string.IsNullOrEmpty(g1.Key))  
             .Select(g1 => new Category
             {
                 CategoryName = g1.Key,
-                Children = g1.GroupBy(p => p.Category2)
+                Children = g1
+                    .Where(p => p.Category2 != null) // Check if Category2 is not null
+                    .GroupBy(p => p.Category2.ToLower().Trim())
+                    .Where(g2 => !string.IsNullOrEmpty(g2.Key))  
                     .Select(g2 => new Category
-                    {               
-                        CategoryName = g2.Key,
-                          Children = g2.GroupBy(p => p.Category3)
-                    .Select(g3 => new Category
                     {
-                        CategoryName = g3.Key
-                    }).OrderBy(c => c.CategoryName).ToList()
-                        
-                    }).OrderBy(c => c.CategoryName).ToList()
-            }).ToList();
-        
+                        CategoryName = g2.Key,
+                        Children = g2
+                            .Where(p => p.Category3 != null) // Check if Category3 is not null
+                            .GroupBy(p => p.Category3.ToLower().Trim())
+                            .Where(g3 => !string.IsNullOrEmpty(g3.Key))  
+                            .Select(g3 => new Category
+                            {
+                                CategoryName = g3.Key
+                            })
+                            .OrderBy(c => c.CategoryName)
+                            .ToList()
+                    })
+                    .OrderBy(c => c.CategoryName)
+                    .ToList()
+            })
+            .OrderBy(c => c.CategoryName)
+            .ToList();
       
         
         return new SuccessDataResult<List<Category>>(categories);
@@ -81,7 +93,7 @@ public class EcommerceProductService : IEcommerceProductService
     public async Task<IResults> UpdateVariant(EcommerceVariantUpdateDTO model)
     {
         var variant = await _variantService.FindAsNoTrackingAsync(x => x.Id == model.Id);
-        var images =  _imageService.Where(x => x.EcommerceVariantId == model.Id).ToList();
+        var images =  _imageService.Where(x =>!x.IsDeleted&&x.EcommerceVariantId == model.Id).ToList();
 
         if (variant.IsNull())
         {
@@ -117,6 +129,7 @@ public class EcommerceProductService : IEcommerceProductService
             Category1 = model.Category1,
             Category2 = model.Category2,
             Category3 = model.Category3,
+            VariantsName = model.VariantsName,
             Brand = model.Brand
         };
 
@@ -185,10 +198,10 @@ public class EcommerceProductService : IEcommerceProductService
     public async Task<IResults> RemoveSingleVariant(long id)
     {
 
-        var product =  await _productService.Where(x => x.Id == id).FirstOrDefaultAsync();
-        product.IsDeleted = true;
-        _productService.UpdateAsync(product);
-        return new SuccessResult("PRODUCT_REMOVED");
+        var variant =  await _variantService.Where(x => x.Id == id).FirstOrDefaultAsync();
+        variant.IsDeleted = true;
+        _variantService.UpdateAsync(variant);
+        return new SuccessResult("Variant Removed");
     }
 
    public async Task<IResults> RemoveBasket(int variantId, string guid, long? clientId)
@@ -213,9 +226,9 @@ public class EcommerceProductService : IEcommerceProductService
     public async Task<IDataResults<BasketADDResponseDTO>> AddBasket(int variantId,string guid,long?clientId)
     {
         
-        var myClient=  await _clientService.Where(x => x.Id == clientId).FirstOrDefaultAsync();
+        var myClient=  await _clientService.Where(x =>!x.IsDeleted&& x.Id == clientId).FirstOrDefaultAsync();
         
-        var basket = await _basketService.Where(x => x.Guid == guid || x.Id==myClient.BasketId).FirstOrDefaultAsync();
+        var basket = await _basketService.Where(x => !x.IsDeleted&& x.Guid == guid || x.Id==myClient.BasketId).FirstOrDefaultAsync();
         
         
 
@@ -231,7 +244,7 @@ public class EcommerceProductService : IEcommerceProductService
            
            if (!clientId.IsNull())
            {
-               var client=  await _clientService.Where(x => x.Id == clientId).FirstOrDefaultAsync();
+               var client=  await _clientService.Where(x =>!x.IsDeleted&&  x.Id == clientId).FirstOrDefaultAsync();
                client.BasketId = myBasket.Id;
                
                await _clientService.UpdateAsync(client);
@@ -251,7 +264,7 @@ public class EcommerceProductService : IEcommerceProductService
 
         }else
         {
-           var sameCountBasket= await _basketProdRelService.Where(x => x.EcommerceVariantId == variantId && x.EcommerceBasketId == basket.Id).FirstOrDefaultAsync();
+           var sameCountBasket= await _basketProdRelService.Where(x =>!x.IsDeleted&&  x.EcommerceVariantId == variantId && x.EcommerceBasketId == basket.Id).FirstOrDefaultAsync();
 
            if (sameCountBasket.IsNull())
            {
@@ -274,7 +287,7 @@ public class EcommerceProductService : IEcommerceProductService
            
            if (!clientId.IsNull())
            {
-               var client=  await _clientService.Where(x => x.Id == clientId).FirstOrDefaultAsync();
+               var client=  await _clientService.Where(x =>!x.IsDeleted&&  x.Id == clientId).FirstOrDefaultAsync();
                client.BasketId = basket.Id;
 
                await _clientService.UpdateAsync(client);
@@ -289,8 +302,8 @@ public class EcommerceProductService : IEcommerceProductService
      public async Task<IDataResults<List<BasketDTO>>> GetBasket(string guid)
     {
 
-        var basket = await _basketService.Where(x => x.Guid == guid).FirstOrDefaultAsync();
-        var basketRelRepo =  _basketProdRelService.Where(x => x.EcommerceBasketId == basket.Id);
+        var basket = await _basketService.Where(x =>!x.IsDeleted&&  x.Guid == guid).FirstOrDefaultAsync();
+        var basketRelRepo =  _basketProdRelService.Where(x =>!x.IsDeleted&&  x.EcommerceBasketId == basket.Id);
         var variantRepo =  _variantService.Where(x => !x.IsDeleted);
         var imageRepo =  _imageService.Where(x => !x.IsDeleted);
 
@@ -303,7 +316,7 @@ public class EcommerceProductService : IEcommerceProductService
               Variants =  new EcommerceVariantListDTO()
               {
                   Id = variant.Id,
-                  Images =   imageRepo.Where(x=>x.EcommerceVariantId==variant.Id).Select(x => x.Data).ToList(),
+                  Images =   imageRepo.Where(x=>!x.IsDeleted&& x.EcommerceVariantId==variant.Id).Select(x => x.Data).ToList(),
                   Price = variant.Price,
                   Name = variant.Name,
                   Stock = variant.Stock,
@@ -338,7 +351,7 @@ public class EcommerceProductService : IEcommerceProductService
                  Variants =  new EcommerceVariantListDTO()
                  {
                      Id = variant.Id,
-                     Images =   imageRepo.Where(x=>x.EcommerceVariantId==variant.Id).Select(x => x.Data).ToList(),
+                     Images =   imageRepo.Where(x=>!x.IsDeleted&& x.EcommerceVariantId==variant.Id).Select(x => x.Data).ToList(),
                      Price = variant.Price,
                      Name = variant.Name,
                      Stock = variant.Stock,
@@ -447,11 +460,13 @@ public class EcommerceProductService : IEcommerceProductService
                 Category1 = product.Category1.ToLower().Trim(),
                 Category2 = product.Category2.ToLower().Trim(),
                 Category3 = product.Category3.ToLower().Trim(),
+                Brand = product.Brand.ToLower().Trim(),
+                VariantName = product.VariantsName.ToLower().Trim(),
                 Variants =  ( from variant in variantRepo.Where(x=>x.EcommerceProductId==product.Id)
                     select new EcommerceVariantListDTO()
                     {
                         Id = variant.Id,
-                        Images =   imagesRepo.Where(x=>x.EcommerceVariantId==variant.Id).Select(x => x.Data).ToList(),
+                        Images =   imagesRepo.Where(x=>!x.IsDeleted&& x.EcommerceVariantId==variant.Id).Select(x => x.Data).ToList(),
                         Price = variant.Price,
                         Name = variant.Name,
                         Stock = variant.Stock,

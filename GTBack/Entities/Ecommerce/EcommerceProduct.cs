@@ -6,6 +6,7 @@ public class EcommerceProduct:BaseEntity
     public string? Category2 { get; set; }
     public string? Category3 { get; set; }
     public string? Brand { get; set; }
+    public string? VariantsName { get; set; }
     public long EcommerceCompanyId { get; set; }
     public virtual EcommerceCompany EcommerceCompany { get; set; }
     public long EcommerceEmployeeId { get; set; }

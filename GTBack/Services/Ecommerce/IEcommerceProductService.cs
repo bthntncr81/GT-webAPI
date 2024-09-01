@@ -24,4 +24,6 @@ public interface IEcommerceProductService
     Task<IResults> RemoveBasket(int variantId, string guid, long? clientId);
     Task<IResults> UpdateVariant(EcommerceVariantUpdateDTO model);
 
+    Task<IResults> RemoveSingleVariant(long id);
+
 }
