@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240908191954_Coach")]
+    partial class Coach
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,36 +142,6 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("Coaches");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Lesson", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Lessons");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Schedule", b =>
                 {
                     b.Property<long>("Id")
@@ -283,52 +255,12 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("SubLessonId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubLessonId");
 
                     b.ToTable("Subjects");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("LessonId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("SubLessons");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasket", b =>
@@ -1244,28 +1176,6 @@ namespace GTBack.Repository.Migrations
                     b.Navigation("Coach");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Subject", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.SubLesson", "SubLesson")
-                        .WithMany("Subjects")
-                        .HasForeignKey("SubLessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SubLesson");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.Lesson", "Lesson")
-                        .WithMany("SubLessons")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasketProductRelation", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceBasket", "Basket")
@@ -1503,11 +1413,6 @@ namespace GTBack.Repository.Migrations
                     b.Navigation("Students");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Lesson", b =>
-                {
-                    b.Navigation("SubLessons");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
                 {
                     b.Navigation("RefreshTokens");
@@ -1518,11 +1423,6 @@ namespace GTBack.Repository.Migrations
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Subject", b =>
                 {
                     b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
-                {
-                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasket", b =>

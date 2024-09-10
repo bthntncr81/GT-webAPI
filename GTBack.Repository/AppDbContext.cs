@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using GTBack.Core.DTO.Shopping;
+using GTBack.Core.Entities.Coach;
 using GTBack.Core.Entities.Ecommerce;
 using GTBack.Core.Entities.Restourant;
 using GTBack.Core.Entities.SharedEntities;
@@ -29,7 +30,13 @@ namespace GTBack.Repository
         public DbSet<GlobalProductModel> GlobalProductModels { get; set; }
 
         
-        
+        //Coach
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Coach> Coaches { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<SubLesson> SubLessons { get; set; }
         
              
         //Ecommerce
@@ -60,6 +67,25 @@ namespace GTBack.Repository
             modelBuilder.Entity<EcommerceClientFavoriteRelation>()
                 .HasKey(cfr => new { cfr.EcommerceClientId, cfr.EcommerceProductId });
 
+            
+            
+            // Öğrenci ve Koç ilişkisi
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.Coach)
+                .WithMany(c => c.Students)
+                .HasForeignKey(s => s.CoachId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Schedule ile Subject ve Student ilişkisi
+            modelBuilder.Entity<Schedule>()
+                .HasOne(s => s.Student)
+                .WithMany(st => st.Schedules)
+                .HasForeignKey(s => s.StudentId);
+
+            modelBuilder.Entity<Schedule>()
+                .HasOne(s => s.Subject)
+                .WithMany(sub => sub.Schedules)
+                .HasForeignKey(s => s.SubjectId);
             base.OnModelCreating(modelBuilder);
             
       

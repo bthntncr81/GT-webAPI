@@ -129,7 +129,6 @@ public class EcommerceProductService : IEcommerceProductService
             Category1 = model.Category1,
             Category2 = model.Category2,
             Category3 = model.Category3,
-            VariantsName = model.VariantsName,
             Brand = model.Brand
         };
 
@@ -153,7 +152,9 @@ public class EcommerceProductService : IEcommerceProductService
                 Price = item.Price,
                 Name = item.Name,
                 Description = item.Description,
-                VariantIndicator=item.VariantIndicator
+                VariantIndicator=item.VariantIndicator,
+                VariantName= item.VariantName,
+                ThumbImage= item.ThumbImage
             };
             var addedVariant = await _variantService.AddAsync(variant);
 
@@ -227,12 +228,25 @@ public class EcommerceProductService : IEcommerceProductService
     {
         
         var myClient=  await _clientService.Where(x =>!x.IsDeleted&& x.Id == clientId).FirstOrDefaultAsync();
-        
-        var basket = await _basketService.Where(x => !x.IsDeleted&& x.Guid == guid || x.Id==myClient.BasketId).FirstOrDefaultAsync();
+        var basket = new EcommerceBasket();
+        var isBasketExist = false;
+        if (!myClient.IsNull())
+        {
+             basket = await _basketService.Where(x => !x.IsDeleted&& x.Guid == guid || x.Id==myClient.BasketId).FirstOrDefaultAsync();
+             isBasketExist = true;
+        }
+        else
+        {
+            basket = await _basketService.Where(x => !x.IsDeleted&& x.Guid == guid ).FirstOrDefaultAsync();
+            if (!basket.Id.IsNull())
+            {
+                isBasketExist = true;
+            }
+        }
         
         
 
-        if (basket.IsNull())
+        if (!isBasketExist)
         {
             var basketModel = new EcommerceBasket()
             {
@@ -321,7 +335,8 @@ public class EcommerceProductService : IEcommerceProductService
                   Name = variant.Name,
                   Stock = variant.Stock,
                   Description = variant.Description,
-                  EcommerceProductId = variant.EcommerceProductId
+                  EcommerceProductId = variant.EcommerceProductId,
+                  ThumbImage = variant.ThumbImage
               },
               Count = basketRel.Count
               
@@ -395,7 +410,7 @@ public class EcommerceProductService : IEcommerceProductService
      
         if (!ObjectExtensions.IsNull(model.RequestFilter.Name))
         {
-            productRepo = productRepo.Where(p => p.Variants.Any(v => v.Name.Contains(model.RequestFilter.Name)));
+            productRepo = productRepo.Where(p => p.Variants.Any(v => v.Name.ToLower().Contains(model.RequestFilter.Name.ToLower())));
         }
         
         if (model.RequestFilter.Id!=0)
@@ -404,7 +419,7 @@ public class EcommerceProductService : IEcommerceProductService
         }
         if (!ObjectExtensions.IsNull(model.RequestFilter.Description))
         {
-            productRepo = productRepo.Where(p => p.Variants.Any(v => v.Description.Contains(model.RequestFilter.Description)));
+            productRepo = productRepo.Where(p => p.Variants.Any(v => v.Description.ToLower().Contains(model.RequestFilter.Description.ToLower())));
         }
         if (!ObjectExtensions.IsNull(model.RequestFilter.CompanyId))
         {
@@ -461,7 +476,6 @@ public class EcommerceProductService : IEcommerceProductService
                 Category2 = product.Category2.ToLower().Trim(),
                 Category3 = product.Category3.ToLower().Trim(),
                 Brand = product.Brand.ToLower().Trim(),
-                VariantName = product.VariantsName.ToLower().Trim(),
                 Variants =  ( from variant in variantRepo.Where(x=>x.EcommerceProductId==product.Id)
                     select new EcommerceVariantListDTO()
                     {
@@ -472,7 +486,9 @@ public class EcommerceProductService : IEcommerceProductService
                         Stock = variant.Stock,
                         Description = variant.Description,
                         EcommerceProductId = variant.EcommerceProductId,
-                        VariantIndicator = variant.VariantIndicator
+                        VariantIndicator = variant.VariantIndicator,
+                        VariantName = variant.VariantName,
+                        ThumbImage = variant.ThumbImage,
                         
                           
                     }).ToList()                
@@ -491,5 +507,122 @@ public class EcommerceProductService : IEcommerceProductService
     
         return new SuccessDataResult<BaseListDTO<EcommerceProductListDTO, EcommerceProductListFilterRepresent>>(productList);
     }
+    
+    
+    
+    
+    
+    public async Task<IDataResults<BaseListDTO<EcommerceProductListGroupedDTO, EcommerceProductListFilterRepresent>>> GetGroupedProducts(
+    BaseListFilterDTO<EcommerceProductFilter> model)
+{
+    var productRepo = _productService.Where(x => !x.IsDeleted);
+    var variantRepo = _variantService.Where(x => !x.IsDeleted);
+    var imagesRepo = _imageService.Where(x => !x.IsDeleted);
+
+ 
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Name))
+    {
+        productRepo = productRepo.Where(p => p.Variants.Any(v => v.Name.ToLower().Contains(model.RequestFilter.Name.ToLower())));
+    }
+    
+    if (model.RequestFilter.Id!=0)
+    {
+        productRepo = productRepo.Where(p => p.Id==model.RequestFilter.Id);
+    }
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Description))
+    {
+        productRepo = productRepo.Where(p => p.Variants.Any(v => v.Description.ToLower().Contains(model.RequestFilter.Description.ToLower())));
+    }
+    if (!ObjectExtensions.IsNull(model.RequestFilter.CompanyId))
+    {
+        productRepo = productRepo.Where(p => p.EcommerceCompanyId==model.RequestFilter.CompanyId);
+    }
+    
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Category1))
+    {
+        productRepo = productRepo.Where(x => x.Category1.ToLower().Contains(model.RequestFilter.Category1.ToLower()));
+    }
+     
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Category2))
+    {
+        productRepo = productRepo.Where(x => x.Category2.ToLower().Contains(model.RequestFilter.Category2.ToLower()));
+    }
+     
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Category3))
+    {
+        productRepo = productRepo.Where(x => x.Category3.ToLower().Contains(model.RequestFilter.Category3.ToLower()));
+    }
+    
+
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Price))
+    {
+        
+ 
+        productRepo = productRepo.Where(p => p.Variants.Any(v => ((v.Price > model.RequestFilter.Price.Min)&&(v.Price < model.RequestFilter.Price.Max))));
+    }
+
+    if (!ObjectExtensions.IsNull(model.RequestFilter.Stock))
+    {
+        productRepo = productRepo.Where(p => p.Variants.Any(v => ((v.Stock > model.RequestFilter.Stock.Min)&&(v.Stock < model.RequestFilter.Stock.Max))));
+
+    }
+    
+    if (!ObjectExtensions.IsNull(model.SortingFilter.ListOrderType))
+    {
+        if (model.SortingFilter.ListOrderType==ListOrderType.Ascending)
+        {
+            productRepo = productRepo.OrderBy(p => p.Variants.OrderBy(v => v.Id).FirstOrDefault());
+        }
+        else
+        {
+            productRepo = productRepo.OrderByDescending(p => p.Variants.OrderBy(v => v.Id).FirstOrDefault());
+        }
+    }
+    
+    
+    var products = from product in productRepo
+            select new EcommerceProductListGroupedDTO()
+            {
+                Id = product.Id,
+                Category1 = product.Category1.ToLower().Trim(),
+                Category2 = product.Category2.ToLower().Trim(),
+                Category3 = product.Category3.ToLower().Trim(),
+                Brand = product.Brand.ToLower().Trim(),
+                Variants = (
+                    from variant in variantRepo.Where(x => x.EcommerceProductId == product.Id)
+                    group variant by variant.ThumbImage into variantGroup
+                    select new EcommerceVariantGroupDTO()
+                    {
+                        ThumbImage = variantGroup.Key,
+                        Variants = variantGroup.Select(variant => new EcommerceVariantListDTO()
+                        {
+                            Id = variant.Id,
+                            Images = imagesRepo.Where(x => !x.IsDeleted && x.EcommerceVariantId == variant.Id).Select(x => x.Data).ToList(),
+                            Price = variant.Price,
+                            Name = variant.Name,
+                            Stock = variant.Stock,
+                            Description = variant.Description,
+                            EcommerceProductId = variant.EcommerceProductId,
+                            VariantIndicator = variant.VariantIndicator,
+                            VariantName = variant.VariantName,
+                            ThumbImage = variant.ThumbImage,
+                        }).ToList()
+                    }).ToList()              
+            };
+    
+    BaseListDTO<EcommerceProductListGroupedDTO, EcommerceProductListFilterRepresent> productList =
+        new BaseListDTO<EcommerceProductListGroupedDTO, EcommerceProductListFilterRepresent>();
+
+   var listProduct = await products.ToListAsync();
+
+
+    productList.List = _mapper.Map<ICollection<EcommerceProductListGroupedDTO>>(listProduct);
+
+    productList.Filter = new EcommerceProductListFilterRepresent();
+
+
+    return new SuccessDataResult<BaseListDTO<EcommerceProductListGroupedDTO, EcommerceProductListFilterRepresent>>(productList);
+}
+
 }
 

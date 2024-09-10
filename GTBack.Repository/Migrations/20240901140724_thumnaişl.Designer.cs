@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240901140724_thumnaişl")]
+    partial class thumnaişl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,241 +96,6 @@ namespace GTBack.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GlobalProductModels");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Coach", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("ActiveForgotLink")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Coaches");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Lesson", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Lessons");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Schedule", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("StudentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SubjectId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("TimeSlot")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.ToTable("Schedules");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("ActiveForgotLink")
-                        .HasColumnType("text");
-
-                    b.Property<long>("CoachId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Grade")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoachId");
-
-                    b.ToTable("Students");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Subject", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("SubLessonId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubLessonId");
-
-                    b.ToTable("Subjects");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("LessonId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("SubLessons");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasket", b =>
@@ -725,6 +492,9 @@ namespace GTBack.Repository.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("VariantsName")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EcommerceCompanyId");
@@ -820,9 +590,6 @@ namespace GTBack.Repository.Migrations
                     b.Property<string>("VariantIndicator")
                         .HasColumnType("text");
 
-                    b.Property<string>("VariantName")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EcommerceProductId");
@@ -836,16 +603,10 @@ namespace GTBack.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<long?>("CoachId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("EcommerceClientId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("EcommerceEmployeeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("StudentId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Token")
@@ -860,13 +621,9 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoachId");
-
                     b.HasIndex("EcommerceClientId");
 
                     b.HasIndex("EcommerceEmployeeId");
-
-                    b.HasIndex("StudentId");
 
                     b.HasIndex("UserId");
 
@@ -1214,58 +971,6 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("ShoppingUser");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Schedule", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.Student", "Student")
-                        .WithMany("Schedules")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GTBack.Core.Entities.Coach.Subject", "Subject")
-                        .WithMany("Schedules")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.Coach", "Coach")
-                        .WithMany("Students")
-                        .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coach");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Subject", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.SubLesson", "SubLesson")
-                        .WithMany("Subjects")
-                        .HasForeignKey("SubLessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SubLesson");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.Lesson", "Lesson")
-                        .WithMany("SubLessons")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasketProductRelation", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceBasket", "Basket")
@@ -1414,10 +1119,6 @@ namespace GTBack.Repository.Migrations
 
             modelBuilder.Entity("GTBack.Core.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("GTBack.Core.Entities.Coach.Coach", null)
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("CoachId");
-
                     b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceClient", null)
                         .WithMany("RefreshTokens")
                         .HasForeignKey("EcommerceClientId");
@@ -1425,10 +1126,6 @@ namespace GTBack.Repository.Migrations
                     b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", null)
                         .WithMany("RefreshTokens")
                         .HasForeignKey("EcommerceEmployeeId");
-
-                    b.HasOne("GTBack.Core.Entities.Coach.Student", null)
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("StudentId");
 
                     b.HasOne("GTBack.Core.Entities.Shopping.ShoppingUser", "User")
                         .WithMany("RefreshTokens")
@@ -1494,35 +1191,6 @@ namespace GTBack.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("ShoppingCompany");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Coach", b =>
-                {
-                    b.Navigation("RefreshTokens");
-
-                    b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Lesson", b =>
-                {
-                    b.Navigation("SubLessons");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
-                {
-                    b.Navigation("RefreshTokens");
-
-                    b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Subject", b =>
-                {
-                    b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
-                {
-                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceBasket", b =>

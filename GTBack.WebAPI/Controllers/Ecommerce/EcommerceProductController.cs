@@ -40,7 +40,12 @@ public class EcommerceProductController : CustomEcommerceBaseController
     {
         return ApiResult(await _productService.GetProducts(log));
     }
-    
+    [Microsoft.AspNetCore.Mvc.HttpPost("ProductListGrouped")]
+    public async Task<IActionResult> ListGrouped(BaseListFilterDTO<EcommerceProductFilter> log)
+    {
+        return ApiResult(await _productService.GetGroupedProducts(log));
+    }
+
     [Microsoft.AspNetCore.Mvc.HttpGet("GetCategories")]
     public async Task<IActionResult> GetCategories(int id)
     {

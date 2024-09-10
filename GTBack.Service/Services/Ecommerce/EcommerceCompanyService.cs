@@ -9,6 +9,7 @@ using GTBack.Core.Results;
 using GTBack.Core.Services;
 using GTBack.Core.Services.Shopping;
 using Microsoft.EntityFrameworkCore;
+using XAct;
 
 namespace GTBack.Service.Services.Ecommerce;
 
@@ -27,28 +28,61 @@ public class EcommerceCompanyService:IEcommerceCompanyService
 
     public async Task<IResults> AddShoppingCompany(CompanyAddDTO model)
     {
-        var shoppingCompany = new EcommerceCompany()
-        {
-            Id = model.Id,
-            Logo = model.Logo,
-            Name = model.Name,
-            Address = model.Address,
-            Email = model.Email,
-            Phone = model.Phone,
-            GeoCodeY = model.GeoCodeY,
-            GeoCodeX = model.GeoCodeX,
-            ThemeId = model.ThemeId,
-            PrimaryColor = model.PrimaryColor,
-            SecondaryColor = model.SecondaryColor,
-            VergiNumber = model.VergiNumber,
-            IyzicoClientId = model.IyzicoClientId,
-            IyzicoSecretId = model.IyzicoSecretId,
-            PrivacyPolicy = model.PrivacyPolicy,
-            DeliveredAndReturnPolicy = model.DeliveredAndReturnPolicy,
-            DistanceSellingContract = model.DistanceSellingContract,
-        };
+        var company = await _companyService.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+
         
-        await _companyService.AddAsync(shoppingCompany);
+        if (company.IsNull())
+        {
+            var shoppingCompany = new EcommerceCompany()
+            {
+                Id = model.Id,
+                Logo = model.Logo,
+                Name = model.Name,
+                Address = model.Address,
+                Email = model.Email,
+                Phone = model.Phone,
+                GeoCodeY = model.GeoCodeY,
+                GeoCodeX = model.GeoCodeX,
+                ThemeId = model.ThemeId,
+                PrimaryColor = model.PrimaryColor,
+                SecondaryColor = model.SecondaryColor,
+                VergiNumber = model.VergiNumber,
+                IyzicoClientId = model.IyzicoClientId,
+                IyzicoSecretId = model.IyzicoSecretId,
+                PrivacyPolicy = model.PrivacyPolicy,
+                DeliveredAndReturnPolicy = model.DeliveredAndReturnPolicy,
+                DistanceSellingContract = model.DistanceSellingContract,
+            };
+            
+            await _companyService.AddAsync(shoppingCompany);
+
+        }
+        else
+        {
+            company.Id = model.Id;
+                company.Logo = model.Logo;
+                company.Name = model.Name;
+                company.Address = model.Address;
+                company.Email = model.Email;
+                company.Phone = model.Phone;
+                company.GeoCodeY = model.GeoCodeY;
+                company.GeoCodeX = model.GeoCodeX;
+                company. ThemeId = model.ThemeId;
+                company. PrimaryColor = model.PrimaryColor;
+                company. SecondaryColor = model.SecondaryColor;
+                company. VergiNumber = model.VergiNumber;
+                company. IyzicoClientId = model.IyzicoClientId;
+                company. IyzicoSecretId = model.IyzicoSecretId;
+                company. PrivacyPolicy = model.PrivacyPolicy;
+                company. DeliveredAndReturnPolicy = model.DeliveredAndReturnPolicy;
+                company. DistanceSellingContract = model.DistanceSellingContract;
+                
+                await _companyService.UpdateAsync(company);
+            
+        }
+       
+        
+        
         return new SuccessResult();
     }
 

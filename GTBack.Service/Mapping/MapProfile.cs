@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GTBack.Core.DTO.Coach.Request;
 using GTBack.Core.DTO.Ecommerce.Request;
 using GTBack.Core.DTO.Ecommerce.Response;
 using GTBack.Core.DTO.Restourant.Request;
 using GTBack.Core.DTO.Shopping.Request;
+using GTBack.Core.Entities.Coach;
 using GTBack.Core.Entities.Ecommerce;
 using GTBack.Core.Entities.Shopping;
 using CompanyAddDTO = GTBack.Core.DTO.Ecommerce.CompanyAddDTO;
@@ -46,10 +48,38 @@ namespace GTBack.Service.Mapping
             CreateMap<EcommerceProduct, EcommerceProductListDTO>().ReverseMap();
             CreateMap<EcommerceVariant, EcommerceVariantListDTO>().ReverseMap();
             CreateMap<EcommerceVariant, EcommerceVariantUpdateDTO>().ReverseMap();
+            CreateMap<EcommerceVariant, EcommerceVariantGroupDTO>().ReverseMap();
 
 
 
             
+            
+            // Mapping for Refresh Tokens
+            CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
+
+            // Mapping for Coach
+            CreateMap<CoachRegisterDTO, Coach>().ReverseMap();
+            CreateMap<CoachUpdateDTO, Coach>().ReverseMap();
+            CreateMap<UserDTO, Coach>().ReverseMap();
+            
+            // Mapping for Student
+            CreateMap<StudentRegisterDTO, Student>().ReverseMap();
+            CreateMap<StudentUpdateDTO, Student>().ReverseMap();
+            CreateMap<UserDTO, Student>().ReverseMap();
+
+            // AuthenticatedUserResponseDto Mapping (for both Coach and Student)
+            CreateMap<AuthenticatedUserResponseDto, Coach>().ReverseMap();
+            CreateMap<AuthenticatedUserResponseDto, Student>().ReverseMap();
+
+            // Mapping for Login
+            CreateMap<LoginDto, Coach>().ReverseMap();
+            CreateMap<LoginDto, Student>().ReverseMap();
+
+            // Mapping for Reset Password
+            CreateMap<ResetPasswordDTO, Coach>().ReverseMap();
+            CreateMap<ResetPasswordDTO, Student>().ReverseMap();
+            CreateMap<ResetPasswordLinkDTO, Coach>().ReverseMap();
+            CreateMap<ResetPasswordLinkDTO, Student>().ReverseMap();
 
         }
     }
