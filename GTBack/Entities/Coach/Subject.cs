@@ -7,5 +7,5 @@ public class Subject:BaseEntity
     public string Name { get; set; }
     public string Description { get; set; }
 
-    public ICollection<Schedule> Schedules { get; set; } // Bu derse ait programlar
+    public ICollection<SubjectScheduleRelation> SubjectScheduleRelations { get; set; } // Bu derse ait programlar
 }

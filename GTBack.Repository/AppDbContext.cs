@@ -37,6 +37,7 @@ namespace GTBack.Repository
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<SubLesson> SubLessons { get; set; }
+        public DbSet<SubjectScheduleRelation> SubjectScheduleRelations { get; set; }
         
              
         //Ecommerce
@@ -81,12 +82,23 @@ namespace GTBack.Repository
                 .HasOne(s => s.Student)
                 .WithMany(st => st.Schedules)
                 .HasForeignKey(s => s.StudentId);
+            
+            // Subject -> SubjectScheduleRelation (One-to-Many)
+            modelBuilder.Entity<Subject>()
+                .HasMany(s => s.SubjectScheduleRelations)
+                .WithOne(ssr => ssr.Subject)
+                .HasForeignKey(ssr => ssr.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade); // If a Subject is deleted, delete related SubjectScheduleRelations
 
+            // Schedule -> SubjectScheduleRelation (One-to-Many)
             modelBuilder.Entity<Schedule>()
-                .HasOne(s => s.Subject)
-                .WithMany(sub => sub.Schedules)
-                .HasForeignKey(s => s.SubjectId);
-            base.OnModelCreating(modelBuilder);
+                .HasMany(s => s.SubjectScheduleRelations)
+                .WithOne(ssr => ssr.Schedule)
+                .HasForeignKey(ssr => ssr.ScheduleId)
+                .OnDelete(DeleteBehavior.Cascade); // If a Schedule is deleted, delete related SubjectScheduleRelations
+        
+
+       
             
       
         }

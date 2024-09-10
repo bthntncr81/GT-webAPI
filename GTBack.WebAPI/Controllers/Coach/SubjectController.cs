@@ -26,9 +26,9 @@ namespace GTBack.WebAPI.Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<IActionResult> AddSubjectToStudent(long subjectId, DayOfWeekEnum day, string timeSlot)
+        public async Task<IActionResult> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot)
         {
-            var result = await _subjectService.AddSubjectToStudent(subjectId, day, timeSlot);
+            var result = await _subjectService.AddSubjectToStudent(sublessonId, day, timeSlot);
             return ApiResult(result);
         }
 
@@ -41,10 +41,10 @@ namespace GTBack.WebAPI.Controllers
         }
 
         [Authorize]
-        [HttpDelete("Remove")]
-        public async Task<IActionResult> DeleteSubjectForStudent(long subjectId, DayOfWeekEnum day, string timeSlot)
+        [HttpDelete("Remove/{id}")]
+        public async Task<IActionResult> DeleteSubjectForStudent(long id)
         {
-            var result = await _subjectService.DeleteSubjectForStudent(subjectId, day, timeSlot);
+            var result = await _subjectService.DeleteSubjectForStudent(id);
             return ApiResult(result);
         }
         
@@ -80,6 +80,16 @@ namespace GTBack.WebAPI.Controllers
         public async Task<IActionResult> GetAllWeek([FromRoute]int studentId)
         {
             var result=  await _subjectService.GetSubjectsByStudentIdGroupedByDay(studentId);
+            return ApiResult(result);
+
+        }
+        
+        
+        
+        [HttpGet("AddSubjectToSchedule/{subjectId}/{scheduleId}")]
+        public async Task<IActionResult> AddSubjectOnSubLesson([FromRoute]int subjectId,int scheduleId,DateTime ExpireDate)
+        {
+            var result=  await _subjectService.AddSubjectOnSubLesson(subjectId,scheduleId,ExpireDate);
             return ApiResult(result);
 
         }

@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240910125752_sublesson")]
+    partial class sublesson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,6 +195,10 @@ namespace GTBack.Repository.Migrations
                     b.Property<long>("SubLessonId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("SubjectId")
+                        .IsRequired()
+                        .HasColumnType("bigint");
+
                     b.Property<string>("TimeSlot")
                         .IsRequired()
                         .HasColumnType("text");
@@ -205,6 +211,8 @@ namespace GTBack.Repository.Migrations
                     b.HasIndex("StudentId");
 
                     b.HasIndex("SubLessonId");
+
+                    b.HasIndex("SubjectId");
 
                     b.ToTable("Schedules");
                 });
@@ -294,41 +302,6 @@ namespace GTBack.Repository.Migrations
                     b.HasIndex("SubLessonId");
 
                     b.ToTable("Subjects");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubjectScheduleRelation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ExpireDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long?>("ScheduleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SubjectId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.ToTable("SubjectScheduleRelations");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
@@ -1263,9 +1236,17 @@ namespace GTBack.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GTBack.Core.Entities.Coach.Subject", "Subject")
+                        .WithMany("Schedules")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Student");
 
                     b.Navigation("SubLesson");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
@@ -1288,23 +1269,6 @@ namespace GTBack.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("SubLesson");
-                });
-
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.SubjectScheduleRelation", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.Schedule", "Schedule")
-                        .WithMany("SubjectScheduleRelations")
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("GTBack.Core.Entities.Coach.Subject", "Subject")
-                        .WithMany("SubjectScheduleRelations")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Schedule");
-
-                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
@@ -1560,11 +1524,6 @@ namespace GTBack.Repository.Migrations
                     b.Navigation("SubLessons");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Schedule", b =>
-                {
-                    b.Navigation("SubjectScheduleRelations");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
                 {
                     b.Navigation("RefreshTokens");
@@ -1574,7 +1533,7 @@ namespace GTBack.Repository.Migrations
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Subject", b =>
                 {
-                    b.Navigation("SubjectScheduleRelations");
+                    b.Navigation("Schedules");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.SubLesson", b =>
