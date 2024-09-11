@@ -22,18 +22,20 @@ using Microsoft.Extensions.Caching.Memory;
 public class StudentAuthService : IStudentAuthService
 {
     private readonly IService<Student> _studentService;
+    private readonly IService<Coach> _coachService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly ClaimsPrincipal? _loggedUser;
     private readonly IMapper _mapper;
     private readonly IJwtTokenService<BaseRegisterDTO> _tokenService;
     private readonly IMemoryCache _cache;
 
-    public StudentAuthService(IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
+    public StudentAuthService( IService<Coach> coachService,IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<Student> studentService, IMapper mapper)
     {
         _mapper = mapper;
         _cache = cache;
         _studentService = studentService;
+        _coachService = coachService;
         _loggedUser = httpContextAccessor.HttpContext?.User;
         _refreshTokenService = refreshTokenService;
         _tokenService = tokenService;
@@ -71,6 +73,7 @@ public class StudentAuthService : IStudentAuthService
             return new ErrorDataResults<AuthenticatedUserResponseDto>(HttpStatusCode.BadRequest, validationResult.Errors);
         }
 
+        var coach =await _coachService.Where(x => x.ActiveCoachGuid == registerDto.CoachGuid).FirstOrDefaultAsync();
         var student = new Student
         {
             Name = registerDto.Name,
@@ -80,7 +83,7 @@ public class StudentAuthService : IStudentAuthService
             PasswordHash = SHA1.Generate(registerDto.Password),
             IsDeleted = false,
             Grade = registerDto.Grade,
-            CoachId = registerDto.CoachId
+            CoachId = coach.Id
         };
 
         await _studentService.AddAsync(student);

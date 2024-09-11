@@ -15,4 +15,6 @@ public interface ICoachAuthService
     Task<IDataResults<CoachUpdateDTO>> UpdateCoach(CoachUpdateDTO updateDto);
     Task<IResults> ResetPassword(ResetPasswordDTO resetPasswordDto);
     Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO resetPasswordLinkDto);
+
+    Task<IResults> CreateCoachGuid();
 }

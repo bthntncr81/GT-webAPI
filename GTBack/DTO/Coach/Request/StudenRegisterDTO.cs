@@ -5,6 +5,6 @@ namespace GTBack.Core.DTO.Coach.Request;
 public class StudentRegisterDTO : BaseRegisterDTO
 {
     public GradeEnum Grade { get; set; }
-    public long CoachId { get; set; }
+    public string CoachGuid { get; set; }
     public string Password { get; set; }
 }

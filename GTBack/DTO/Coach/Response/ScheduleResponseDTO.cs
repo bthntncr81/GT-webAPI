@@ -6,5 +6,7 @@ public class ScheduleResponseDTO
     public string Sublesson { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
+    public int ?QuestionCount { get; set; }
+    public bool? IsDone { get; set; }
     public string TimeSlot { get; set; }
 }

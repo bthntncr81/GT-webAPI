@@ -75,23 +75,24 @@ namespace GTBack.WebAPI.Controllers
 
         }
         
-                       
-        [HttpGet("GetAllWeek/{studentId}")]
-        public async Task<IActionResult> GetAllWeek([FromRoute]int studentId)
+        [Authorize]
+        [HttpGet("GetAllWeek")]
+        public async Task<IActionResult> GetAllWeek()
         {
-            var result=  await _subjectService.GetSubjectsByStudentIdGroupedByDay(studentId);
+            var result=  await _subjectService.GetSubjectsByStudentIdGroupedByDay();
             return ApiResult(result);
 
         }
         
         
-        
-        [HttpGet("AddSubjectToSchedule/{subjectId}/{scheduleId}")]
-        public async Task<IActionResult> AddSubjectOnSubLesson([FromRoute]int subjectId,int scheduleId,DateTime ExpireDate)
+        [HttpPost("AddSubjectToSchedule")]
+        public async Task<IActionResult> AddSubjectOnSubLesson(AddSubjectToLessonDTO model)
         {
-            var result=  await _subjectService.AddSubjectOnSubLesson(subjectId,scheduleId,ExpireDate);
+            var result=  await _subjectService.AddSubjectOnSubLesson(model);
             return ApiResult(result);
 
         }
+        
+        
     }
 }

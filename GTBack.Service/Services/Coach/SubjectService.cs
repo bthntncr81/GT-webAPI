@@ -58,12 +58,6 @@ public class SubjectService : ISubjectService
     public async Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot)
     {
         long studentId = GetStudentIdFromToken(); // Get studentId from token
-
-        // var subject = await _subjectService.GetByIdAsync(x => x.Id == subjectId);
-        // if (subject == null)
-        // {
-        //     return new ErrorResult("Subject not found");
-        // }
         var existingSchedule = await _scheduleService
             .Where(s => s.StudentId == studentId && s.SubLessonId == sublessonId && s.DayOfWeek == day && s.TimeSlot == timeSlot)
             .FirstOrDefaultAsync();
@@ -87,16 +81,16 @@ public class SubjectService : ISubjectService
         return new SuccessResult("Subject added to student schedule successfully");
     }
     
-    public async Task<IResults> AddSubjectOnSubLesson(long subjectId,int scheduleId,DateTime ExpireDate)
+    public async Task<IResults> AddSubjectOnSubLesson(AddSubjectToLessonDTO model)
     {
 
-        var subject = await _subjectService.GetByIdAsync(x => x.Id == subjectId);
+        var subject = await _subjectService.GetByIdAsync(x => x.Id == model.SubjectId);
         if (subject == null)
         {
             return new ErrorResult("Subject not found");
         }
         var existingSchedule = await _scheduleService
-            .Where(s => s.Id == scheduleId )
+            .Where(s => s.Id == model.ScheduleId )
             .FirstOrDefaultAsync();
 
        var isCorrect=await _subLessonService.AnyAsync(x => x.Id == subject.SubLessonId);
@@ -108,9 +102,11 @@ public class SubjectService : ISubjectService
 
        var secSub = new SubjectScheduleRelation()
        {
-           SubjectId = subjectId,
-           ScheduleId = scheduleId,
-           ExpireDate = ExpireDate
+           SubjectId = model.SubjectId,
+           ScheduleId = model.ScheduleId,
+           ExpireDate = model.ExipreDate,
+           QuestionCount = model.QuestionCount,
+           IsDone = false,
        };
         await _scheduleSubkectRelationService.AddAsync(secSub);
         return new SuccessResult("Subject added to student schedule successfully");
@@ -188,48 +184,50 @@ public class SubjectService : ISubjectService
 
         return new SuccessDataResult<List<LessonAddDTO>>(lessonDtos);
     }
-    public async Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay(long studentId)
-    {
-        // Fetch all schedules for the student
-        var schedules = await _scheduleService
-            .Where(s => !s.IsDeleted && s.StudentId == studentId)
-            .Include(s => s.SubLesson)
-            .ThenInclude(sl => sl.Subjects) // Include related Subjects in SubLesson
-            .ToListAsync();
-        var time = DateTime.Now.ToUniversalTime();
-        var sub = await _scheduleSubkectRelationService
-            .Where(x => x.ExpireDate > time && x.ScheduleId == schedules[0].Id).FirstOrDefaultAsync();
-        var id = sub.SubjectId;
-        // Group the subjects by day of the week
-        var subjectsGroupedByDay = schedules
-            .GroupBy(s => s.DayOfWeek.ToString()) // Group by DayOfWeek as a string
-            .ToDictionary(
-                group => group.Key, // Key: Day of the week
-                group => group.Select(s => new ScheduleResponseDTO
-                {
-                    Id = s.Id,
-                    Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+   public async Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay()
+{
+    long studentId = GetStudentIdFromToken(); // Get studentId from token
 
-                    // Check if SubjectScheduleRelations is not null and has a valid entry
-                    Name = s.SubjectScheduleRelations != null 
-                        ? s.SubjectScheduleRelations
-                            .Where(x => x.ExpireDate > time && x.Subject != null)
-                            .Select(x => x.Subject.Name)
-                            .FirstOrDefault() ?? string.Empty // Default to empty string if no valid Subject is found
-                        : string.Empty,
+    // Fetch all schedules for the student with necessary includes
+    var schedules = await _scheduleService
+        .Where(s => !s.IsDeleted && s.StudentId == studentId)
+        .Include(s => s.SubLesson)
+        .ThenInclude(sl => sl.Subjects) // Include related Subjects in SubLesson
+        .Include(s => s.SubjectScheduleRelations) // Ensure SubjectScheduleRelations is included
+        .ThenInclude(ssr => ssr.Subject) // Include related Subject
+        .AsNoTracking() // Improve performance since we are just reading data
+        .ToListAsync(); // Get the data from the database
 
-                    Description = s.SubjectScheduleRelations != null
-                        ? s.SubjectScheduleRelations
-                            .Where(x => x.ExpireDate > time && x.Subject != null)
-                            .Select(x => x.Subject.Description)
-                            .FirstOrDefault() ?? string.Empty // Default to empty string if no valid Description is found
-                        : string.Empty,
+    // Now perform client-side operations
+    var subjectsGroupedByDay = schedules
+        .AsEnumerable() // Switch to client-side evaluation
+        .GroupBy(s => s.DayOfWeek.ToString()) // Group by DayOfWeek in memory
+        .ToDictionary(
+            group => group.Key,
+            group => group.Select(s => new ScheduleResponseDTO
+            {
+                Id = s.Id,
+                Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+                Name = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Subject.Name)
+                        .FirstOrDefault() ?? string.Empty
+                    : string.Empty,
+                Description = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Subject.Description)
+                        .FirstOrDefault() ?? string.Empty    : string.Empty,
+                TimeSlot = s.TimeSlot,
+                QuestionCount = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount,
+                IsDone = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone
+            }).ToList()
+        );
 
-                    TimeSlot = s.TimeSlot
-                }).ToList()
-            );
-        return new SuccessDataResult<Dictionary<string, List<ScheduleResponseDTO>>>(subjectsGroupedByDay);
-    }
+    // Return the result
+    return new SuccessDataResult<Dictionary<string, List<ScheduleResponseDTO>>>(subjectsGroupedByDay);
+}
         
         public async Task<IDataResults<List<ScheduleResponseDTO>>> GetSubjectsByStudentIdAndDay(long studentId, DayOfWeekEnum day)
         {
@@ -238,20 +236,25 @@ public class SubjectService : ISubjectService
                 .Include(s => s.SubLesson)
                 .ThenInclude(sl => sl.Subjects) // Include related Subjects in SubLesson
                 .ToListAsync();
-
+     
 // Map the results to ScheduleResponseDTO
             var response = schedules.Select(schedule => new ScheduleResponseDTO
             {
                 Id = schedule.Id,
                 Sublesson = schedule.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
-                Name = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate>DateTime.Now).FirstOrDefault().Subject.Name, // Get Subject Name
-                Description = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate>DateTime.Now).FirstOrDefault().Subject.Name, // Get Subject Description
-                TimeSlot = schedule.TimeSlot
+                Name = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().Subject.Name, // Get Subject Name
+                Description = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().Subject.Name, // Get Subject Description
+                TimeSlot = schedule.TimeSlot,
+                QuestionCount = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount,
+                IsDone = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone
             }).ToList();
   
 
         return new SuccessDataResult<List<ScheduleResponseDTO>>(response);
     }
+        
+        
+    
         
         
         
