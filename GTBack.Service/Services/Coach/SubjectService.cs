@@ -55,9 +55,8 @@ public class SubjectService : ISubjectService
     }
 
     // Add a subject for the student
-    public async Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot)
+    public async Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot,long studentId)
     {
-        long studentId = GetStudentIdFromToken(); // Get studentId from token
         var existingSchedule = await _scheduleService
             .Where(s => s.StudentId == studentId && s.SubLessonId == sublessonId && s.DayOfWeek == day && s.TimeSlot == timeSlot)
             .FirstOrDefaultAsync();
@@ -220,8 +219,63 @@ public class SubjectService : ISubjectService
                         .Select(x => x.Subject.Description)
                         .FirstOrDefault() ?? string.Empty    : string.Empty,
                 TimeSlot = s.TimeSlot,
-                QuestionCount = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount,
-                IsDone = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone
+                QuestionCount = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount??0,
+                IsDone = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone??false
+            }).ToList()
+        );
+
+    // Return the result
+    return new SuccessDataResult<Dictionary<string, List<ScheduleResponseDTO>>>(subjectsGroupedByDay);
+}
+   
+    public async Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay(int studentId)
+{
+
+    // Fetch all schedules for the student with necessary includes
+    var schedules = await _scheduleService
+        .Where(s => !s.IsDeleted && s.StudentId == studentId)
+        .Include(s => s.SubLesson)
+        .ThenInclude(sl => sl.Subjects) // Include related Subjects in SubLesson
+        .Include(s => s.SubjectScheduleRelations) // Ensure SubjectScheduleRelations is included
+        .ThenInclude(ssr => ssr.Subject) // Include related Subject
+        .AsNoTracking() // Improve performance since we are just reading data
+        .ToListAsync(); // Get the data from the database
+
+    // Now perform client-side operations
+    var subjectsGroupedByDay = schedules
+        .AsEnumerable() // Switch to client-side evaluation
+        .GroupBy(s => s.DayOfWeek.ToString()) // Group by DayOfWeek in memory
+        .ToDictionary(
+            group => group.Key,
+            group => group.Select(s => new ScheduleResponseDTO
+            {
+                Id = s.Id,
+                Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+                Name = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Subject.Name)
+                        .FirstOrDefault() ?? string.Empty
+                    : string.Empty,
+                Description = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Subject.Description)
+                        .FirstOrDefault() ?? string.Empty
+                    : string.Empty,
+                TimeSlot = s.TimeSlot,
+                QuestionCount = s.SubjectScheduleRelations != null 
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.QuestionCount)
+                        .FirstOrDefault() ?? 0
+                    : 0,
+                IsDone = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.IsDone)
+                        .FirstOrDefault() ?? false
+                    : false
             }).ToList()
         );
 

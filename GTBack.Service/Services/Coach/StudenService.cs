@@ -161,6 +161,27 @@ public class StudentAuthService : IStudentAuthService
 
         return new SuccessResult("Password reset successfully", HttpStatusCode.OK);
     }
+    
+    public async Task<IDataResults<List<StudentUpdateDTO>>> GetStudentsByCoachId()
+    {
+        
+        var userIdClaim = _loggedUser.FindFirstValue("Id");
+
+        var student = await _studentService.Where(x => x.CoachId ==Int32.Parse(userIdClaim) ).Select(s=>new StudentUpdateDTO()
+        {
+            Id=s.Id,
+            Name = s.Name,
+            Surname = s.Surname,
+            Grade = s.Grade,
+            Phone = s.Phone,
+            Email = s.Email,
+            
+            
+        }).ToListAsync();
+
+        return new SuccessDataResult<List<StudentUpdateDTO>>(student);
+
+    }
 
     // Send Reset Password Link
     public async Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO resetPasswordLinkDto)
@@ -236,4 +257,6 @@ public class StudentAuthService : IStudentAuthService
 
         smtpClient.Send(message);
     }
+    
+    
 }

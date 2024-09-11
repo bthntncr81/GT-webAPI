@@ -26,9 +26,9 @@ namespace GTBack.WebAPI.Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<IActionResult> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot)
+        public async Task<IActionResult> AddSubjectToStudent(AddLessonToStudentDTO model)
         {
-            var result = await _subjectService.AddSubjectToStudent(sublessonId, day, timeSlot);
+            var result = await _subjectService.AddSubjectToStudent(model.SubLessonId, model.day, model.TimeSlot,model.StudentId);
             return ApiResult(result);
         }
 
@@ -80,6 +80,14 @@ namespace GTBack.WebAPI.Controllers
         public async Task<IActionResult> GetAllWeek()
         {
             var result=  await _subjectService.GetSubjectsByStudentIdGroupedByDay();
+            return ApiResult(result);
+
+        }
+        
+        [HttpGet("GetAllWeekById/{id}")]
+        public async Task<IActionResult> GetAllWeek(int id)
+        {
+            var result=  await _subjectService.GetSubjectsByStudentIdGroupedByDay(id);
             return ApiResult(result);
 
         }

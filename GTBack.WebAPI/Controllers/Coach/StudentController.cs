@@ -65,5 +65,14 @@ namespace GTBack.WebAPI.Controllers
         {
             return ApiResult(await _studentAuthService.Delete(id));
         }
+        [Authorize]
+        [HttpGet("GetCoachsStudent")]
+        public async Task<IActionResult> GetCoachsStudent()
+        {
+            return ApiResult(await _studentAuthService.GetStudentsByCoachId());
+        }
+        
+        
     }
+    
 }

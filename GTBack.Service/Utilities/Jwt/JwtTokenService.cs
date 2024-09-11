@@ -37,13 +37,13 @@ namespace GTBack.Service.Utilities.Jwt
                 new(ClaimTypes.Surname, userDto.Surname),
                 new("UserType", userDto.UserTypeId.ToString()),
                 new("CompanyId", userDto.EcommerceCompanyId.ToString()),
-                new("isStudent", isStudent.ToString()??"false"),
+                new("isStudent", isStudent.ToString()),
             };
             claims.Add(new Claim("name", userDto.Name));
             claims.Add(new Claim("surname", userDto.Surname));
             claims.Add(new Claim("userType", userDto.UserTypeId.ToString()));
             claims.Add(new Claim("companyId", userDto.EcommerceCompanyId.ToString()));
-            claims.Add(new Claim("isStudent", isStudent.ToString()??"false"));
+            claims.Add(new Claim("isStudent", isStudent.ToString()));
 
 
             claims.Add(new Claim("ExpTime", expirationTime.ToString()));

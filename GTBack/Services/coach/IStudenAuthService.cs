@@ -14,4 +14,5 @@ public interface IStudentAuthService
     Task<IDataResults<StudentUpdateDTO>> UpdateStudent(StudentUpdateDTO updateDto);
     Task<IResults> ResetPassword(ResetPasswordDTO resetPasswordDto);
     Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO resetPasswordLinkDto);
+    Task<IDataResults<List<StudentUpdateDTO>>> GetStudentsByCoachId();
 }

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 public interface ISubjectService
 {
-    Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot);
     Task<IResults> UpdateSubjectForStudent(long subjectId, DayOfWeekEnum day, string timeSlot);
     Task<IResults> DeleteSubjectForStudent(long scheduleId);
     Task<IDataResults<List<LessonAddDTO>>> GetAllLessonsWithSubLessonsAndSubjects();
@@ -19,4 +18,6 @@ public interface ISubjectService
     Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay();
 
     Task<IResults> AddSubjectOnSubLesson(AddSubjectToLessonDTO model);
+    Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay(int studentId);
+    Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot, long studentId);
 }
