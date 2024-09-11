@@ -295,7 +295,7 @@ public class ShoppingUserService:IShoppingUserService
 
     private async Task<AuthenticatedUserResponseDto> Authenticate(ClientRegisterRequestDTO userDto)
     {
-        var accessToken = _tokenService.GenerateAccessToken(userDto);
+        var accessToken = _tokenService.GenerateAccessToken(userDto,false);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         var refreshTokenDto = new RefreshTokenDto()

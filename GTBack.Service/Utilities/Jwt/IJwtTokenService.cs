@@ -11,7 +11,7 @@ namespace GTBack.Service.Utilities.Jwt
 {
     public interface IJwtTokenService<T>  where T :BaseRegisterDTO
     {
-        public AccessTokenDto GenerateAccessToken(BaseRegisterDTO userDto);
+        public AccessTokenDto GenerateAccessToken(BaseRegisterDTO userDto,bool? isStudent);
  
         public string GenerateRefreshToken();
         public bool Validate(string refreshToken);
