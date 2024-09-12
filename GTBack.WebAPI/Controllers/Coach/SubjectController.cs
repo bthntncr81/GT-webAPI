@@ -92,6 +92,14 @@ namespace GTBack.WebAPI.Controllers
 
         }
         
+        [HttpGet("CheckSubject")]
+        public async Task<IActionResult> CheckSubject([FromQuery]long scheduleRelId,bool isDone)
+        {
+            var result=  await _subjectService.ChangeIsDone(scheduleRelId,isDone);
+            return ApiResult(result);
+
+        }
+        
         
         [HttpPost("AddSubjectToSchedule")]
         public async Task<IActionResult> AddSubjectOnSubLesson(AddSubjectToLessonDTO model)

@@ -18,6 +18,7 @@ public interface ISubjectService
     Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay();
 
     Task<IResults> AddSubjectOnSubLesson(AddSubjectToLessonDTO model);
+    Task<IResults> ChangeIsDone( long scheduleRelId,bool isDone);
     Task<IDataResults<Dictionary<string, List<ScheduleResponseDTO>>>> GetSubjectsByStudentIdGroupedByDay(int studentId);
     Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot, long studentId);
 }

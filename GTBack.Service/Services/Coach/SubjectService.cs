@@ -232,6 +232,13 @@ public class SubjectService : ISubjectService
             {
                 Id = s.Id,
                 Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+                SublessonId = s.SubLesson?.Id ?? 0, // Get SubLesson Name
+                ScheduleRelId = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Id)
+                        .FirstOrDefault() 
+                    : 0,
                 Name = s.SubjectScheduleRelations != null
                     ? s.SubjectScheduleRelations
                         .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
@@ -245,7 +252,13 @@ public class SubjectService : ISubjectService
                         .FirstOrDefault() ?? string.Empty    : string.Empty,
                 TimeSlot = s.TimeSlot,
                 QuestionCount = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount??0,
-                IsDone = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone??false
+                IsDone = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone??false,
+                SubjectId = s.SubjectScheduleRelations != null 
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.SubjectId)
+                        .FirstOrDefault() 
+                    : 0,
             }).ToList()
         );
 
@@ -277,6 +290,12 @@ public class SubjectService : ISubjectService
                 Id = s.Id,
                 Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
                 SublessonId = s.SubLesson?.Id ?? 0, // Get SubLesson Name
+                ScheduleRelId = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Id)
+                        .FirstOrDefault() 
+                    : 0,
                 Name = s.SubjectScheduleRelations != null
                     ? s.SubjectScheduleRelations
                         .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
@@ -299,14 +318,14 @@ public class SubjectService : ISubjectService
                 SubjectId = s.SubjectScheduleRelations != null 
                     ? s.SubjectScheduleRelations
                         .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
-                        .Select(x => x.Id)
+                        .Select(x => x.SubjectId)
                         .FirstOrDefault() 
                     : 0,
                 IsDone = s.SubjectScheduleRelations != null
                     ? s.SubjectScheduleRelations
                         .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
                         .Select(x => x.IsDone)
-                        .FirstOrDefault() ?? false
+                        .FirstOrDefault() 
                     : false
             }).ToList()
         );
@@ -324,24 +343,65 @@ public class SubjectService : ISubjectService
                 .ToListAsync();
      
 // Map the results to ScheduleResponseDTO
-            var response = schedules.Select(schedule => new ScheduleResponseDTO
+            var response = schedules.Select(s => new ScheduleResponseDTO
             {
-                Id = schedule.Id,
-                Sublesson = schedule.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
-                SublessonId = schedule.SubLesson?.Id ?? 0, // Get SubLesson Name
-                Name = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().Subject.Name, // Get Subject Name
-                Description = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().Subject.Name, // Get Subject Description
-                TimeSlot = schedule.TimeSlot,
-                QuestionCount = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount,
-                IsDone = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone
+                Id = s.Id,
+                Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+                SublessonId = s.SubLesson.Id, // Get SubLesson Name
+                ScheduleRelId = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Id)
+                        .FirstOrDefault() 
+                    : 0,
+                Name = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Subject.Name)
+                        .FirstOrDefault() ?? string.Empty
+                    : string.Empty,
+                Description = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
+                        .Select(x => x.Subject.Description)
+                        .FirstOrDefault() ?? string.Empty
+                    : string.Empty,
+                TimeSlot = s.TimeSlot,
+                QuestionCount = s.SubjectScheduleRelations != null 
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.QuestionCount)
+                        .FirstOrDefault() 
+                    : 0,
+                SubjectId = s.SubjectScheduleRelations != null 
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.SubjectId)
+                        .FirstOrDefault() 
+                    : 0,
+                IsDone = s.SubjectScheduleRelations != null
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.IsDone)
+                        .FirstOrDefault() 
+                    : false
             }).ToList();
   
 
         return new SuccessDataResult<List<ScheduleResponseDTO>>(response);
     }
-        
-        
-    
+
+
+       public  async Task<IResults> ChangeIsDone(long scheduleRelId, bool isDone)
+       {
+
+          var scheduleRel= await _scheduleSubkectRelationService.Where(x => x.Id == scheduleRelId).FirstOrDefaultAsync();
+          scheduleRel.IsDone = isDone;
+
+       await   _scheduleSubkectRelationService.UpdateAsync(scheduleRel);
+            return new SuccessResult("Succesfuly Changed");
+
+        }
         
         
         
