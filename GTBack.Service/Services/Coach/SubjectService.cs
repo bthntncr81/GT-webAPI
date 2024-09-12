@@ -98,12 +98,27 @@ public class SubjectService : ISubjectService
            return new ErrorResult("Subject is not connected this subLesson");
 
        }
+       
+       // Get the current date and time in local time
+       DateTime now = DateTime.Now;
+
+       // Calculate the number of days until Sunday (Sunday is considered DayOfWeek.Sunday)
+       int daysUntilSunday = ((int)DayOfWeek.Sunday - (int)now.DayOfWeek + 7) % 7;
+
+       // Find the upcoming Sunday
+       DateTime nextSunday = now.AddDays(daysUntilSunday);
+
+       // Set the time to 23:59:00 for the next Sunday in local time
+       DateTime sundayAtMidnight = new DateTime(nextSunday.Year, nextSunday.Month, nextSunday.Day, 23, 59, 0, DateTimeKind.Local);
+
+       // Convert the time to UTC before saving to the database
+       DateTime sundayAtMidnightUtc = sundayAtMidnight.ToUniversalTime();
 
        var secSub = new SubjectScheduleRelation()
        {
            SubjectId = model.SubjectId,
            ScheduleId = model.ScheduleId,
-           ExpireDate = model.ExipreDate,
+           ExpireDate = sundayAtMidnightUtc,
            QuestionCount = model.QuestionCount,
            IsDone = false,
        };
@@ -251,6 +266,7 @@ public class SubjectService : ISubjectService
             {
                 Id = s.Id,
                 Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+                SublessonId = s.SubLesson?.Id ?? 0, // Get SubLesson Name
                 Name = s.SubjectScheduleRelations != null
                     ? s.SubjectScheduleRelations
                         .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
@@ -296,6 +312,7 @@ public class SubjectService : ISubjectService
             {
                 Id = schedule.Id,
                 Sublesson = schedule.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
+                SublessonId = schedule.SubLesson?.Id ?? 0, // Get SubLesson Name
                 Name = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().Subject.Name, // Get Subject Name
                 Description = schedule.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().Subject.Name, // Get Subject Description
                 TimeSlot = schedule.TimeSlot,

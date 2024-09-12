@@ -6,6 +6,5 @@ public class AddSubjectToLessonDTO
 {
     public long SubjectId { get; set; }
     public long ScheduleId { get; set; }
-    public DateTime ExipreDate { get; set; }
     public int QuestionCount { get; set; }
 }
