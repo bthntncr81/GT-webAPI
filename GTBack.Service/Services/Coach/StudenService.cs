@@ -88,6 +88,10 @@ public class StudentAuthService : IStudentAuthService
 
         await _studentService.AddAsync(student);
 
+        coach.ActiveCoachGuid = null;
+
+        await _coachService.UpdateAsync(coach);
+
         var response = await Authenticate(_mapper.Map<StudentRegisterDTO>(student));
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response, HttpStatusCode.OK);
     }
