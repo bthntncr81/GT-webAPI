@@ -163,7 +163,6 @@ public class SubjectService : ISubjectService
     // Delete a subject for the student
     public async Task<IResults> DeleteSubjectForStudent(long scheduleId)
     {
-        long studentId = GetStudentIdFromToken(); // Get studentId from token
 
         var schedule = await _scheduleService
             .Where(s => s.Id==scheduleId )
