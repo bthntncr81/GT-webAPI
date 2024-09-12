@@ -113,16 +113,27 @@ public class SubjectService : ISubjectService
 
        // Convert the time to UTC before saving to the database
        DateTime sundayAtMidnightUtc = sundayAtMidnight.ToUniversalTime();
-
-       var secSub = new SubjectScheduleRelation()
+       var existingRel = await _scheduleSubkectRelationService.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+       if (existingRel.IsNull())
        {
-           SubjectId = model.SubjectId,
-           ScheduleId = model.ScheduleId,
-           ExpireDate = sundayAtMidnightUtc,
-           QuestionCount = model.QuestionCount,
-           IsDone = false,
-       };
-        await _scheduleSubkectRelationService.AddAsync(secSub);
+           var secSub = new SubjectScheduleRelation()
+           {
+               SubjectId = model.SubjectId,
+               ScheduleId = model.ScheduleId,
+               ExpireDate = sundayAtMidnightUtc,
+               QuestionCount = model.QuestionCount,
+               IsDone = false,
+           };
+           await _scheduleSubkectRelationService.AddAsync(secSub);
+       }
+       else
+       {
+           existingRel.SubjectId = model.SubjectId;
+           existingRel.QuestionCount = model.QuestionCount;
+           await _scheduleSubkectRelationService.UpdateAsync(existingRel);
+
+       }
+
         return new SuccessResult("Subject added to student schedule successfully");
     }
 
@@ -285,6 +296,12 @@ public class SubjectService : ISubjectService
                         .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
                         .Select(x => x.QuestionCount)
                         .FirstOrDefault() ?? 0
+                    : 0,
+                SubjectId = s.SubjectScheduleRelations != null 
+                    ? s.SubjectScheduleRelations
+                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
+                        .Select(x => x.Id)
+                        .FirstOrDefault() 
                     : 0,
                 IsDone = s.SubjectScheduleRelations != null
                     ? s.SubjectScheduleRelations
