@@ -231,34 +231,15 @@ public class SubjectService : ISubjectService
             group => group.Select(s => new ScheduleResponseDTO
             {
                 Id = s.Id,
-                Sublesson = s.SubLesson?.Name ?? string.Empty, // Get SubLesson Name
-                SublessonId = s.SubLesson?.Id ?? 0, // Get SubLesson Name
-                ScheduleRelId = s.SubjectScheduleRelations != null
-                    ? s.SubjectScheduleRelations
-                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
-                        .Select(x => x.Id)
-                        .FirstOrDefault() 
-                    : 0,
-                Name = s.SubjectScheduleRelations != null
-                    ? s.SubjectScheduleRelations
-                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
-                        .Select(x => x.Subject.Name)
-                        .FirstOrDefault() ?? string.Empty
-                    : string.Empty,
-                Description = s.SubjectScheduleRelations != null
-                    ? s.SubjectScheduleRelations
-                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)
-                        .Select(x => x.Subject.Description)
-                        .FirstOrDefault() ?? string.Empty    : string.Empty,
+                Sublesson = s.SubLesson?.Name ?? string.Empty, // Ensure SubLesson is not null
+                SublessonId = s.SubLesson?.Id ?? 0,
+                ScheduleRelId = s.SubjectScheduleRelations?.FirstOrDefault(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)?.Id ?? 0,
+                Name = s.SubjectScheduleRelations?.FirstOrDefault(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)?.Subject?.Name ?? string.Empty,
+                Description = s.SubjectScheduleRelations?.FirstOrDefault(x => x.ExpireDate > DateTime.Now.ToUniversalTime() && x.Subject != null)?.Subject?.Description ?? string.Empty,
                 TimeSlot = s.TimeSlot,
-                QuestionCount = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().QuestionCount??0,
-                IsDone = s.SubjectScheduleRelations.Where(x=>x.ExpireDate> DateTime.Now.ToUniversalTime()).FirstOrDefault().IsDone??false,
-                SubjectId = s.SubjectScheduleRelations != null 
-                    ? s.SubjectScheduleRelations
-                        .Where(x => x.ExpireDate > DateTime.Now.ToUniversalTime())
-                        .Select(x => x.SubjectId)
-                        .FirstOrDefault() 
-                    : 0,
+                QuestionCount = s.SubjectScheduleRelations?.FirstOrDefault(x => x.ExpireDate > DateTime.Now.ToUniversalTime())?.QuestionCount ?? 0,
+                IsDone = s.SubjectScheduleRelations?.FirstOrDefault(x => x.ExpireDate > DateTime.Now.ToUniversalTime())?.IsDone ?? false,
+                SubjectId = s.SubjectScheduleRelations?.FirstOrDefault(x => x.ExpireDate > DateTime.Now.ToUniversalTime())?.SubjectId ?? 0,
             }).ToList()
         );
 

@@ -26,46 +26,81 @@ public class LessonService : ILessonService
         var existingLesson = await _lessonService.Where(x => x.Name == lessonDto.Name).FirstOrDefaultAsync();
         if (existingLesson != null)
         {
-            return new ErrorResult("Lesson already exists");
-        }
+            // Create a new Lesson entity
+         
 
-        // Create a new Lesson entity
-        var lesson = new Lesson
-        {
-            Name = lessonDto.Name,
-            Description = lessonDto.Description,
-            SubLessons = new List<SubLesson>()
-        };
-
-        // Add SubLessons and Subjects from DTO
-        foreach (var subLessonDto in lessonDto.SubLessons)
-        {
-            var subLesson = new SubLesson
+            // Add SubLessons and Subjects from DTO
+            foreach (var subLessonDto in lessonDto.SubLessons)
             {
-                Name = subLessonDto.Name,
-                Description = subLessonDto.Description,
-                LessonId = lesson.Id,
-                Subjects = new List<Subject>()
-            };
-
-            foreach (var subjectDto in subLessonDto.Subjects)
-            {
-                var subject = new Subject
+                var subLesson = new SubLesson
                 {
-                    Name = subjectDto.Name,
-                    Description = subjectDto.Description,
-                    SubLessonId = subLesson.Id
+                    Name = subLessonDto.Name,
+                    Description = subLessonDto.Description,
+                    LessonId = existingLesson.Id,
+                    Subjects = new List<Subject>()
                 };
 
-                subLesson.Subjects.Add(subject);
+                foreach (var subjectDto in subLessonDto.Subjects)
+                {
+                    var subject = new Subject
+                    {
+                        Name = subjectDto.Name,
+                        Description = subjectDto.Description,
+                        SubLessonId = subLesson.Id
+                    };
+
+                    subLesson.Subjects.Add(subject);
+                }
+                await _subLessonService.AddAsync(subLesson);
+
             }
 
-            lesson.SubLessons.Add(subLesson);
+            // Add the lesson and associated sub-lessons and subjects to the database
+            
+        }
+        else
+        {
+            // Create a new Lesson entity
+            var lesson = new Lesson
+            {
+                Name = lessonDto.Name,
+                Description = lessonDto.Description,
+                SubLessons = new List<SubLesson>()
+            };
+
+            // Add SubLessons and Subjects from DTO
+            foreach (var subLessonDto in lessonDto.SubLessons)
+            {
+                var subLesson = new SubLesson
+                {
+                    Name = subLessonDto.Name,
+                    Description = subLessonDto.Description,
+                    LessonId = lesson.Id,
+                    Subjects = new List<Subject>()
+                };
+
+                foreach (var subjectDto in subLessonDto.Subjects)
+                {
+                    var subject = new Subject
+                    {
+                        Name = subjectDto.Name,
+                        Description = subjectDto.Description,
+                        SubLessonId = subLesson.Id
+                    };
+
+                    subLesson.Subjects.Add(subject);
+                }
+
+                lesson.SubLessons.Add(subLesson);
+            }
+
+            // Add the lesson and associated sub-lessons and subjects to the database
+            await _lessonService.AddAsync(lesson);
         }
 
-        // Add the lesson and associated sub-lessons and subjects to the database
-        await _lessonService.AddAsync(lesson);
+     
+      
 
-        return new SuccessResult("Lesson, SubLessons, and Subjects added successfully");
+            return new SuccessResult("Lesson, SubLessons, and Subjects added successfully");
     }
 }
