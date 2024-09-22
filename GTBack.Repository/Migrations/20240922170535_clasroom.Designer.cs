@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240922170535_clasroom")]
+    partial class clasroom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,9 +106,6 @@ namespace GTBack.Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CoachId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -124,8 +123,6 @@ namespace GTBack.Repository.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CoachId");
 
                     b.ToTable("Classrooms");
                 });
@@ -1331,17 +1328,6 @@ namespace GTBack.Repository.Migrations
                     b.ToTable("ShoppingUser");
                 });
 
-            modelBuilder.Entity("GTBack.Core.Entities.Coach.Classroom", b =>
-                {
-                    b.HasOne("GTBack.Core.Entities.Coach.Coach", "Coach")
-                        .WithMany("Classrooms")
-                        .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coach");
-                });
-
             modelBuilder.Entity("GTBack.Core.Entities.Coach.QuestionImage", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.Coach.SubjectScheduleRelation", "SubjectScheduleRelation")
@@ -1665,8 +1651,6 @@ namespace GTBack.Repository.Migrations
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Coach", b =>
                 {
-                    b.Navigation("Classrooms");
-
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("Students");

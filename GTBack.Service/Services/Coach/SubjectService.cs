@@ -383,8 +383,6 @@ public class SubjectService : ISubjectService
             return new SuccessResult("Succesfuly Changed");
 
         }
-        
-        
-        
+    
 
 }

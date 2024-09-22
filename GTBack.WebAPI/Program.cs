@@ -108,6 +108,7 @@ builder.Services.AddTransient(typeof(IListingServiceI<,>), typeof(ListService<,>
 builder.Services.AddScoped(typeof(IShoppingCompany), typeof(ShoppingCompanyService));
 builder.Services.AddScoped(typeof(ILessonService), typeof(LessonService));
 builder.Services.AddScoped(typeof(IQuestionImageService), typeof(QuestionImageService));
+builder.Services.AddScoped(typeof(IClassroomService), typeof(ClasroomService));
 builder.Services.AddScoped(typeof(ISubjectService), typeof(SubjectService));
 builder.Services.AddScoped(typeof(ICoachAuthService), typeof(CoachService));
 builder.Services.AddScoped(typeof(IStudentAuthService), typeof(StudentAuthService));

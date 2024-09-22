@@ -38,6 +38,7 @@ namespace GTBack.Repository
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<SubLesson> SubLessons { get; set; }
         public DbSet<SubjectScheduleRelation> SubjectScheduleRelations { get; set; }
+        public DbSet<Classroom> Classrooms { get; set; }
         
              
         //Ecommerce

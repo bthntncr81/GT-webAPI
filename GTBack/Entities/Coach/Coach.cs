@@ -12,5 +12,6 @@ public class Coach:BaseEntity
 
 
     public virtual ICollection<RefreshToken>? RefreshTokens { get; set; } 
+    public virtual ICollection<Classroom>? Classrooms { get; set; } 
     public ICollection<Student> Students { get; set; } // Koçun öğrencileri
 }

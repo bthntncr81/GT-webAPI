@@ -29,7 +29,7 @@ namespace GTBack.WebAPI.Controllers.Pay
         public async Task<IActionResult> Pay(PaymentRequestDTO req)
         {
             Options options = new Options();
-            if (req.isDevelopment)
+            if (!req.isDevelopment)
             {
                options=new Options() {
                     ApiKey = "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",

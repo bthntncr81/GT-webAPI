@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5ea7e60-7f05-43eb-ae70-2eece1cd4f28" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GTBack/DTO/Ecommerce/Response/BasketADDResponseDTO.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GT-webAPI.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GT-webAPI.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack.Repository/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack.Repository/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack.Service/Services/Ecommerce/EcommerceCompanyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack.Service/Services/Ecommerce/EcommerceCompanyService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack.Service/Services/Ecommerce/EcommerceProductService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack.Service/Services/Ecommerce/EcommerceProductService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack.WebAPI/Controllers/Ecommerce/EcommerceProductController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack.WebAPI/Controllers/Ecommerce/EcommerceProductController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack.WebAPI/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack.WebAPI/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack/DTO/Ecommerce/Request/CompanyAddDTO.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack/DTO/Ecommerce/Request/CompanyAddDTO.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack/DTO/Ecommerce/Request/EcommerceProductFilter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack/DTO/Ecommerce/Request/EcommerceProductFilter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack/Entities/Ecommerce/EcommerceProduct.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack/Entities/Ecommerce/EcommerceProduct.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack/Enums/Shopping/OrderStatusEnum.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack/Enums/Shopping/OrderStatusEnum.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GTBack/Services/Ecommerce/IEcommerceProductService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack/Services/Ecommerce/IEcommerceProductService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GTBack.WebAPI/Controllers/Pay/PaymentController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GTBack.WebAPI/Controllers/Pay/PaymentController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,9 +17,10 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/GTBack.WebAPI/Controllers/Ecommerce/AuthorizationController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GTBack.WebAPI/Controllers/Ecommerce/AuthorizationController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GTBack.WebAPI/Controllers/Shopping/AuthController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/GTBack.WebAPI/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/GTBack/Results/DataResults.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GTBack/Results/DataResults.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -80,6 +71,9 @@
       <workItem from="1724233784840" duration="13000" />
       <workItem from="1724233813468" duration="5000" />
       <workItem from="1724666793005" duration="647000" />
+      <workItem from="1726773803908" duration="13000" />
+      <workItem from="1726774894295" duration="15000" />
+      <workItem from="1727017425933" duration="17000" />
     </task>
     <servers />
   </component>
