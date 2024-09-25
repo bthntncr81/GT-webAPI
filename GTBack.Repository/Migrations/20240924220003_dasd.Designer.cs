@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240924220003_dasd")]
+    partial class dasd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,8 +257,7 @@ namespace GTBack.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudentId")
-                        .IsUnique();
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Parents");
                 });
@@ -364,9 +365,6 @@ namespace GTBack.Repository.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<long>("ParentId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -1402,8 +1400,8 @@ namespace GTBack.Repository.Migrations
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Parent", b =>
                 {
                     b.HasOne("GTBack.Core.Entities.Coach.Student", "Student")
-                        .WithOne("Parent")
-                        .HasForeignKey("GTBack.Core.Entities.Coach.Parent", "StudentId")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1752,9 +1750,6 @@ namespace GTBack.Repository.Migrations
 
             modelBuilder.Entity("GTBack.Core.Entities.Coach.Student", b =>
                 {
-                    b.Navigation("Parent")
-                        .IsRequired();
-
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("Schedules");

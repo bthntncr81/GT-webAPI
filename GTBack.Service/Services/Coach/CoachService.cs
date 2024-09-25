@@ -160,7 +160,7 @@ public class CoachService : ICoachAuthService
     // Authentication
     private async Task<AuthenticatedUserResponseDto> Authenticate(CoachRegisterDTO userDto)
     {
-        var accessToken = _tokenService.GenerateAccessToken(userDto,false);
+        var accessToken = _tokenService.GenerateAccessTokenCoach(userDto,"teacher");
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         await _refreshTokenService.Create(new RefreshTokenDto

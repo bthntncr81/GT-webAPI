@@ -111,6 +111,7 @@ builder.Services.AddScoped(typeof(IQuestionImageService), typeof(QuestionImageSe
 builder.Services.AddScoped(typeof(IClassroomService), typeof(ClasroomService));
 builder.Services.AddScoped(typeof(ISubjectService), typeof(SubjectService));
 builder.Services.AddScoped(typeof(ICoachAuthService), typeof(CoachService));
+builder.Services.AddScoped(typeof(IParentAuthService), typeof(ParentService));
 builder.Services.AddScoped(typeof(IStudentAuthService), typeof(StudentAuthService));
 builder.Services.AddScoped(typeof(IShoppingUserService), typeof(ShoppingUserService));
 builder.Services.AddScoped(typeof(IAuthService), typeof(ClientAuthService));

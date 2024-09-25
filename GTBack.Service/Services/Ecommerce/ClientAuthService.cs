@@ -198,7 +198,7 @@ public class ClientAuthService:IAuthService
 
     private async Task<AuthenticatedUserResponseDto> Authenticate(ClientRegisterRequestDTO userDto)
     {
-        var accessToken = _tokenService.GenerateAccessToken(userDto,false);
+        var accessToken = _tokenService.GenerateAccessToken(userDto);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         var refreshTokenDto = new RefreshTokenDto()

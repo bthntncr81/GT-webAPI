@@ -221,7 +221,7 @@ public class StudentAuthService : IStudentAuthService
     // Authenticate Student (generates tokens)
     private async Task<AuthenticatedUserResponseDto> Authenticate(StudentRegisterDTO studentDto)
     {
-        var accessToken = _tokenService.GenerateAccessToken(studentDto,true);
+        var accessToken = _tokenService.GenerateAccessTokenCoach(studentDto,"student");
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         await _refreshTokenService.Create(new RefreshTokenDto

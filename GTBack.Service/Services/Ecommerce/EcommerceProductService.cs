@@ -238,7 +238,7 @@ public class EcommerceProductService : IEcommerceProductService
         else
         {
             basket = await _basketService.Where(x => !x.IsDeleted&& x.Guid == guid ).FirstOrDefaultAsync();
-            if (!basket.Id.IsNull())
+            if (!basket.IsNull())
             {
                 isBasketExist = true;
             }
@@ -320,10 +320,13 @@ public class EcommerceProductService : IEcommerceProductService
         var basketRelRepo =  _basketProdRelService.Where(x =>!x.IsDeleted&&  x.EcommerceBasketId == basket.Id);
         var variantRepo =  _variantService.Where(x => !x.IsDeleted);
         var imageRepo =  _imageService.Where(x => !x.IsDeleted);
+        var productRepo =  _productService.Where(x => !x.IsDeleted);
 
         var query = from variant in variantRepo
             join basketRel in basketRelRepo on variant.Id equals basketRel.EcommerceVariantId into basketRelLeft
             from basketRel in basketRelLeft
+            join prod in productRepo on variant.EcommerceProductId equals prod.Id into productLeft
+            from prod in productLeft
             select new BasketDTO()
 
             {
@@ -338,6 +341,9 @@ public class EcommerceProductService : IEcommerceProductService
                   EcommerceProductId = variant.EcommerceProductId,
                   ThumbImage = variant.ThumbImage
               },
+              Category1 = prod.Category1,
+              Category2 = prod.Category2,
+              Category3 = prod.Category3,
               Count = basketRel.Count
               
               
@@ -356,10 +362,13 @@ public class EcommerceProductService : IEcommerceProductService
          var basketRelRepo =  _basketProdRelService.Where(x => x.EcommerceBasketId == client.BasketId);
          var variantRepo =  _variantService.Where(x => !x.IsDeleted);
          var imageRepo =  _imageService.Where(x => !x.IsDeleted);
+         var productRepo =  _productService.Where(x => !x.IsDeleted);
 
          var query = from variant in variantRepo
              join basketRel in basketRelRepo on variant.Id equals basketRel.EcommerceVariantId into basketRelLeft
              from basketRel in basketRelLeft
+             join prod in productRepo on variant.EcommerceProductId equals prod.Id into productLeft
+             from prod in productLeft
              select new BasketDTO()
 
              {
@@ -372,12 +381,16 @@ public class EcommerceProductService : IEcommerceProductService
                      Stock = variant.Stock,
                      Description = variant.Description,
                      EcommerceProductId = variant.EcommerceProductId,
-                     VariantIndicator = variant.VariantIndicator
+                     ThumbImage = variant.ThumbImage
                  },
+                 Category1 = prod.Category1,
+                 Category2 = prod.Category2,
+                 Category3 = prod.Category3,
                  Count = basketRel.Count
               
               
              };
+
 
          var myList = await query.ToListAsync();
 

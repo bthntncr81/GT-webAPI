@@ -39,6 +39,7 @@ namespace GTBack.Repository
         public DbSet<SubLesson> SubLessons { get; set; }
         public DbSet<SubjectScheduleRelation> SubjectScheduleRelations { get; set; }
         public DbSet<Classroom> Classrooms { get; set; }
+        public DbSet<Parent> Parents { get; set; }
         
              
         //Ecommerce
@@ -76,6 +77,16 @@ namespace GTBack.Repository
                 .HasOne(s => s.Coach)
                 .WithMany(c => c.Students)
                 .HasForeignKey(s => s.CoachId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.Parent)
+                .WithOne(c => c.Student).HasForeignKey<Student>(s=>s.ParentId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Parent>()
+                .HasOne(s => s.Student)
+                .WithOne(c => c.Parent).HasForeignKey<Parent>(s=>s.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Schedule ile Subject ve Student ilişkisi

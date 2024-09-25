@@ -56,6 +56,10 @@ namespace GTBack.Service.Mapping
             
             // Mapping for Refresh Tokens
             CreateMap<RefreshToken, RefreshTokenDto>().ReverseMap();
+            
+            // Mapping for Coach
+            CreateMap<ParentRegisterDTO, Parent>().ReverseMap();
+            CreateMap<UserDTO, Parent>().ReverseMap();
 
             // Mapping for Coach
             CreateMap<CoachRegisterDTO, Coach>().ReverseMap();

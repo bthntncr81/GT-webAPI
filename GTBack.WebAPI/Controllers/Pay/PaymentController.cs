@@ -25,104 +25,110 @@ namespace GTBack.WebAPI.Controllers.Pay
         }
   
         
-        [Microsoft.AspNetCore.Mvc.HttpPost("Pay")]
-        public async Task<IActionResult> Pay(PaymentRequestDTO req)
+       [Microsoft.AspNetCore.Mvc.HttpPost("Pay")]
+public async Task<IActionResult> Pay(PaymentRequestDTO req)
+{
+    try
+    {
+        // Set API options based on the environment
+        Options options = new Options
         {
-            Options options = new Options();
-            if (!req.isDevelopment)
-            {
-               options=new Options() {
-                    ApiKey = "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
-                    SecretKey = "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
-                    BaseUrl = "https://api.iyzipay.com"
-                };
-            }
-            else
-            {
-                options=new Options() {
-                    ApiKey = "sandbox-ifkcjkaPdtshoWkt36gjOwpZ9Z5XsUZM",
-                    SecretKey = "sandbox-0PfKYCdPshA2ZhqfdGq6JxfB5dXQWeqa",
-                    BaseUrl = "https://sandbox-api.iyzipay.com"
-                };
-            }
-        
-        CreatePaymentRequest request = new CreatePaymentRequest();
-        request.Locale = req.locale;
-        request.ConversationId = Guid.NewGuid().ToString();
-        request.Price = req.price;
-        request.PaidPrice = req.paidPrice;
-        request.Currency = Currency.TRY.ToString();
-        request.Installment = req.installment;
-        request.BasketId = req.basketId;
-        request.PaymentChannel = req.paymentChannel;
-        request.PaymentGroup = req.paymentGroup;
-        request.CallbackUrl = "https://localhost:5213/api/Payments/Payment/PayCallBack";
-        
-        PaymentCard paymentCard = new PaymentCard();
-        paymentCard.CardHolderName = req.paymentCard.cardHolderName;
-        paymentCard.CardNumber = req.paymentCard.cardNumber;
-        paymentCard.ExpireMonth = req.paymentCard.expireMonth;
-        paymentCard.ExpireYear = req.paymentCard.expireYear;
-        paymentCard.Cvc = req.paymentCard.cvc;
-        paymentCard.RegisterCard = req.paymentCard.registerCard;
-        request.PaymentCard = paymentCard;
-        
-        Buyer buyer = new Buyer();
-        buyer.Id = req.buyer.id;
-        buyer.Name = req.buyer.name;
-        buyer.Surname = req.buyer.surname;
-        buyer.GsmNumber = req.buyer.gsmNumber;
-        buyer.Email = req.buyer.email;
-        buyer.IdentityNumber = req.buyer.identityNumber;
-        buyer.LastLoginDate = req.buyer.lastLoginDate;
-        buyer.RegistrationDate = req.buyer.registrationDate;
-        buyer.RegistrationAddress = req.buyer.registrationAddress;
-        buyer.Ip = req.buyer.ip;
-        buyer.City = req.buyer.city;
-        buyer.Country = req.buyer.country;
-        buyer.ZipCode = req.buyer.zipCode;
-        request.Buyer = buyer;
-        
-        Address shippingAddress = new Address();
-        shippingAddress.ContactName = req.ShippingAddress.ContactName;
-        shippingAddress.City = req.ShippingAddress.City;
-        shippingAddress.Country = req.ShippingAddress.Country;
-        shippingAddress.Description = req.ShippingAddress.Description;
-        shippingAddress.ZipCode = req.ShippingAddress.ZipCode;
-        request.ShippingAddress = shippingAddress;
-        
-        Address billingAddress = new Address();
-        billingAddress.ContactName = req.BillingAddress.ContactName;
-        billingAddress.City = req.BillingAddress.City;
-        billingAddress.Country = req.BillingAddress.Country;
-        billingAddress.Description = req.BillingAddress.Description;
-        billingAddress.ZipCode = req.BillingAddress.ZipCode;
-        request.BillingAddress = billingAddress;
-        
-        // request.PaymentChannel = PaymentChannel.WEB.ToString();
-        // request.PaymentGroup = PaymentGroup.PRODUCT.ToString();
-        List<BasketItem> basketItems = new List<BasketItem>();
+            ApiKey = req.isDevelopment ? "sandbox-ifkcjkaPdtshoWkt36gjOwpZ9Z5XsUZM" : "VAxH2UuoOaLKcQY1Q5C7xnI9U1Hm3V0y",
+            SecretKey = req.isDevelopment ? "sandbox-0PfKYCdPshA2ZhqfdGq6JxfB5dXQWeqa" : "h9zhWxKLbkkb0f4Y0FKltAbLwgrlfWuV",
+            BaseUrl = req.isDevelopment ? "https://sandbox-api.iyzipay.com" : "https://api.iyzipay.com"
+        };
 
-        foreach (var item in req.basketItems)
+        // Create a payment request
+        CreatePaymentRequest request = new CreatePaymentRequest
         {
-            BasketItem basketItem = new BasketItem();
-            basketItem.Id = item.id;
-            basketItem.Name = item.name;
-            basketItem.Category1 = item.category1;
-            basketItem.Category2 = item.category2;
-            basketItem.ItemType =item.itemType;
-            basketItem.Price = item.price;
-            basketItem.ItemType=BasketItemType.PHYSICAL.ToString();
-            basketItems.Add(basketItem);
-        }
+            Locale = req.locale,
+            ConversationId = Guid.NewGuid().ToString(),
+            Price = req.price,
+            PaidPrice = req.paidPrice,
+            Currency = Currency.TRY.ToString(),
+            Installment = req.installment,
+            BasketId = req.basketId,
+            PaymentChannel = req.paymentChannel,
+            PaymentGroup = req.paymentGroup,
+            CallbackUrl = "http://localhost:5213/api/Payments/Payment/PayCallBack"
+        };
 
-        request.BasketItems = basketItems;
+        // Set payment card details
+        request.PaymentCard = new PaymentCard
+        {
+            CardHolderName = req.paymentCard.cardHolderName,
+            CardNumber = req.paymentCard.cardNumber,
+            ExpireMonth = req.paymentCard.expireMonth,
+            ExpireYear = req.paymentCard.expireYear,
+            Cvc = req.paymentCard.cvc,
+            RegisterCard = req.paymentCard.registerCard
+        };
+
+        // Set buyer details
+        request.Buyer = new Buyer
+        {
+            Id = req.buyer.id,
+            Name = req.buyer.name,
+            Surname = req.buyer.surname,
+            GsmNumber = req.buyer.gsmNumber,
+            Email = req.buyer.email,
+            IdentityNumber = req.buyer.identityNumber,
+            LastLoginDate = req.buyer.lastLoginDate,
+            RegistrationDate = req.buyer.registrationDate,
+            RegistrationAddress = req.buyer.registrationAddress,
+            Ip = req.buyer.ip,
+            City = req.buyer.city,
+            Country = req.buyer.country,
+            ZipCode = req.buyer.zipCode
+        };
+
+        // Set shipping and billing addresses
+        request.ShippingAddress = new Address
+        {
+            ContactName = req.ShippingAddress.ContactName,
+            City = req.ShippingAddress.City,
+            Country = req.ShippingAddress.Country,
+            Description = req.ShippingAddress.Description,
+            ZipCode = req.ShippingAddress.ZipCode
+        };
+
+        request.BillingAddress = new Address
+        {
+            ContactName = req.BillingAddress.ContactName,
+            City = req.BillingAddress.City,
+            Country = req.BillingAddress.Country,
+            Description = req.BillingAddress.Description,
+            ZipCode = req.BillingAddress.ZipCode
+        };
+
+        // Create basket items
+        request.BasketItems = req.basketItems.Select(item => new BasketItem
+        {
+            Id = item.id,
+            Name = item.name,
+            Category1 = item.category1,
+            Category2 = item.category2,
+            ItemType = BasketItemType.PHYSICAL.ToString(),
+            Price = item.price
+        }).ToList();
+
+        // Initialize 3D secure payment
         ThreedsInitialize threedsInitialize = ThreedsInitialize.Create(request, options);
 
+        if (threedsInitialize.Status == "failure")
+        {
+            return BadRequest(new { ErrorMessage = threedsInitialize.ErrorMessage, ErrorCode = threedsInitialize.ErrorCode });
+        }
+
+        // Return the HTML content for 3D secure redirection
         return Ok(new { Content = threedsInitialize.HtmlContent, ConversationId = request.ConversationId });
-        
-    
     }
+    catch (Exception ex)
+    {
+        // Catch any exceptions and return a detailed error message
+        return StatusCode(500, new { Error = "An error occurred while processing the payment.", Details = ex.Message });
+    }
+}
 
         
         [Microsoft.AspNetCore.Mvc.HttpPost("PayCallBack")]
@@ -144,6 +150,8 @@ namespace GTBack.WebAPI.Controllers.Pay
 
             if(data.Status != "success")
             {
+                
+
                 return BadRequest("Ödeme başarısız oldu!");
             }
             
@@ -155,7 +163,16 @@ namespace GTBack.WebAPI.Controllers.Pay
 
             ThreedsPayment threedsPayment = ThreedsPayment.Create(request, options);
 
-            await _hubContext.Clients.Client(PayHub.TransactionConnections[data.ConversationId]).SendAsync("Receive", data);
+            if (threedsPayment.Status == "failure")
+            {
+                await _hubContext.Clients.Client(PayHub.TransactionConnections[data.ConversationId]).SendAsync("Receive", "failure");
+
+            }
+            else
+            {
+                await _hubContext.Clients.Client(PayHub.TransactionConnections[data.ConversationId]).SendAsync("Receive", data);
+
+            }
 
             return Ok();
         }

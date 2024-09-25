@@ -24,7 +24,68 @@ namespace GTBack.Service.Utilities.Jwt
             _configuration = configuration.JwtConfiguration;
         }
 
-        public AccessTokenDto GenerateAccessToken(BaseRegisterDTO userDto,bool? isStudent)
+        public AccessTokenDto GenerateAccessTokenParent(BaseRegisterDTO userDto,string userType,string logNumber)
+        {
+            var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
+         
+            
+            var claims = new List<Claim>
+            {
+                new("Id", userDto.Id.ToString()),
+                new(ClaimTypes.Name, userDto.Name),
+                new(ClaimTypes.Expiration, expirationTime.ToString()),
+                new(ClaimTypes.Surname, userDto.Surname),
+                new("userType", userType),
+                new("logNumber", logNumber),
+            };
+
+
+
+            claims.Add(new Claim("ExpTime", expirationTime.ToString()));
+            var value = GenerateToken(
+                _configuration.AccessTokenSecret,
+                _configuration.Issuer,
+                _configuration.Audience,
+                expirationTime,
+                claims);
+            return new AccessTokenDto()
+            {
+                Value = value,
+                ExpirationTime = expirationTime
+            };
+        }
+
+        public AccessTokenDto GenerateAccessTokenCoach(BaseRegisterDTO userDto,string userType)
+        {
+            var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
+         
+            
+            var claims = new List<Claim>
+            {
+                new("Id", userDto.Id.ToString()),
+                new(ClaimTypes.Name, userDto.Name),
+                new(ClaimTypes.Expiration, expirationTime.ToString()),
+                new(ClaimTypes.Surname, userDto.Surname),
+                new("userType", userType),
+            };
+
+
+
+            claims.Add(new Claim("ExpTime", expirationTime.ToString()));
+            var value = GenerateToken(
+                _configuration.AccessTokenSecret,
+                _configuration.Issuer,
+                _configuration.Audience,
+                expirationTime,
+                claims);
+            return new AccessTokenDto()
+            {
+                Value = value,
+                ExpirationTime = expirationTime
+            };
+        }
+
+        public AccessTokenDto GenerateAccessToken(BaseRegisterDTO userDto)
         {
             var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
          
@@ -37,13 +98,12 @@ namespace GTBack.Service.Utilities.Jwt
                 new(ClaimTypes.Surname, userDto.Surname),
                 new("UserType", userDto.UserTypeId.ToString()),
                 new("CompanyId", userDto.EcommerceCompanyId.ToString()),
-                new("isStudent", isStudent.ToString()),
+
             };
             claims.Add(new Claim("name", userDto.Name));
             claims.Add(new Claim("surname", userDto.Surname));
             claims.Add(new Claim("userType", userDto.UserTypeId.ToString()));
             claims.Add(new Claim("companyId", userDto.EcommerceCompanyId.ToString()));
-            claims.Add(new Claim("isStudent", isStudent.ToString()));
 
 
             claims.Add(new Claim("ExpTime", expirationTime.ToString()));
