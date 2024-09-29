@@ -57,17 +57,7 @@ public class SubjectService : ISubjectService
     // Add a subject for the student
     public async Task<IResults> AddSubjectToStudent(long sublessonId, DayOfWeekEnum day, string timeSlot,long studentId)
     {
-        var existingSchedule = await _scheduleService
-            .Where(s => s.StudentId == studentId && s.SubLessonId == sublessonId && s.DayOfWeek == day && s.TimeSlot == timeSlot)
-            .FirstOrDefaultAsync();
-
-
-
-        if (existingSchedule != null)
-        {
-            return new ErrorResult("Subject is already scheduled for this student at the specified time");
-        }
-
+      
         var schedule = new Schedule
         {
             StudentId = studentId,
