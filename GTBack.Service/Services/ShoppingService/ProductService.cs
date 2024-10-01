@@ -16,6 +16,7 @@ using GTBack.Core.Services.Shopping;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Utilities.Collections;
 using XAct;
 
 namespace GTBack.Service.Services.ShoppingService;
@@ -30,7 +31,7 @@ public class ProductService : IProductService
     private readonly IBackgroundJobClient _backgroundJobClient;
 
 
-    public ProductService( IService<MyVariant> variantService,
+    public ProductService(IService<MyVariant> variantService,
         IService<GlobalProductModel> globalProductService, IService<Product> productService,
         IService<Image> imageService, IMapper mapper)
     {
@@ -261,7 +262,7 @@ public class ProductService : IProductService
                 x.SubCategory.ToLower().Contains(filter.SubCategory) ||
                 x.Category.ToLower().Contains(filter.SubCategory));
         }
-        
+
         if (!filter.Size.IsNullOrEmpty())
         {
             var str = "\"size\":\"" + filter.Size;
@@ -271,9 +272,9 @@ public class ProductService : IProductService
 
         if (!filter.GeneralFilter.IsNullOrEmpty())
         {
-            productRepo = productRepo.Where(x => x.Name.ToLower().Contains(filter.GeneralFilter)|| x.Description.ToLower().Contains(filter.GeneralFilter));
+            productRepo = productRepo.Where(x => x.Name.ToLower().Contains(filter.GeneralFilter) || x.Description.ToLower().Contains(filter.GeneralFilter));
         }
-        
+
         if (!filter.Id.IsNullOrEmpty())
         {
             productRepo = productRepo.Where(x => x.ProductId == filter.Id);
@@ -298,26 +299,26 @@ public class ProductService : IProductService
 
 
         var query = (from product in productRepo
-            select new GlobalProductModelResponseDTO()
-            {
-                Id = product.Id,
-                ProductId = !product.ProductId.IsNullOrEmpty() ? product.ProductId : null,
-                ProductCode = !product.ProductCode.IsNullOrEmpty() ? product.ProductCode : null,
-                Barcode = !product.Barcode.IsNullOrEmpty() ? product.Barcode : null,
-                MainCategory = !product.MainCategory.IsNullOrEmpty() ? product.MainCategory : null,
-                SubCategory = !product.SubCategory.IsNullOrEmpty() ? product.SubCategory : null,
-                Category = !product.Category.IsNullOrEmpty() ? product.Category : null,
-                BrandId = !product.BrandId.IsNullOrEmpty() ? product.BrandId : null,
-                Brand = !product.Brand.IsNullOrEmpty() ? product.Brand : null,
-                Name = !product.Name.IsNullOrEmpty() ? product.Name : null,
-                Description = !product.Description.IsNullOrEmpty() ? product.Description : null,
-                NotDiscountedPrice = !product.NotDiscountedPrice.IsNullOrEmpty() ? product.NotDiscountedPrice : null,
-                Images = !product.Images.IsNullOrEmpty() ? product.Images : null,
-                Price = !product.Price.IsNullOrEmpty() ? product.Price : null,
-                Detail = !product.Detail.IsNullOrEmpty() ? product.Detail : null,
-                Quantity = !product.Quantity.IsNullOrEmpty() ? product.Quantity : null,
-                Variants = product.Variants
-            });
+                     select new GlobalProductModelResponseDTO()
+                     {
+                         Id = product.Id,
+                         ProductId = !product.ProductId.IsNullOrEmpty() ? product.ProductId : null,
+                         ProductCode = !product.ProductCode.IsNullOrEmpty() ? product.ProductCode : null,
+                         Barcode = !product.Barcode.IsNullOrEmpty() ? product.Barcode : null,
+                         MainCategory = !product.MainCategory.IsNullOrEmpty() ? product.MainCategory : null,
+                         SubCategory = !product.SubCategory.IsNullOrEmpty() ? product.SubCategory : null,
+                         Category = !product.Category.IsNullOrEmpty() ? product.Category : null,
+                         BrandId = !product.BrandId.IsNullOrEmpty() ? product.BrandId : null,
+                         Brand = !product.Brand.IsNullOrEmpty() ? product.Brand : null,
+                         Name = !product.Name.IsNullOrEmpty() ? product.Name : null,
+                         Description = !product.Description.IsNullOrEmpty() ? product.Description : null,
+                         NotDiscountedPrice = !product.NotDiscountedPrice.IsNullOrEmpty() ? product.NotDiscountedPrice : null,
+                         Images = !product.Images.IsNullOrEmpty() ? product.Images : null,
+                         Price = !product.Price.IsNullOrEmpty() ? product.Price : null,
+                         Detail = !product.Detail.IsNullOrEmpty() ? product.Detail : null,
+                         Quantity = !product.Quantity.IsNullOrEmpty() ? product.Quantity : null,
+                         Variants = product.Variants
+                     });
 
 
         query = query.Skip(filter.Skip).Take(filter.Take);
@@ -365,11 +366,11 @@ public class ProductService : IProductService
             await _productService.RemoveAsync(await _productService.Where(x => x.Id == id).FirstOrDefaultAsync());
 
         }
-        
+
         return new SuccessResult("PRODUCT_REMOVED");
     }
-    
- 
+
+
 
 
     public async Task<IDataResults<BaseListDTO<ProductListDTO, ProductListFilterRepresent>>> GetProducts(
@@ -381,10 +382,10 @@ public class ProductService : IProductService
         {
             query = _productService.Where(x => x.MainCategory.ToLower().Contains(model.RequestFilter.MainCategory));
         }
-        
+
         if (!ObjectExtensions.IsNull(model.RequestFilter.GeneralFilter))
         {
-            query = _productService.Where(x => x.Name.ToLower().Contains(model.RequestFilter.GeneralFilter)|| x.Description.ToLower().Contains(model.RequestFilter.GeneralFilter));
+            query = _productService.Where(x => x.Name.ToLower().Contains(model.RequestFilter.GeneralFilter) || x.Description.ToLower().Contains(model.RequestFilter.GeneralFilter));
         }
 
         if (!ObjectExtensions.IsNull(model.RequestFilter.TopCategory))
@@ -397,15 +398,15 @@ public class ProductService : IProductService
             query = _productService.Where(x => x.SubCategory.ToLower().Contains(model.RequestFilter.SubCategory));
         }
 
-        if (!CollectionUtilities.IsNullOrEmpty(model.RequestFilter.Name))
-        {
-            query = query.Where(x => x.Name.Contains(model.RequestFilter.Name));
-        }
+        // if (!CollectionUtilities.IsNullOrEmpty(model.RequestFilter.Name))
+        // {
+        //     query = query.Where(x => x.Name.Contains(model.RequestFilter.Name));
+        // }
 
-        if (!CollectionUtilities.IsNullOrEmpty(model.RequestFilter.Description))
-        {
-            query = query.Where(x => x.Description.Contains(model.RequestFilter.Description));
-        }
+        // if (!CollectionUtilities.IsNullOrEmpty(model.RequestFilter.Description))
+        // {
+        //     query = query.Where(x => x.Description.Contains(model.RequestFilter.Description));
+        // }
 
         if (!ObjectExtensions.IsNull(model.RequestFilter.Sort))
         {

@@ -45,17 +45,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using MimeKit;
+using EmailService;
 
 public class CoachService : ICoachAuthService
 {
     private readonly IService<Coach> _coachService;
+    private readonly IMailService _mailService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly ClaimsPrincipal? _loggedUser;
     private readonly IMapper _mapper;
     private readonly IJwtTokenService<BaseRegisterDTO> _tokenService;
     private readonly IMemoryCache _cache;
 
-    public CoachService(IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
+    public CoachService(IMemoryCache cache, IMailService mailService, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<Coach> coachService, IMapper mapper)
     {
         _mapper = mapper;
@@ -63,6 +66,7 @@ public class CoachService : ICoachAuthService
         _coachService = coachService;
         _loggedUser = httpContextAccessor.HttpContext?.User;
         _refreshTokenService = refreshTokenService;
+        _mailService = mailService;
         _tokenService = tokenService;
     }
 
@@ -195,23 +199,70 @@ public class CoachService : ICoachAuthService
     }
 
 
-    private void SendMail(MailData mailData)
-    {
-        var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587)
-        {
-            EnableSsl = true,
-            Credentials = new NetworkCredential("kocumbenim_afl@hotmail.com", "Bthntncr81.")
-        };
+
+    // public async Task<IResults> SendMail(MailData mail)
+    // {
+
+    //     var message = new MimeMessage();
+    //     message.From.Add(new MailboxAddress("Akçakoca Orhan Özdemir Fen Lisesi", "info@aoflots.com"));
+    //     message.To.Add(new MailboxAddress("Recipient Name", mail.RecieverMail));
+    //     message.Subject = "Öğretmen Kodu";
+    //     var body = new TextPart("html")
+    //     {
+    //         Text = mail.EmailBody
+    //     };
+
+    //     message.Body = body;
+
+    //     using (var client = new MailKit.Net.Smtp.SmtpClient()) // This is from MailKit
+    //     {
+    //         try
+    //         {
+    //             // GoDaddy SMTP settings for SSL connection
+    //             var smtpServer = "smtpout.secureserver.net";
+    //             var smtpPort = 465; // SSL port
+    //             var smtpUser = "info@aoflots.com"; // Your email address
+    //             var smtpPass = "l&3yikx257"; // Your email password
+
+    //             // Connect to the SMTP server
+    //             await client.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.SslOnConnect);
+
+    //             // Authenticate
+    //             await client.AuthenticateAsync(smtpUser, smtpPass);
+
+    //             // Send the email
+    //             await client.SendAsync(message);
+    //             Console.WriteLine("Email sent successfully!");
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             Console.WriteLine($"Error sending email: {ex.Message}");
+    //         }
+    //         finally
+    //         {
+    //             // Disconnect from the SMTP server
+    //             await client.DisconnectAsync(true);
+    //         }
+    //     }
+
+    //     return new SuccessResult();
+
+    // }
+
+    // private void SendMail(MailData mailData)
+    // {
+    //     var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587)
+    //     {
+    //         EnableSsl = true,
+    //         Credentials = new NetworkCredential("kocumbenim_afl@hotmail.com", "Bthntncr81.")
+    //     };
 
 
 
-        var message = new MailMessage(mailData.SenderMail, mailData.RecieverMail, mailData.EmailSubject, mailData.EmailBody)
-        {
-            IsBodyHtml = true
-        };
 
-        smtpClient.Send(message);
-    }
+
+    //     smtpClient.Send(message);
+    // }
     public async Task<IResults> CreateCoachGuid()
     {
         var userIdClaim = _loggedUser.FindFirstValue("Id");
@@ -224,15 +275,20 @@ public class CoachService : ICoachAuthService
         coach.ActiveCoachGuid = code;
 
         await _coachService.UpdateAsync(coach);
-        string emailTemplate = $"<!doctype html><html lang=\"en-US\"><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><title>Reset Password Email Template</title><meta name=\"description\" content=\"Reset Password Email Template.\"><style type=\"text/css\">a:hover {{text-decoration: underline !important;}}</style></head><body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\"><table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\" style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\"><tr><td><table style=\"background-color: #f2f3f8; max-width:670px;margin:0 auto;\" width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"height:80px;\">&nbsp;</td></tr><tr><td style=\"text-align:center;\"></td></tr><tr><td style=\"height:20px;\">&nbsp;</td></tr><tr><td><table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\"><tr><td style=\"height:40px;\">&nbsp;</td></tr><tr><td style=\"padding:0 35px;\"><h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">Öğretmen Kodu Talebinde Bulundunuz</h1><span style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px;border-bottom:1px solid #cecece; width:100px;\"></span> Öğretmen Kodunuz {code} </td></tr><tr><td style=\"height:40px;\">&nbsp;</td></tr></table></td></table></td></tr></table></body></html>";
-        var mail = new MailData()
+        string emailTemplate = $"<!doctype html><html lang=\"en-US\"><head><meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" /><title>Reset Password Email Template</title><meta name=\"description\" content=\"Reset Password Email Template.\"><style type=\"text/css\">a:hover {{text-decoration: underline !important;}}</style></head><body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\"><table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\" style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\"><tr><td><table style=\"background-color: #f2f3f8; max-width:670px;margin:0 auto;\" width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"height:80px;\">&nbsp;</td></tr><tr><td style=\"text-align:center;\"></td></tr><tr><td style=\"height:20px;\">&nbsp;</td></tr><tr><td><table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\"><tr><td style=\"height:40px;\">&nbsp;</td></tr><tr><td style=\"padding:0 35px;\"><h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">Öğretmen Kodu Talebinde Bulundunuz</h1> Öğretmen Kodunuz {code} </td></tr><tr><td style=\"height:40px;\">&nbsp;</td></tr></table></td></table></td></tr></table></body></html>";
+        var mail = new MailServiceOptions()
         {
-            SenderMail = "kocumbenim_afl@hotmail.com",
-            RecieverMail = coach.Email,
-            EmailBody = emailTemplate,
-            EmailSubject = "Öğretmen Kayıt Kodu"
+            SenderEmail = "info@aoflots.com",
+            ReceiverEmail = coach.Email,
+            ReceiverName = coach.Name,
+            Body = emailTemplate,
+            Subject = "Öğretmen Kayıt Kodu",
+            SenderName = "Akçakoca Orhan Özdemir Fen Lisesi",
+            SmtpPort = 465,
+            SmtpServer = "smtpout.secureserver.net",
+            SenderPassword = "l&3yikx257",
         };
-        SendMail(mail);
+        _mailService.SendEmail(mail);
 
         return new SuccessResult("Guid Sended");
 

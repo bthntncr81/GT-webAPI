@@ -28,6 +28,7 @@ using GTBack.WebAPI;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Server.Hubs;
+using EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,7 +99,6 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<RefreshTokenRepository>();
 builder.Services.AddTransient<IValidatorFactory, ServiceProviderValidatorFactory>();
-builder.Services.AddTransient<IMailService, MailService>();
 builder.Services.AddScoped(typeof(IJwtTokenService<BaseRegisterDTO>), typeof(JwtTokenService<BaseRegisterDTO>));
 builder.Services.AddScoped(typeof(IRefreshTokenService), typeof(RefreshTokenService));
 builder.Services.AddAppConfiguration(builder.Configuration);
@@ -112,6 +112,7 @@ builder.Services.AddScoped(typeof(IClassroomService), typeof(ClasroomService));
 builder.Services.AddScoped(typeof(ISubjectService), typeof(SubjectService));
 builder.Services.AddScoped(typeof(ICoachAuthService), typeof(CoachService));
 builder.Services.AddScoped(typeof(IParentAuthService), typeof(ParentService));
+builder.Services.AddScoped(typeof(IMailService), typeof(MailService));
 builder.Services.AddScoped(typeof(IStudentAuthService), typeof(StudentAuthService));
 builder.Services.AddScoped(typeof(IShoppingUserService), typeof(ShoppingUserService));
 builder.Services.AddScoped(typeof(IAuthService), typeof(ClientAuthService));
@@ -124,13 +125,14 @@ builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 builder.Services.AddAutoMapper(typeof(RestourantMapProfile));
 builder.Services.AddAutoMapper(typeof(ShoppingMapProfile));
 builder.Services.AddAutoMapper(typeof(MapProfile));
+
 builder.Services.LoadValidators();
 builder.Services.AddMemoryCache();
 
 
 if (FirebaseApp.DefaultInstance == null)
 {
-   
+
 }
 
 var appConfig = builder.Configuration.Get<GoThereAppConfig>();
@@ -139,7 +141,7 @@ var appConfig = builder.Configuration.Get<GoThereAppConfig>();
 
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
-   x.UseNpgsql(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
+    x.UseNpgsql(builder.Configuration.GetSection("ConnectionStrings:defaultConnection").Value);
 });
 
 

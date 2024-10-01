@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace GTBack.Service.Utilities.Jwt
 {
-    public class JwtTokenService<T>: IJwtTokenService<BaseRegisterDTO>
+    public class JwtTokenService<T> : IJwtTokenService<BaseRegisterDTO>
     {
         private readonly JwtConfiguration _configuration;
 
@@ -24,11 +24,11 @@ namespace GTBack.Service.Utilities.Jwt
             _configuration = configuration.JwtConfiguration;
         }
 
-        public AccessTokenDto GenerateAccessTokenParent(BaseRegisterDTO userDto,string userType,string logNumber)
+        public AccessTokenDto GenerateAccessTokenParent(BaseRegisterDTO userDto, string userType, string logNumber)
         {
             var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
-         
-            
+
+
             var claims = new List<Claim>
             {
                 new("Id", userDto.Id.ToString()),
@@ -55,11 +55,11 @@ namespace GTBack.Service.Utilities.Jwt
             };
         }
 
-        public AccessTokenDto GenerateAccessTokenCoach(BaseRegisterDTO userDto,string userType)
+        public AccessTokenDto GenerateAccessTokenCoach(BaseRegisterDTO userDto, string userType)
         {
             var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
-         
-            
+
+
             var claims = new List<Claim>
             {
                 new("Id", userDto.Id.ToString()),
@@ -68,7 +68,8 @@ namespace GTBack.Service.Utilities.Jwt
                 new(ClaimTypes.Surname, userDto.Surname),
                 new("userType", userType),
             };
-
+            claims.Add(new Claim("name", userDto.Name));
+            claims.Add(new Claim("surname", userDto.Surname));
 
 
             claims.Add(new Claim("ExpTime", expirationTime.ToString()));
@@ -88,8 +89,8 @@ namespace GTBack.Service.Utilities.Jwt
         public AccessTokenDto GenerateAccessToken(BaseRegisterDTO userDto)
         {
             var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
-         
-            
+
+
             var claims = new List<Claim>
             {
                 new("Id", userDto.Id.ToString()),
@@ -120,11 +121,11 @@ namespace GTBack.Service.Utilities.Jwt
             };
         }
 
-        
-     
-        
-        
-    
+
+
+
+
+
         public string GenerateRefreshToken()
         {
             var expirationTime = DateTime.UtcNow.AddHours(_configuration.RefreshTokenExpirationMinutes);
