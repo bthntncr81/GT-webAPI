@@ -29,10 +29,14 @@ public class StudentAuthService : IStudentAuthService
     private readonly IJwtTokenService<BaseRegisterDTO> _tokenService;
     private readonly IMemoryCache _cache;
 
-    public StudentAuthService( IService<Coach> coachService,IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
+    private readonly IMailService _mailService;
+
+
+    public StudentAuthService(IMailService mailService, IService<Coach> coachService, IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<Student> studentService, IMapper mapper)
     {
         _mapper = mapper;
+        _mailService = mailService;
         _cache = cache;
         _studentService = studentService;
         _coachService = coachService;
@@ -58,7 +62,7 @@ public class StudentAuthService : IStudentAuthService
     public async Task<IDataResults<AuthenticatedUserResponseDto>> Register(StudentRegisterDTO registerDto)
     {
         var validationResult = FluentValidationTool.ValidateModelWithKeyResult(new StudentRegisterValidator(), registerDto);
-        
+
         if (!validationResult.Success)
         {
             return new ErrorDataResults<AuthenticatedUserResponseDto>(HttpStatusCode.BadRequest, validationResult.Errors);
@@ -73,7 +77,7 @@ public class StudentAuthService : IStudentAuthService
             return new ErrorDataResults<AuthenticatedUserResponseDto>(HttpStatusCode.BadRequest, validationResult.Errors);
         }
 
-        var coach =await _coachService.Where(x => x.ActiveCoachGuid == registerDto.CoachGuid).FirstOrDefaultAsync();
+        var coach = await _coachService.Where(x => x.ActiveCoachGuid == registerDto.CoachGuid).FirstOrDefaultAsync();
         var student = new Student
         {
             Name = registerDto.Name,
@@ -141,7 +145,7 @@ public class StudentAuthService : IStudentAuthService
         var email = loginDto.Mail.ToLower().Trim();
         var student = await _studentService.Where(x => x.Email.ToLower() == email && !x.IsDeleted).FirstOrDefaultAsync();
 
-        if (student == null ||SHA1.Verify(loginDto.Password, student.PasswordHash))
+        if (student == null || SHA1.Verify(loginDto.Password, student.PasswordHash))
         {
             return new ErrorDataResults<AuthenticatedUserResponseDto>("Invalid email or password", HttpStatusCode.BadRequest);
         }
@@ -165,22 +169,22 @@ public class StudentAuthService : IStudentAuthService
 
         return new SuccessResult("Password reset successfully", HttpStatusCode.OK);
     }
-    
+
     public async Task<IDataResults<List<StudentUpdateDTO>>> GetStudentsByCoachId()
     {
-        
+
         var userIdClaim = _loggedUser.FindFirstValue("Id");
 
-        var student = await _studentService.Where(x => x.CoachId ==Int32.Parse(userIdClaim) ).Select(s=>new StudentUpdateDTO()
+        var student = await _studentService.Where(x => x.CoachId == Int32.Parse(userIdClaim)).Select(s => new StudentUpdateDTO()
         {
-            Id=s.Id,
+            Id = s.Id,
             Name = s.Name,
             Surname = s.Surname,
             Grade = s.Grade,
             Phone = s.Phone,
             Email = s.Email,
-            
-            
+
+
         }).ToListAsync();
 
         return new SuccessDataResult<List<StudentUpdateDTO>>(student);
@@ -190,38 +194,40 @@ public class StudentAuthService : IStudentAuthService
     // Send Reset Password Link
     public async Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO resetPasswordLinkDto)
     {
-        var email = resetPasswordLinkDto.mail.ToLower().Trim();
-        var student = await _studentService.Where(x => x.Email == email && !x.IsDeleted).FirstOrDefaultAsync();
-
-        if (student == null)
+        string randomString = GenerateRandomString(40);
+        string mailBody =
+            "<!doctype html>\n<html lang=\"en-US\">\n\n<head>\n    <meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\" />\n    <title>Reset Password Email Template</title>\n    <meta name=\"description\" content=\"Reset Password Email Template.\">\n    <style type=\"text/css\">\n        a:hover {\n            text-decoration: underline !important;\n        }\n    </style>\n</head>\n\n<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">\n    <!--100% body table-->\n    <table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\"\n        style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">\n        <tr>\n            <td>\n                <table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\"\n                    align=\"center\" cellpadding=\"0\" cellspacing=\"0\">\n                    <tr>\n                        <td style=\"height:80px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td style=\"text-align:center;\">\n                            <a href=\"https://www.aoflots.com\" title=\"logo\" target=\"_blank\">\n                                <img width=\"150\" src=\"https://www.aoflots.com/assets/logo-blue.png\" title=\"logo\"\n                                    alt=\"logo\">\n                            </a>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td style=\"height:20px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td>\n                            <table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\"\n                                style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">\n                                <tr>\n                                    <td style=\"height:40px;\">&nbsp;</td>\n                                </tr>\n                                <tr>\n                                    <td style=\"padding:0 35px;\">\n                                        <h1\n                                            style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">\n                                            Şifrenizi sıfırlama talebinde bulundunuz</h1>\n                                        <span\n                                            style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>\n                                        <p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">\n                                            Size eski şifrenizi öylece gönderemeyiz. Şifrenizi sıfırlamak için benzersiz\n                                            bir bağlantı sizin için oluşturuldu. Şifrenizi sıfırlamak için aşağıdaki\n                                            bağlantıya tıklayın ve talimatları izleyin.\n                                        </p>\n                                        <a href=\"https://www.aoflots.com/auth/reset-password?type=student&key=" + randomString + "\"\n                                            style=\"background:#2d2e2d;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">\n                                            Şifremi Yenile\n                                        </a>\n                                    </td>\n                                </tr>\n                                <tr>\n                                    <td style=\"height:40px;\">&nbsp;</td>\n                                </tr>\n                            </table>\n                        </td>\n                    <tr>\n                        <td style=\"height:20px;\">&nbsp;</td>\n                    </tr>\n                    <tr>\n                        <td style=\"text-align:center;\">\n                            <p\n                                style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">\n                                &copy; <strong>www.aoflots.com</strong></p>\n                        </td>\n                    </tr>\n                    <tr>\n                        <td style=\"height:80px;\">&nbsp;</td>\n                    </tr>\n                </table>\n            </td>\n        </tr>\n    </table>\n    <!--/100% body table-->\n</body>\n\n</html>";
+        var user = _studentService.Where(x => x.Email == resetPasswordLinkDto.mail).FirstOrDefault();
+        if (user == null)
         {
-            return new ErrorResult("Student with this email does not exist", HttpStatusCode.NotFound);
+            return new ErrorResult("Bu e posta hesabı bir kullanıcıya ait değil");
         }
 
-        string resetLink = GenerateRandomString(40); // Random string for reset link
-        student.ActiveForgotLink = resetLink;
-        await _studentService.UpdateAsync(student);
+        user.ActiveForgotLink = randomString;
 
-        // Prepare reset email
-        string mailBody = $"Please click on the link to reset your password: <a href='https://yourwebsite.com/reset-password?key={resetLink}'>Reset Password</a>";
+        await _studentService.UpdateAsync(user);
 
-        var mailData = new MailData
+        var mail = new MailServiceOptions()
         {
-            SenderMail = "your-email@domain.com",
-            RecieverMail = resetPasswordLinkDto.mail,
-            EmailSubject = "Reset Your Password",
-            EmailBody = mailBody
+            SenderEmail = "info@aoflots.com",
+            ReceiverEmail = resetPasswordLinkDto.mail,
+            ReceiverName = user.Name,
+            Body = mailBody,
+            Subject = "Öğretmen Kayıt Kodu",
+            SenderName = "Akçakoca Orhan Özdemir Fen Lisesi Öğrenci Takip Sistemi",
+            SmtpPort = 465,
+            SmtpServer = "smtpout.secureserver.net",
+            SenderPassword = "l&3yikx257",
         };
 
-        SendMail(mailData); // You should implement SendMail method for sending the email
-
-        return new SuccessResult("Reset password link sent successfully", HttpStatusCode.OK);
+        _mailService.SendEmail(mail);
+        return new SuccessResult();
     }
 
     // Authenticate Student (generates tokens)
     private async Task<AuthenticatedUserResponseDto> Authenticate(StudentRegisterDTO studentDto)
     {
-        var accessToken = _tokenService.GenerateAccessTokenCoach(studentDto,"student");
+        var accessToken = _tokenService.GenerateAccessTokenCoach(studentDto, "student");
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         await _refreshTokenService.Create(new RefreshTokenDto
@@ -261,6 +267,6 @@ public class StudentAuthService : IStudentAuthService
 
         smtpClient.Send(message);
     }
-    
-    
+
+
 }
