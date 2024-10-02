@@ -126,7 +126,7 @@ public class ParentService : IParentAuthService
         var email = loginDto.Mail.ToLower().Trim();
         var coach = await _parentService.Where(x => x.Email.ToLower() == email && !x.IsDeleted).FirstOrDefaultAsync();
 
-        if (coach == null || SHA1.Verify(loginDto.Password, coach.PasswordHash))
+        if (coach == null || !SHA1.Verify(loginDto.Password, coach.PasswordHash))
         {
             return new ErrorDataResults<AuthenticatedUserResponseDto>("Invalid email or password", HttpStatusCode.BadRequest);
         }

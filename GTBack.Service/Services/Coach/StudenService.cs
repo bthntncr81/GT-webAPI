@@ -145,7 +145,7 @@ public class StudentAuthService : IStudentAuthService
         var email = loginDto.Mail.ToLower().Trim();
         var student = await _studentService.Where(x => x.Email.ToLower() == email && !x.IsDeleted).FirstOrDefaultAsync();
 
-        if (student == null || SHA1.Verify(loginDto.Password, student.PasswordHash))
+        if (student == null || !SHA1.Verify(loginDto.Password, student.PasswordHash))
         {
             return new ErrorDataResults<AuthenticatedUserResponseDto>("Invalid email or password", HttpStatusCode.BadRequest);
         }

@@ -23,6 +23,14 @@ namespace GTBack.Service.Utilities
 
         public static bool Verify(string text, string textHashed)
         {
+            if (Generate(text).Equals(textHashed))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
             return Generate(text) == textHashed;
         }
     }
