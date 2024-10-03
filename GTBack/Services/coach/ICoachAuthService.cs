@@ -16,5 +16,7 @@ public interface ICoachAuthService
     Task<IResults> ResetPassword(ResetPasswordDTO resetPasswordDto);
     Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO resetPasswordLinkDto);
 
+    Task<IResults> AddPermission(int studentId);
+
     Task<IResults> CreateCoachGuid();
 }

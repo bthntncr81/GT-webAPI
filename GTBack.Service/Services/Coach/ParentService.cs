@@ -53,19 +53,20 @@ public class ParentService : IParentAuthService
         //     return new ErrorDataResults<AuthenticatedUserResponseDto>(HttpStatusCode.BadRequest, validationResult.Errors);
         // }
 
-        var email = registerDto.Mail.ToLower().Trim();
+        var email = registerDto.StudentMail.ToLower().Trim();
         var student = await _studentService.Where(x => x.Email.ToLower() == email.ToLower() && !x.IsDeleted).FirstOrDefaultAsync();
-        var existingParent = await _parentService.Where(x => x.Email.ToLower() == email.ToLower() && !x.IsDeleted).FirstOrDefaultAsync();
+        var existingParent = await _parentService.Where(x => x.Email.ToLower() == registerDto.Mail.ToLower() && !x.IsDeleted).FirstOrDefaultAsync();
 
         if (existingParent != null)
         {
-            // validationResult.Errors.Add("", "Email already exists");
             return new ErrorDataResults<AuthenticatedUserResponseDto>("Bu emailde kullanıcı var", HttpStatusCode.BadRequest);
         }
-
-        if (student.ParentId != null)
+        else if (student == null)
         {
-            // validationResult.Errors.Add("", "Email already exists");
+            return new ErrorDataResults<AuthenticatedUserResponseDto>("Böyle bir öğrenci yok", HttpStatusCode.BadRequest);
+        }
+        else if (student.ParentId != null && student.ParentId != 0)
+        {
             return new ErrorDataResults<AuthenticatedUserResponseDto>("Bu  öğrencinin hali hazırda bir velisi var", HttpStatusCode.BadRequest);
         }
 
@@ -199,6 +200,7 @@ public class ParentService : IParentAuthService
         return new SuccessResult();
     }
 
+   
 
     private static string GenerateRandomString(int length)
     {

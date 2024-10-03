@@ -87,7 +87,8 @@ public class StudentAuthService : IStudentAuthService
             PasswordHash = SHA1.Generate(registerDto.Password),
             IsDeleted = false,
             Grade = registerDto.Grade,
-            CoachId = coach.Id
+            CoachId = coach.Id,
+            HavePermission = false
         };
 
         await _studentService.AddAsync(student);
@@ -114,6 +115,7 @@ public class StudentAuthService : IStudentAuthService
         student.Email = updateDto.Email;
         student.Phone = updateDto.Phone;
         student.Grade = updateDto.Grade;
+        student.HavePermission = updateDto.HavePermission;
 
         await _studentService.UpdateAsync(student);
         return new SuccessDataResult<StudentUpdateDTO>(updateDto, HttpStatusCode.OK);
@@ -183,6 +185,7 @@ public class StudentAuthService : IStudentAuthService
             Grade = s.Grade,
             Phone = s.Phone,
             Email = s.Email,
+            HavePermission = s.HavePermission,
 
 
         }).ToListAsync();
@@ -227,7 +230,7 @@ public class StudentAuthService : IStudentAuthService
     // Authenticate Student (generates tokens)
     private async Task<AuthenticatedUserResponseDto> Authenticate(StudentRegisterDTO studentDto)
     {
-        var accessToken = _tokenService.GenerateAccessTokenCoach(studentDto, "student");
+        var accessToken = _tokenService.GenerateAccessTokenStudent(studentDto,studentDto.HavePermission);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         await _refreshTokenService.Create(new RefreshTokenDto

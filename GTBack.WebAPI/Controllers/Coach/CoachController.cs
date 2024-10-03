@@ -65,15 +65,26 @@ namespace GTBack.WebAPI.Controllers
         {
             return ApiResult(await _coachAuthService.Delete(id));
         }
-        
+
         [Authorize]
         [HttpGet("CreateCoachGuid")]
         public async Task<IActionResult> CreateCoachGuid()
         {
-            var result=  await _coachAuthService.CreateCoachGuid();
+            var result = await _coachAuthService.CreateCoachGuid();
             return ApiResult(result);
 
         }
+
+
+        [Authorize]
+        [HttpGet("ChangeStudentPermission/{id}")]
+        public async Task<IActionResult> ChangeStudentPermission(int id)
+        {
+            var result = await _coachAuthService.AddPermission(id);
+            return ApiResult(result);
+
+        }
+
 
     }
 }

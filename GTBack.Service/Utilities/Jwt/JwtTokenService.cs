@@ -55,7 +55,7 @@ namespace GTBack.Service.Utilities.Jwt
             };
         }
 
-        public AccessTokenDto GenerateAccessTokenCoach(BaseRegisterDTO userDto, string userType)
+        public AccessTokenDto GenerateAccessTokenCoach(BaseRegisterDTO userDto)
         {
             var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
 
@@ -66,7 +66,39 @@ namespace GTBack.Service.Utilities.Jwt
                 new(ClaimTypes.Name, userDto.Name),
                 new(ClaimTypes.Expiration, expirationTime.ToString()),
                 new(ClaimTypes.Surname, userDto.Surname),
-                new("userType", userType),
+                new("userType", "teacher"),
+            };
+            claims.Add(new Claim("name", userDto.Name));
+            claims.Add(new Claim("surname", userDto.Surname));
+
+
+            claims.Add(new Claim("ExpTime", expirationTime.ToString()));
+            var value = GenerateToken(
+                _configuration.AccessTokenSecret,
+                _configuration.Issuer,
+                _configuration.Audience,
+                expirationTime,
+                claims);
+            return new AccessTokenDto()
+            {
+                Value = value,
+                ExpirationTime = expirationTime
+            };
+        }
+
+        public AccessTokenDto GenerateAccessTokenStudent(BaseRegisterDTO userDto, bool havePermission)
+        {
+            var expirationTime = DateTime.UtcNow.AddHours(_configuration.AccessTokenExpirationMinutes);
+
+
+            var claims = new List<Claim>
+            {
+                new("Id", userDto.Id.ToString()),
+                new(ClaimTypes.Name, userDto.Name),
+                new(ClaimTypes.Expiration, expirationTime.ToString()),
+                new(ClaimTypes.Surname, userDto.Surname),
+                new("userType", "student"),
+                new("havePermission", havePermission?"1":"0"),
             };
             claims.Add(new Claim("name", userDto.Name));
             claims.Add(new Claim("surname", userDto.Surname));

@@ -9,5 +9,6 @@ public class StudentUpdateDTO
     public string Surname { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }
+    public bool? HavePermission { get; set; }
     public GradeEnum Grade { get; set; }
 }

@@ -21,16 +21,18 @@ using GTBack.Service.Validation.Coach;
 public class CoachService : ICoachAuthService
 {
     private readonly IService<Coach> _coachService;
+    private readonly IService<Student> _studentService;
     private readonly IMailService _mailService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly ClaimsPrincipal? _loggedUser;
     private readonly IMapper _mapper;
     private readonly IJwtTokenService<BaseRegisterDTO> _tokenService;
 
-    public CoachService(IMailService mailService, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
+    public CoachService(IService<Student> studentService, IMailService mailService, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<Coach> coachService, IMapper mapper)
     {
         _mapper = mapper;
+        _studentService = studentService;
         _coachService = coachService;
         _loggedUser = httpContextAccessor.HttpContext?.User;
         _refreshTokenService = refreshTokenService;
@@ -132,7 +134,7 @@ public class CoachService : ICoachAuthService
     // Authentication
     private async Task<AuthenticatedUserResponseDto> Authenticate(CoachRegisterDTO userDto)
     {
-        var accessToken = _tokenService.GenerateAccessTokenCoach(userDto, "teacher");
+        var accessToken = _tokenService.GenerateAccessTokenCoach(userDto);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         await _refreshTokenService.Create(new RefreshTokenDto
@@ -195,69 +197,18 @@ public class CoachService : ICoachAuthService
 
 
 
-    // public async Task<IResults> SendMail(MailData mail)
-    // {
+    public async Task<IResults> AddPermission(int studentId)
+    {
 
-    //     var message = new MimeMessage();
-    //     message.From.Add(new MailboxAddress("Akçakoca Orhan Özdemir Fen Lisesi", "info@aoflots.com"));
-    //     message.To.Add(new MailboxAddress("Recipient Name", mail.RecieverMail));
-    //     message.Subject = "Öğretmen Kodu";
-    //     var body = new TextPart("html")
-    //     {
-    //         Text = mail.EmailBody
-    //     };
+        var student = await _studentService.Where(x => x.Id == studentId).FirstOrDefaultAsync();
 
-    //     message.Body = body;
+        student.HavePermission = !student.HavePermission;
 
-    //     using (var client = new MailKit.Net.Smtp.SmtpClient()) // This is from MailKit
-    //     {
-    //         try
-    //         {
-    //             // GoDaddy SMTP settings for SSL connection
-    //             var smtpServer = "smtpout.secureserver.net";
-    //             var smtpPort = 465; // SSL port
-    //             var smtpUser = "info@aoflots.com"; // Your email address
-    //             var smtpPass = "l&3yikx257"; // Your email password
+       await  _studentService.UpdateAsync(student);
 
-    //             // Connect to the SMTP server
-    //             await client.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.SslOnConnect);
+        return new SuccessResult();
+    }
 
-    //             // Authenticate
-    //             await client.AuthenticateAsync(smtpUser, smtpPass);
-
-    //             // Send the email
-    //             await client.SendAsync(message);
-    //             Console.WriteLine("Email sent successfully!");
-    //         }
-    //         catch (Exception ex)
-    //         {
-    //             Console.WriteLine($"Error sending email: {ex.Message}");
-    //         }
-    //         finally
-    //         {
-    //             // Disconnect from the SMTP server
-    //             await client.DisconnectAsync(true);
-    //         }
-    //     }
-
-    //     return new SuccessResult();
-
-    // }
-
-    // private void SendMail(MailData mailData)
-    // {
-    //     var smtpClient = new SmtpClient("smtp-mail.outlook.com", 587)
-    //     {
-    //         EnableSsl = true,
-    //         Credentials = new NetworkCredential("kocumbenim_afl@hotmail.com", "Bthntncr81.")
-    //     };
-
-
-
-
-
-    //     smtpClient.Send(message);
-    // }
     public async Task<IResults> CreateCoachGuid()
     {
         var userIdClaim = _loggedUser.FindFirstValue("Id");

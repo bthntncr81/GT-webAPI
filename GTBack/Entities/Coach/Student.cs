@@ -2,7 +2,7 @@ using GTBack.Core.Enums.Coach;
 
 namespace GTBack.Core.Entities.Coach;
 
-public class Student:BaseEntity
+public class Student : BaseEntity
 {
     public string Name { get; set; }
     public string Surname { get; set; }
@@ -14,9 +14,10 @@ public class Student:BaseEntity
     public long? ClassroomId { get; set; }
     public string? PasswordHash { get; set; } // To store hashed password
     public string? ActiveForgotLink { get; set; }
+    public bool? HavePermission { get; set; } = false;
 
 
-    public virtual ICollection<RefreshToken>? RefreshTokens { get; set; } 
+    public virtual ICollection<RefreshToken>? RefreshTokens { get; set; }
     public Coach Coach { get; set; } // Öğrenci'nin Koçu
     public Parent Parent { get; set; } // Öğrenci'nin Koçu
     public Classroom? Classroom { get; set; } // Öğrenci'nin Koçu
