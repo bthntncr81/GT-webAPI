@@ -10,7 +10,7 @@ public class EcommerceProduct:BaseEntity
     public virtual EcommerceCompany EcommerceCompany { get; set; }
     public long EcommerceEmployeeId { get; set; }
     public virtual EcommerceEmployee EcommerceEmployee { get; set; }
-    public virtual ICollection<EcommerceProductOrderRelation> ProductOrderRelations { get; set; }
+    public virtual ICollection<EcommerceVariantOrderRelation> EcommerceVariantOrderRelation { get; set; }
     public virtual ICollection<EcommerceClientFavoriteRelation> ClientFavoriteRelations { get; set; }
    
     public virtual ICollection<EcommerceVariant> Variants { get; set; }

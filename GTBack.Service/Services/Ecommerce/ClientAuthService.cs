@@ -178,7 +178,7 @@ public class ClientAuthService : IAuthService
 
 
 
-    public async Task<IDataResults<AuthenticatedUserResponseDto>> Login(LoginDto loginDto)
+    public async Task<IDataResults<AuthenticatedUserResponseDto>> Login(LoginDto loginDto,int companyId)
     {
         var valResult =
             FluentValidationTool.ValidateModelWithKeyResult(new ClientLoginValidator(), loginDto);
@@ -188,8 +188,7 @@ public class ClientAuthService : IAuthService
         }
 
         var mail = loginDto.Mail.ToLower().Trim();
-        var parent =
-            await _service.GetByIdAsync((x => x.Email.ToLower() == mail && !x.IsDeleted)); //get by mail eklenecek
+        var parent = await _service.Where((x => x.Email.ToLower() == mail.ToLower()&&x.EcommerceCompanyId==companyId && !x.IsDeleted)).FirstOrDefaultAsync(); //get by mail eklenecek
 
 
         if (parent?.PasswordHash == null)

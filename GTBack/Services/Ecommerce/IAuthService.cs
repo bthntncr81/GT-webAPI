@@ -13,7 +13,7 @@ public interface IAuthService
 {
     Task<IDataResults<ClientUpdateDTO>> Me();
     Task<IDataResults<UserDTO>> GetById(long id);
-    Task<IDataResults<AuthenticatedUserResponseDto>> Login(LoginDto loginDto);
+    Task<IDataResults<AuthenticatedUserResponseDto>> Login(LoginDto loginDto, int companyId);
     Task<IDataResults<AuthenticatedUserResponseDto>> Register(ClientRegisterRequestDTO registerDto);
     Task<IDataResults<AuthenticatedUserResponseDto>> GoogleLogin(GoogleLoginDTO model);
     Task<IResults> ResetPasswordLink(ResetPasswordLinkDTO userMail);

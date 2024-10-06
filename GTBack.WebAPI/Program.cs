@@ -115,6 +115,7 @@ builder.Services.AddScoped(typeof(IParentAuthService), typeof(ParentService));
 builder.Services.AddScoped(typeof(IMailService), typeof(MailService));
 builder.Services.AddScoped(typeof(IStudentAuthService), typeof(StudentAuthService));
 builder.Services.AddScoped(typeof(IShoppingUserService), typeof(ShoppingUserService));
+builder.Services.AddScoped(typeof(IEcommerceOrderService), typeof(OrderService));
 builder.Services.AddScoped(typeof(IAuthService), typeof(ClientAuthService));
 builder.Services.AddScoped(typeof(IEmployeeAuthService), typeof(ClientEmployeeService));
 builder.Services.AddScoped(typeof(IEcommerceProductService), typeof(EcommerceProductService));

@@ -2,7 +2,7 @@ using GTBack.Core.Enums.Shopping;
 
 namespace GTBack.Core.Entities.Ecommerce;
 
-public class EcommerceOrder:BaseEntity
+public class EcommerceOrder : BaseEntity
 {
     public string OrderGuid { get; set; }
     public long EcommerceClientId { get; set; }
@@ -15,5 +15,6 @@ public class EcommerceOrder:BaseEntity
     public string City { get; set; }
     public string District { get; set; }
     public string IyzicoTransactionId { get; set; }
-    public virtual ICollection<EcommerceProductOrderRelation> ProductOrderRelations { get; set; }
+    public virtual ICollection<EcommerceVariantOrderRelation> EcommerceVariantOrderRelation { get; set; }
 }
+

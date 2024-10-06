@@ -17,11 +17,11 @@ namespace GTBack.WebAPI.Controllers.Ecommerce
 {
     public class AuthorizationController : CustomEcommerceBaseController
     {
-     
+
         private readonly IAuthService _authService;
         private readonly IEcommerceCompanyService _company;
 
-        public AuthorizationController(IService<ShoppingUser> service, IMapper mapper,IAuthService authService,IEcommerceCompanyService company)
+        public AuthorizationController(IService<ShoppingUser> service, IMapper mapper, IAuthService authService, IEcommerceCompanyService company)
         {
             _authService = authService;
             _company = company;
@@ -33,26 +33,26 @@ namespace GTBack.WebAPI.Controllers.Ecommerce
         {
             return ApiResult(await _authService.Me());
         }
-   
-            
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginDto log)
+
+
+        [HttpPost("Login/{id}")]
+        public async Task<IActionResult> Login(LoginDto log, int id)
         {
-            return ApiResult(await _authService.Login(log));
+            return ApiResult(await _authService.Login(log, id));
         }
-        
+
         [HttpPost("UpdateAccount")]
         public async Task<IActionResult> UpdateAccount(ClientUpdateDTO log)
         {
             return ApiResult(await _authService.UpdateUser(log));
         }
-            
+
         [HttpPost("ResetPasswordLink")]
         public async Task<IActionResult> Login([FromBody] ResetPasswordLinkDTO userMail)
         {
             return ApiResult(await _authService.ResetPasswordLink(userMail));
         }
-        
+
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO password)
         {
@@ -64,7 +64,7 @@ namespace GTBack.WebAPI.Controllers.Ecommerce
         {
             return ApiResult(await _company.AddShoppingCompany(log));
         }
-        
+
         [HttpGet("GetCompany")]
         public async Task<IActionResult> GetCompany(int id)
         {
@@ -79,9 +79,9 @@ namespace GTBack.WebAPI.Controllers.Ecommerce
         [HttpPost("GoogleLogin")]
         public async Task<IActionResult> GoogleLogin(GoogleLoginDTO request)
         {
-            
+
             return ApiResult(await _authService.GoogleLogin(request));
         }
-        
+
     }
 }

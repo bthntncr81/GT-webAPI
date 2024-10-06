@@ -20,7 +20,7 @@ namespace GTBack.Repository
         //Shared Tables   
         public DbSet<RefreshToken> RefreshToken { get; set; }
         public DbSet<Currency> Currency { get; set; }
-        
+
         //Shopping
         public DbSet<Image> Image { get; set; }
         public DbSet<Product> Product { get; set; }
@@ -29,7 +29,7 @@ namespace GTBack.Repository
         public DbSet<ShoppingUser> ShoppingUser { get; set; }
         public DbSet<GlobalProductModel> GlobalProductModels { get; set; }
 
-        
+
         //Coach
         public DbSet<Student> Students { get; set; }
         public DbSet<Coach> Coaches { get; set; }
@@ -40,8 +40,8 @@ namespace GTBack.Repository
         public DbSet<SubjectScheduleRelation> SubjectScheduleRelations { get; set; }
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<Parent> Parents { get; set; }
-        
-             
+
+
         //Ecommerce
         public DbSet<EcommerceBasket> EcommerceBasket { get; set; }
         public DbSet<EcommerceBasketProductRelation> EcommerceBasketProductRelation { get; set; }
@@ -51,18 +51,18 @@ namespace GTBack.Repository
         public DbSet<EcommerceEmployee> EcommerceEmployee { get; set; }
         public DbSet<EcommerceOrder> EcommerceOrder { get; set; }
         public DbSet<EcommerceProduct> EcommerceProduct { get; set; }
-        public DbSet<EcommerceProductOrderRelation> EcommerceProductOrderRelation { get; set; }
+        public DbSet<EcommerceVariantOrderRelation> EcommerceVariantOrderRelation { get; set; }
         public DbSet<EcommerceRefreshToken> EcommerceRefreshToken { get; set; }
         public DbSet<EcommerceVariant> EcommerceVariant { get; set; }
         public DbSet<EcommerceImage> EcommerceImage { get; set; }
-        
-        
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            modelBuilder.Entity<EcommerceProductOrderRelation>()
-                .HasKey(por => new { por.EcommerceProductId, por.EcommerceOrderId });
+            modelBuilder.Entity<EcommerceVariantOrderRelation>()
+                .HasKey(por => new { por.EcommerceVariantId, por.EcommerceOrderId });
 
             modelBuilder.Entity<EcommerceBasketProductRelation>()
                 .HasKey(bpr => new { bpr.EcommerceBasketId, bpr.EcommerceVariantId });
@@ -70,23 +70,23 @@ namespace GTBack.Repository
             modelBuilder.Entity<EcommerceClientFavoriteRelation>()
                 .HasKey(cfr => new { cfr.EcommerceClientId, cfr.EcommerceProductId });
 
-            
-            
+
+
             // Öğrenci ve Koç ilişkisi
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Coach)
                 .WithMany(c => c.Students)
                 .HasForeignKey(s => s.CoachId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Parent)
-                .WithOne(c => c.Student).HasForeignKey<Student>(s=>s.ParentId)
+                .WithOne(c => c.Student).HasForeignKey<Student>(s => s.ParentId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<Parent>()
                 .HasOne(s => s.Student)
-                .WithOne(c => c.Parent).HasForeignKey<Parent>(s=>s.StudentId)
+                .WithOne(c => c.Parent).HasForeignKey<Parent>(s => s.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Schedule ile Subject ve Student ilişkisi
@@ -94,7 +94,7 @@ namespace GTBack.Repository
                 .HasOne(s => s.Student)
                 .WithMany(st => st.Schedules)
                 .HasForeignKey(s => s.StudentId);
-            
+
             // Subject -> SubjectScheduleRelation (One-to-Many)
             modelBuilder.Entity<Subject>()
                 .HasMany(s => s.SubjectScheduleRelations)
@@ -108,11 +108,11 @@ namespace GTBack.Repository
                 .WithOne(ssr => ssr.Schedule)
                 .HasForeignKey(ssr => ssr.ScheduleId)
                 .OnDelete(DeleteBehavior.Cascade); // If a Schedule is deleted, delete related SubjectScheduleRelations
-        
 
-       
-            
-      
+
+
+
+
         }
     }
 }
