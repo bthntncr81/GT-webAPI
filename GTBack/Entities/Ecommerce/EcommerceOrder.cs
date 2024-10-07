@@ -5,7 +5,7 @@ namespace GTBack.Core.Entities.Ecommerce;
 public class EcommerceOrder : BaseEntity
 {
     public string OrderGuid { get; set; }
-    public long EcommerceClientId { get; set; }
+    public long? EcommerceClientId { get; set; }
     public virtual EcommerceClient EcommerceClient { get; set; }
     public int TotalPrice { get; set; }
     public string Note { get; set; }

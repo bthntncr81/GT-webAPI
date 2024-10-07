@@ -12,7 +12,9 @@ public class PaymentRequestDTO
     public string paidPrice { get; set; }
     public string currency { get; set; }
     public string basketId { get; set; }
-  
+    public string? ApiKey { get; set; }
+    public string? SecretKey { get; set; }
+
     public string paymentGroup { get; set; }
     public string paymentChannel { get; set; }
     public PaymentCardDTO paymentCard { get; set; }

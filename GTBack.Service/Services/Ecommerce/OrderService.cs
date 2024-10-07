@@ -61,7 +61,7 @@ public class OrderService : IEcommerceOrderService
         var order = new EcommerceOrder
         {
             OrderGuid = g.ToString(),
-            EcommerceClientId = model.EcommerceClientId,
+            EcommerceClientId = model.EcommerceClientId.HasValue ? model.EcommerceClientId : 0,
             TotalPrice = model.TotalPrice,
             Note = model.Note,
             Status = model.Status,
@@ -126,7 +126,7 @@ public class OrderService : IEcommerceOrderService
         var orderListDTOs = orders.Select(order => new EcommerceOrderListDTO
         {
             Id = order.Id,
-            EcommerceClientId = order.EcommerceClientId,
+            EcommerceClientId = order.EcommerceClientId.HasValue ? order.EcommerceClientId : 0,
             Phone = client?.Phone, // Handle nullable client data appropriately
             Mail = client?.Email,
             OpenAddress = order.OpenAddress,
