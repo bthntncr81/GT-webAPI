@@ -3,6 +3,7 @@ using System;
 using GTBack.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241009180418_pk")]
+    partial class pk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -670,9 +672,6 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("EmailPassword")
-                        .HasColumnType("text");
-
                     b.Property<string>("GeoCodeX")
                         .HasColumnType("text");
 
@@ -708,12 +707,6 @@ namespace GTBack.Repository.Migrations
                     b.Property<string>("SecondaryColor")
                         .HasColumnType("text");
 
-                    b.Property<int?>("SmtpPort")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SmtpServer")
-                        .HasColumnType("text");
-
                     b.Property<int>("ThemeId")
                         .HasColumnType("integer");
 
@@ -721,9 +714,6 @@ namespace GTBack.Repository.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("VergiNumber")
-                        .HasColumnType("text");
-
-                    b.Property<string>("WebAddress")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

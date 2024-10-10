@@ -71,7 +71,8 @@ namespace GTBack.Repository
                 .HasKey(cfr => new { cfr.EcommerceClientId, cfr.EcommerceProductId });
 
 
-
+            modelBuilder.Entity<EcommerceVariantOrderRelation>()
+           .HasKey(v => v.Id);
             // Öğrenci ve Koç ilişkisi
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Coach)

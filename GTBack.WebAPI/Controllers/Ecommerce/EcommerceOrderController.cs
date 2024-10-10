@@ -27,11 +27,10 @@ public class EcommerceOrderController : CustomEcommerceBaseController
         return ApiResult(await _orderService.CreateOrder(model));
     }
 
-    [Microsoft.AspNetCore.Mvc.HttpGet("GetOrdersByUserId/{id}")]
-    public async Task<IActionResult> GetOrdersByUserId(int id)
+    [Microsoft.AspNetCore.Mvc.HttpGet("GetOrdersByUserId/{id}/{orderId}/")]
+    public async Task<IActionResult> GetOrdersByUserId(int id, int? orderId)
     {
-
-        return ApiResult(await _orderService.GetOrdersByUserId(id));
+        return ApiResult(await _orderService.GetOrdersByUserId(id, orderId));
     }
 
 

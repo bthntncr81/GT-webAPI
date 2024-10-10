@@ -6,6 +6,8 @@ public class EcommerceOrderListDTO
 {
     public long Id { get; set; }
     public long? EcommerceClientId { get; set; }
+    public string Name { get; set; }
+    public string Surname { get; set; }
     public string Phone { get; set; }
     public string? Mail { get; set; }
     public string? OpenAddress { get; set; }

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using GTBack.Core.DTO;
 using GTBack.Core.DTO.Ecommerce.Response;
@@ -60,7 +61,7 @@ public class OrderService : IEcommerceOrderService
         // Create the order
         var order = new EcommerceOrder
         {
-            OrderGuid = g.ToString(),
+            OrderGuid = GenerateRandomString(10),
             EcommerceClientId = model.EcommerceClientId.HasValue ? model.EcommerceClientId : 0,
             TotalPrice = model.TotalPrice,
             Note = model.Note,
@@ -94,14 +95,29 @@ public class OrderService : IEcommerceOrderService
     }
 
 
-    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrdersByUserId(int id)
+    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrdersByUserId(int id, int? orderId)
     {
-        // Get orders related to the client
-        var orders = await _service
-            .Where(x => x.EcommerceClientId == id && !x.IsDeleted)
-            .Include(o => o.EcommerceVariantOrderRelation)
-                .ThenInclude(ov => ov.EcommerceVariant)
-            .ToListAsync();
+
+        var orders = new List<EcommerceOrder>();
+        if (orderId.HasValue && orderId != 0)
+        {
+            // Get orders related to the client
+            orders = await _service
+               .Where(x => x.EcommerceClientId == id && !x.IsDeleted && x.Id == orderId)
+               .Include(o => o.EcommerceVariantOrderRelation)
+                   .ThenInclude(ov => ov.EcommerceVariant)
+               .ToListAsync();
+        }
+        else
+        {
+            // Get orders related to the client
+            orders = await _service
+                .Where(x => x.EcommerceClientId == id && !x.IsDeleted)
+                .Include(o => o.EcommerceVariantOrderRelation)
+                    .ThenInclude(ov => ov.EcommerceVariant)
+                .ToListAsync();
+        }
+
 
         // Get product-order relations (those not marked as deleted)
         var orderRelations = _orderProdRel
@@ -127,6 +143,8 @@ public class OrderService : IEcommerceOrderService
         {
             Id = order.Id,
             EcommerceClientId = order.EcommerceClientId.HasValue ? order.EcommerceClientId : 0,
+            Name = client?.Name, // Handle nullable client data appropriately
+            Surname = client?.Surname, // Handle nullable client data appropriately
             Phone = client?.Phone, // Handle nullable client data appropriately
             Mail = client?.Email,
             OpenAddress = order.OpenAddress,
@@ -139,9 +157,11 @@ public class OrderService : IEcommerceOrderService
             Note = order.Note,
             CreatedDate = order.CreatedDate,
             Status = order.Status,
-            Products = order.EcommerceVariantOrderRelation.Select(variantOrder => new EcommerceVariantListWithCountDTO
+            Products = orderId.HasValue && orderId != 0 ? order.EcommerceVariantOrderRelation.Select(variantOrder => new EcommerceVariantListWithCountDTO
             {
                 EcommerceProductId = variantOrder.EcommerceVariant.EcommerceProductId,
+                Id = variantOrder.EcommerceVariant.Id,
+                CreatedDate = variantOrder.CreatedDate,
                 Name = variantOrder.EcommerceVariant.Name,
                 Description = variantOrder.EcommerceVariant.Description,
                 ThumbImage = variantOrder.EcommerceVariant.ThumbImage,
@@ -155,79 +175,10 @@ public class OrderService : IEcommerceOrderService
                     .ToList(),
                 // You may also include the count of variants ordered, if necessary
                 Count = variantOrder.Count
-            }).ToList()
+            }).ToList() : null
         }).ToList();
-
-
-
-
         return new SuccessDataResult<ICollection<EcommerceOrderListDTO>>(orderListDTOs);
     }
-    //  orderRelRepo
-    //          .Where(rel => rel.EcommerceOrderId == order.Id)
-    //          .Select(rel => prodRepo.FirstOrDefault(p => p.Id == rel.EcommerceVariantId))
-    //          .Where(prod => prod != null)
-    //          .Select(prod => new EcommerceVariantListWithCountDTO
-    //          {
-    //              EcommerceProductId = prod.EcommerceProductId,
-    //              Name = prod.Name,
-    //              Description = prod.Description,
-    //              ThumbImage = prod.ThumbImage,
-    //              VariantName = prod.VariantName,
-    //              VariantIndicator = prod.VariantIndicator,
-    //              Price = prod.Price,
-    //              Count = orderRelRepo.Where(x => x.EcommerceOrderId == order.Id && x.EcommerceVariantId == prod.Id).Select(x => x.Count).FirstOrDefault(),
-    //              Images = imageRepo
-    //                  .Where(img => img.EcommerceVariantId == prod.Id)
-    //                  .Select(img => img.Data)
-    //                  .ToList()
-    //          }).ToList()
-
-    // public async Task<IDataResults<ICollection<ShoppingOrderListDTO>>> GetOrderByOrderId(int id)
-    // {
-
-    //     var orderRepo = _service.Where(x => x.Id == id);
-    //     var addressRepo = _addressService.Where(x => !x.IsDeleted);
-
-    //     var query = from order in orderRepo
-    //                 join address in addressRepo on order.AddressId equals address.Id into addressLeft
-    //                 from address in addressLeft.DefaultIfEmpty()
-    //                 select new ShoppingOrderListDTO()
-    //                 {
-    //                     Id = order.Id,
-    //                     BasketJsonDetail = order.BasketJsonDetail,
-    //                     ShoppingUserId = order.ShoppingUserId.IsNull() ? order.ShoppingUserId : null,
-    //                     OrderGuid = order.OrderGuid,
-    //                     TotalPrice = order.TotalPrice,
-    //                     OrderNote = order.OrderNote,
-    //                     Status = order.Status,
-    //                     Name = order.Name,
-    //                     Surname = order.Surname,
-    //                     CreatedDate = order.CreatedDate,
-    //                     Phone = order.Phone,
-    //                     Mail = order.Mail,
-    //                     Address = new AddressResponseDTO
-    //                     {
-    //                         Name = address.Name,
-    //                         City = address.City,
-    //                         District = address.District,
-    //                         OpenAddress = address.OpenAddress,
-    //                         Country = address.Country,
-    //                     }
-
-    //                 };
-
-
-    //     var orderList = await query.ToListAsync();
-
-
-
-
-    //     return new SuccessDataResult<ICollection<ShoppingOrderListDTO>>(orderList);
-    // }
-
-
-
     public async Task<IResults> OrderConfirm(long orderId)
     {
 
@@ -260,6 +211,22 @@ public class OrderService : IEcommerceOrderService
 
 
         return new SuccessDataResult<MailMessage>(message);
+    }
+
+    static string GenerateRandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // Define the character set
+        Random random = new Random(); // Create a new instance of the Random class
+        StringBuilder result = new StringBuilder(length);
+
+        // Generate the random string
+        for (int i = 0; i < length; i++)
+        {
+            // Get a random index in the range of the character set and append the character at that index to the result
+            result.Append(chars[random.Next(chars.Length)]);
+        }
+
+        return result.ToString(); // Convert the StringBuilder to a string and return it
     }
 
 }

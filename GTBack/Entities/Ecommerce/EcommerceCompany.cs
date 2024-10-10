@@ -1,10 +1,14 @@
 namespace GTBack.Core.Entities.Ecommerce;
 
-public class EcommerceCompany:BaseEntity
+public class EcommerceCompany : BaseEntity
 {
     public string? Logo { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
+    public string? WebAddress { get; set; }
+    public string? EmailPassword { get; set; }
+    public string? SmtpServer { get; set; }
+    public int? SmtpPort { get; set; }
     public string Phone { get; set; }
     public string? Address { get; set; }
     public string? GeoCodeY { get; set; }
