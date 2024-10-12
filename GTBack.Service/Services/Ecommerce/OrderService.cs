@@ -54,7 +54,7 @@ public class OrderService : IEcommerceOrderService
     }
 
 
-    public async Task<IDataResults<OrderDTO>> CreateOrder(OrderDTO model)
+    public async Task<IDataResults<string>> CreateOrder(OrderDTO model)
     {
         Guid g = Guid.NewGuid();
 
@@ -91,19 +91,23 @@ public class OrderService : IEcommerceOrderService
 
         }
 
-        return new SuccessDataResult<OrderDTO>(model);
+
+
+
+
+        return new SuccessDataResult<string>(addedOrder.OrderGuid);
     }
 
 
-    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrdersByUserId(int id, int? orderId)
+    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrdersByUserId(int id, string? orderGuid)
     {
 
         var orders = new List<EcommerceOrder>();
-        if (orderId.HasValue && orderId != 0)
+        if (!orderGuid.IsNullOrEmpty() && orderGuid != "0")
         {
             // Get orders related to the client
             orders = await _service
-               .Where(x => x.EcommerceClientId == id && !x.IsDeleted && x.Id == orderId)
+               .Where(x => x.EcommerceClientId == id && !x.IsDeleted && x.OrderGuid == orderGuid)
                .Include(o => o.EcommerceVariantOrderRelation)
                    .ThenInclude(ov => ov.EcommerceVariant)
                .ToListAsync();
@@ -157,7 +161,7 @@ public class OrderService : IEcommerceOrderService
             Note = order.Note,
             CreatedDate = order.CreatedDate,
             Status = order.Status,
-            Products = orderId.HasValue && orderId != 0 ? order.EcommerceVariantOrderRelation.Select(variantOrder => new EcommerceVariantListWithCountDTO
+            Products = !order.OrderGuid.IsNullOrEmpty() && orderGuid != "0" ? order.EcommerceVariantOrderRelation.Select(variantOrder => new EcommerceVariantListWithCountDTO
             {
                 EcommerceProductId = variantOrder.EcommerceVariant.EcommerceProductId,
                 Id = variantOrder.EcommerceVariant.Id,

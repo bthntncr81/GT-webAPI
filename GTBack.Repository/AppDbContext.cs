@@ -62,7 +62,7 @@ namespace GTBack.Repository
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.Entity<EcommerceVariantOrderRelation>()
-                .HasKey(por => new { por.EcommerceVariantId, por.EcommerceOrderId });
+       .HasKey(por => por.Id); // Set Id as the primary key
 
             modelBuilder.Entity<EcommerceBasketProductRelation>()
                 .HasKey(bpr => new { bpr.EcommerceBasketId, bpr.EcommerceVariantId });

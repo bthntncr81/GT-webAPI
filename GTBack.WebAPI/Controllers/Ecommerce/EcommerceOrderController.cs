@@ -28,7 +28,7 @@ public class EcommerceOrderController : CustomEcommerceBaseController
     }
 
     [Microsoft.AspNetCore.Mvc.HttpGet("GetOrdersByUserId/{id}/{orderId}/")]
-    public async Task<IActionResult> GetOrdersByUserId(int id, int? orderId)
+    public async Task<IActionResult> GetOrdersByUserId(int id, string? orderId)
     {
         return ApiResult(await _orderService.GetOrdersByUserId(id, orderId));
     }

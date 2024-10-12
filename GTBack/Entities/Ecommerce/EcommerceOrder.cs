@@ -9,6 +9,7 @@ public class EcommerceOrder : BaseEntity
     public virtual EcommerceClient EcommerceClient { get; set; }
     public int TotalPrice { get; set; }
     public string Note { get; set; }
+    public string? ShippmentTrackingLink { get; set; }
     public OrderStatusEnum Status { get; set; }
     public string OpenAddress { get; set; }
     public string Country { get; set; }
