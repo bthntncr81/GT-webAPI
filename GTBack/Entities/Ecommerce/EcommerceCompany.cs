@@ -23,5 +23,6 @@ public class EcommerceCompany : BaseEntity
     public string? DeliveredAndReturnPolicy { get; set; }
     public string? DistanceSellingContract { get; set; }
     public virtual ICollection<EcommerceEmployee> EcommerceEmployees { get; set; }
+    public virtual ICollection<EcommerceOrder> EcommerceOrder { get; set; }
     public virtual ICollection<EcommerceClient> EcommerceClients { get; set; }
 }

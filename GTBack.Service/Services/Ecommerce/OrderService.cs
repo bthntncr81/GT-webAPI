@@ -29,6 +29,7 @@ public class OrderService : IEcommerceOrderService
     private readonly IService<EcommerceVariantOrderRelation> _orderProdRel;
     private readonly IService<EcommerceClient> _ecommerceClientService;
     private readonly IService<EcommerceVariant> _prodService;
+    private readonly IService<EcommerceCompany> _companyService;
     private readonly IService<EcommerceImage> _imageService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly ClaimsPrincipal? _loggedUser;
@@ -36,7 +37,7 @@ public class OrderService : IEcommerceOrderService
     private readonly IJwtTokenService<BaseRegisterDTO> _tokenService;
     private readonly IMemoryCache _cache;
 
-    public OrderService(IService<EcommerceImage> imageService, IService<EcommerceVariant> prodService, IService<EcommerceClient> ecommerceClientService, IService<EcommerceVariantOrderRelation> orderProdRel, IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
+    public OrderService(IService<EcommerceCompany> companyService, IService<EcommerceImage> imageService, IService<EcommerceVariant> prodService, IService<EcommerceClient> ecommerceClientService, IService<EcommerceVariantOrderRelation> orderProdRel, IMemoryCache cache, IRefreshTokenService refreshTokenService, IJwtTokenService<BaseRegisterDTO> tokenService,
         IHttpContextAccessor httpContextAccessor, IService<EcommerceOrder> service,
         IMapper mapper)
     {
@@ -44,6 +45,7 @@ public class OrderService : IEcommerceOrderService
         _cache = cache;
         _orderProdRel = orderProdRel;
         _imageService = imageService;
+        _companyService = companyService;
         _prodService = prodService;
         _ecommerceClientService = ecommerceClientService;
         _service = service;
@@ -58,6 +60,8 @@ public class OrderService : IEcommerceOrderService
     {
         Guid g = Guid.NewGuid();
 
+        var user = await _ecommerceClientService.Where(x => x.Id == model.EcommerceClientId).FirstOrDefaultAsync();
+
         // Create the order
         var order = new EcommerceOrder
         {
@@ -71,6 +75,7 @@ public class OrderService : IEcommerceOrderService
             City = model.City,
             District = model.District,
             IyzicoTransactionId = model.IyzicoTransactionId,
+            EcommerceCompanyId = user.EcommerceCompanyId
         };
 
         var addedOrder = await _service.AddAsync(order);
@@ -99,11 +104,11 @@ public class OrderService : IEcommerceOrderService
     }
 
 
-    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrdersByUserId(int id, string? orderGuid)
+    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrdersByUserId(int? id, string? orderGuid)
     {
 
         var orders = new List<EcommerceOrder>();
-        if (!orderGuid.IsNullOrEmpty() && orderGuid != "0")
+        if (!orderGuid.IsNullOrEmpty() && orderGuid != "0" && id.HasValue && id != 0)
         {
             // Get orders related to the client
             orders = await _service
@@ -112,7 +117,7 @@ public class OrderService : IEcommerceOrderService
                    .ThenInclude(ov => ov.EcommerceVariant)
                .ToListAsync();
         }
-        else
+        else if (id.HasValue && id != 0)
         {
             // Get orders related to the client
             orders = await _service
@@ -120,6 +125,15 @@ public class OrderService : IEcommerceOrderService
                 .Include(o => o.EcommerceVariantOrderRelation)
                     .ThenInclude(ov => ov.EcommerceVariant)
                 .ToListAsync();
+        }
+        else if (!orderGuid.IsNullOrEmpty() && orderGuid != "0")
+        {
+            // Get orders related to the client
+            orders = await _service
+               .Where(x => !x.IsDeleted && x.OrderGuid == orderGuid)
+               .Include(o => o.EcommerceVariantOrderRelation)
+                   .ThenInclude(ov => ov.EcommerceVariant)
+               .ToListAsync();
         }
 
 
@@ -232,5 +246,80 @@ public class OrderService : IEcommerceOrderService
 
         return result.ToString(); // Convert the StringBuilder to a string and return it
     }
+
+
+    public async Task<IDataResults<ICollection<EcommerceOrderListDTO>>> GetOrderByCompanyId(long? companyId)
+    {
+
+        var orders = new List<EcommerceOrder>();
+
+        // Get orders related to the client
+        orders = await _service
+           .Where(x => !x.IsDeleted && x.EcommerceCompanyId == companyId)
+           .Include(o => o.EcommerceVariantOrderRelation)
+               .ThenInclude(ov => ov.EcommerceVariant)
+           .ToListAsync();
+
+
+
+
+        // Get product-order relations (those not marked as deleted)
+        var orderRelations = _orderProdRel
+            .Where(x => !x.IsDeleted);
+
+        // Get products (those not marked as deleted)
+        var products = await _prodService
+            .Where(x => !x.IsDeleted)
+            .ToListAsync();
+
+        // Get images (those not marked as deleted)
+        var images = await _imageService
+            .Where(x => !x.IsDeleted)
+            .ToListAsync();
+
+
+
+        // Map orders to DTO
+        var orderListDTOs = orders.Select(order => new EcommerceOrderListDTO
+        {
+            Id = order.Id,
+            EcommerceClientId = order.EcommerceClientId.HasValue ? order.EcommerceClientId : 0,
+            OpenAddress = order.OpenAddress,
+            Name = _ecommerceClientService.Where(x => x.Id == order.EcommerceClientId).Select(x => x.Name).FirstOrDefault(), // Handle nullable client data appropriately
+            Surname = _ecommerceClientService.Where(x => x.Id == order.EcommerceClientId).Select(x => x.Surname).FirstOrDefault(), // Handle nullable client data appropriately
+            Phone = _ecommerceClientService.Where(x => x.Id == order.EcommerceClientId).Select(x => x.Phone).FirstOrDefault(), // Handle nullable client data appropriately
+            Mail = _ecommerceClientService.Where(x => x.Id == order.EcommerceClientId).Select(x => x.Email).FirstOrDefault(), // Handle nullable client data appropriately
+            OrderGuid = order.OrderGuid,
+            TotalPrice = order.TotalPrice,
+            City = order.City,
+            Country = order.Country,
+            District = order.District,
+            IyzicoTransactionId = order.IyzicoTransactionId,
+            Note = order.Note,
+            CreatedDate = order.CreatedDate,
+            Status = order.Status,
+            Products = order.EcommerceVariantOrderRelation.Select(variantOrder => new EcommerceVariantListWithCountDTO
+            {
+                EcommerceProductId = variantOrder.EcommerceVariant.EcommerceProductId,
+                Id = variantOrder.EcommerceVariant.Id,
+                CreatedDate = variantOrder.CreatedDate,
+                Name = variantOrder.EcommerceVariant.Name,
+                Description = variantOrder.EcommerceVariant.Description,
+                ThumbImage = variantOrder.EcommerceVariant.ThumbImage,
+                VariantName = variantOrder.EcommerceVariant.VariantName,
+                VariantIndicator = variantOrder.EcommerceVariant.VariantIndicator,
+                Stock = variantOrder.EcommerceVariant.Stock,
+                Price = variantOrder.EcommerceVariant.Price,
+                Images = variantOrder.EcommerceVariant.EcommerceImages
+                    .Where(img => !img.IsDeleted)
+                    .Select(img => img.Data)
+                    .ToList(),
+                // You may also include the count of variants ordered, if necessary
+                Count = variantOrder.Count
+            }).ToList()
+        }).ToList();
+        return new SuccessDataResult<ICollection<EcommerceOrderListDTO>>(orderListDTOs);
+    }
+
 
 }

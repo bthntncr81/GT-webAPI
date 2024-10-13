@@ -6,7 +6,9 @@ public class EcommerceOrder : BaseEntity
 {
     public string OrderGuid { get; set; }
     public long? EcommerceClientId { get; set; }
+    public long? EcommerceCompanyId { get; set; }
     public virtual EcommerceClient EcommerceClient { get; set; }
+    public virtual EcommerceCompany EcommerceCompany { get; set; }
     public int TotalPrice { get; set; }
     public string Note { get; set; }
     public string? ShippmentTrackingLink { get; set; }
