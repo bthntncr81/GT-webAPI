@@ -75,20 +75,21 @@ public class ClasroomService : IClassroomService
 
 
 
-    public async Task<IDataResults<List<StudentUpdateDTO>>> GetClassStudents(long classId)
+    public async Task<IDataResults<List<StudentResponseDTO>>> GetClassStudents(long classId)
     {
 
-        var student = await _studentService.Where(x => x.ClassroomId == classId).Select(s => new StudentUpdateDTO()
+        var student = await _studentService.Where(x => x.ClassroomId == classId).Select(s => new StudentResponseDTO()
         {
             Id = s.Id,
             Name = s.Name,
             Surname = s.Surname,
             HavePermission = s.HavePermission,
             Grade = s.Grade,
+            ClassroomId = s.ClassroomId.HasValue ? (long)s.ClassroomId : 0,
             Phone = s.Phone,
             Email = s.Email,
         }).ToListAsync();
-        return new SuccessDataResult<List<StudentUpdateDTO>>(student);
+        return new SuccessDataResult<List<StudentResponseDTO>>(student);
     }
 
     public async Task<IResults> AddClassRoomToStudents(AddStudentToClassroom model)
