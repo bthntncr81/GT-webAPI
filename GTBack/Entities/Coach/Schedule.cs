@@ -8,6 +8,7 @@ public class Schedule:BaseEntity
     public DayOfWeekEnum DayOfWeek { get; set; } // Haftanın günü
     // public long? SubjectId { get; set; } // Programdaki ders
     public long SubLessonId { get; set; } // Programdaki ders
+    public string? UniqueId { get; set; } // Programdaki ders
     public string TimeSlot { get; set; } // Dersin saat dilimi
 
     public Student Student { get; set; } // İlişkili öğrenci

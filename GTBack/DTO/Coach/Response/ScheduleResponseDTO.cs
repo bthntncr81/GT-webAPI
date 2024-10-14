@@ -7,6 +7,8 @@ public class ScheduleResponseDTO
     public long? ScheduleRelId { get; set; }
     public long? SubjectId { get; set; }
     public long SublessonId { get; set; }
+    public string UniqueId { get; set; }
+    public string UniqueIdSubject { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public int ?QuestionCount { get; set; }

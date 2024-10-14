@@ -8,6 +8,7 @@ public class EcommerceVariantListDTO : BaseEntity
     public string Name { get; set; }
     public string Description { get; set; }
     public string ThumbImage { get; set; }
+    public string? VariantCode { get; set; }
 
     public string VariantName { get; set; }
     public string VariantIndicator { get; set; }

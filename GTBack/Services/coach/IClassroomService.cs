@@ -14,4 +14,5 @@ public interface IClassroomService
     Task<IResults> AddScheduleToClass(AddScheduleAllClass model);
     Task<IDataResults<List<ClassroomListModel>>> GetClassrooms();
     Task<IDataResults<List<StudentUpdateDTO>>> GetClassStudents(long classId);
+    Task<IResults> AddSubjectOnSubLesson(AddSubjectAllClassesDTO model);
 }

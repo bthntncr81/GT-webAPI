@@ -179,6 +179,7 @@ public class OrderService : IEcommerceOrderService
             {
                 EcommerceProductId = variantOrder.EcommerceVariant.EcommerceProductId,
                 Id = variantOrder.EcommerceVariant.Id,
+                VariantCode = variantOrder.EcommerceVariant.VariantCode,
                 CreatedDate = variantOrder.CreatedDate,
                 Name = variantOrder.EcommerceVariant.Name,
                 Description = variantOrder.EcommerceVariant.Description,
@@ -304,6 +305,7 @@ public class OrderService : IEcommerceOrderService
                 Id = variantOrder.EcommerceVariant.Id,
                 CreatedDate = variantOrder.CreatedDate,
                 Name = variantOrder.EcommerceVariant.Name,
+                VariantCode = variantOrder.EcommerceVariant.VariantCode,
                 Description = variantOrder.EcommerceVariant.Description,
                 ThumbImage = variantOrder.EcommerceVariant.ThumbImage,
                 VariantName = variantOrder.EcommerceVariant.VariantName,

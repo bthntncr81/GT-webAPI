@@ -6,6 +6,7 @@ public class SubjectScheduleRelation:BaseEntity
     public long? SubjectId { get; set; } // Programdaki ders
     
     public int? QuestionCount { get; set; } // Programdaki ders
+    public string? UniqueId { get; set; } // Programdaki ders
     public int? CorrectCount { get; set; } // Programdaki ders
     public bool? IsDone { get; set; } // Programdaki ders
     public DateTime ExpireDate { get; set; } // Programdaki ders

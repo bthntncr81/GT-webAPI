@@ -18,7 +18,7 @@ namespace GTBack.WebAPI.Controllers
         private readonly IClassroomService _classroomService;
         private readonly ILessonService _lessonService;
 
-        public ClasroomController(IClassroomService classroomService,ILessonService lessonService)
+        public ClasroomController(IClassroomService classroomService, ILessonService lessonService)
         {
             _classroomService = classroomService;
             _lessonService = lessonService;
@@ -40,13 +40,22 @@ namespace GTBack.WebAPI.Controllers
         }
 
         [Authorize]
+        [HttpPost("AddSubjectOnSubLesson")]
+        public async Task<IActionResult> AddSubjectOnSubLesson(AddSubjectAllClassesDTO model)
+        {
+            var result = await _classroomService.AddSubjectOnSubLesson(model);
+            return ApiResult(result);
+        }
+
+
+        [Authorize]
         [HttpPost("AddLessonToClass")]
         public async Task<IActionResult> DeleteSubjectForStudent(AddScheduleAllClass model)
         {
             var result = await _classroomService.AddScheduleToClass(model);
             return ApiResult(result);
         }
-        
+
         [Authorize]
         [HttpGet("GetClassrooms")]
         public async Task<IActionResult> GetClassrooms()
@@ -54,8 +63,8 @@ namespace GTBack.WebAPI.Controllers
             var result = await _classroomService.GetClassrooms();
             return ApiResult(result);
         }
-        
-        
+
+
         [Authorize]
         [HttpGet("GetStudentsByClassroomId/{id}")]
         public async Task<IActionResult> GetClassStudents(int id)
@@ -64,9 +73,9 @@ namespace GTBack.WebAPI.Controllers
             return ApiResult(result);
         }
 
-        
-       
-        
-        
+
+
+
+
     }
 }

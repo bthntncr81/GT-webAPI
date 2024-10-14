@@ -152,6 +152,7 @@ public class EcommerceProductService : IEcommerceProductService
                 Price = item.Price,
                 Name = item.Name,
                 Description = item.Description,
+                VariantCode = item.VariantCode,
                 VariantIndicator = item.VariantIndicator,
                 VariantName = item.VariantName,
                 ThumbImage = item.ThumbImage
@@ -511,6 +512,7 @@ public class EcommerceProductService : IEcommerceProductService
                                            Description = variant.Description,
                                            EcommerceProductId = variant.EcommerceProductId,
                                            VariantIndicator = variant.VariantIndicator,
+                                           VariantCode = variant.VariantCode,
                                            VariantName = variant.VariantName,
                                            ThumbImage = variant.ThumbImage,
 

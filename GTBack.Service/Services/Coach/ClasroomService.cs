@@ -30,7 +30,7 @@ public class ClasroomService : IClassroomService
     private readonly ClaimsPrincipal? _loggedUser;
     private readonly IMapper _mapper;
 
-    public ClasroomService(IMapper mapper,IService<SubjectScheduleRelation> scheduleSubkectRelationService,IService<Student> studentService, IService<Classroom> classroomService,IService<Subject> subjectService, IService<Schedule> scheduleService, IHttpContextAccessor httpContextAccessor)
+    public ClasroomService(IMapper mapper, IService<SubjectScheduleRelation> scheduleSubkectRelationService, IService<Student> studentService, IService<Classroom> classroomService, IService<Subject> subjectService, IService<Schedule> scheduleService, IHttpContextAccessor httpContextAccessor)
     {
         _subjectService = subjectService;
         _mapper = mapper;
@@ -54,33 +54,33 @@ public class ClasroomService : IClassroomService
             Name = model.Name,
             Grade = model.Grade
         };
-      await  _classroomService.AddAsync(classroom);
+        await _classroomService.AddAsync(classroom);
 
         return new SuccessResult();
     }
 
-    
-    public async Task<IDataResults<List<ClassroomListModel>>> GetClassrooms( )
+
+    public async Task<IDataResults<List<ClassroomListModel>>> GetClassrooms()
     {
         var userIdClaim = _loggedUser.FindFirstValue("Id");
 
-     var classList=   await _classroomService.Where(x => x.CoachId==long.Parse(userIdClaim)).Select(x => new ClassroomListModel()
+        var classList = await _classroomService.Where(x => x.CoachId == long.Parse(userIdClaim)).Select(x => new ClassroomListModel()
         {
             Name = x.Name,
             CoachId = x.CoachId,
-            Id=x.Id
+            Id = x.Id
         }).ToListAsync();
         return new SuccessDataResult<List<ClassroomListModel>>(classList);
     }
-    
-    
-    
+
+
+
     public async Task<IDataResults<List<StudentUpdateDTO>>> GetClassStudents(long classId)
     {
 
-        var student = await _studentService.Where(x => x.ClassroomId ==classId).Select(s=>new StudentUpdateDTO()
+        var student = await _studentService.Where(x => x.ClassroomId == classId).Select(s => new StudentUpdateDTO()
         {
-            Id=s.Id,
+            Id = s.Id,
             Name = s.Name,
             Surname = s.Surname,
             Grade = s.Grade,
@@ -92,10 +92,10 @@ public class ClasroomService : IClassroomService
 
     public async Task<IResults> AddClassRoomToStudents(AddStudentToClassroom model)
     {
-        
+
         foreach (var id in model.StudentIds)
         {
-            var item=    await  _studentService.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var item = await _studentService.Where(x => x.Id == id).FirstOrDefaultAsync();
             item.ClassroomId = model.ClassroomId;
             await _studentService.UpdateAsync(item);
         }
@@ -103,28 +103,98 @@ public class ClasroomService : IClassroomService
         return new SuccessResult();
     }
 
-        
-        
-    
-    
+
+
+
+
     public async Task<IResults> AddScheduleToClass(AddScheduleAllClass model)
     {
-        var studentIds= await  _studentService.Where(x=>x.ClassroomId==model.ClassId).Select(x=>x.Id).ToListAsync();
+        var studentIds = await _studentService.Where(x => x.ClassroomId == model.ClassId).Select(x => x.Id).ToListAsync();
+        Guid g = Guid.NewGuid();
 
         foreach (var studentId in studentIds)
         {
+
             var schedule = new Schedule
             {
                 StudentId = studentId,
                 SubLessonId = model.SublessonId,
                 DayOfWeek = model.Day,
-                TimeSlot = model.TimeSlot
+                TimeSlot = model.TimeSlot,
+                UniqueId = g.ToString()
             };
 
-            await _scheduleService.AddAsync(schedule); 
+            await _scheduleService.AddAsync(schedule);
         }
-        
+
         return new SuccessResult("Subject added to student schedule successfully");
     }
- 
+
+
+
+    public async Task<IResults> AddSubjectOnSubLesson(AddSubjectAllClassesDTO model)
+    {
+
+        var schedulesIds = await _scheduleService.Where(x => x.UniqueId == model.UniqueId).Select(x => x.Id).ToListAsync();
+
+        var subject = await _subjectService.GetByIdAsync(x => x.Id == model.SubjectId);
+        if (subject == null)
+        {
+            return new ErrorResult("Subject not found");
+        }
+
+
+        // Get the current date and time in local time
+        DateTime now = DateTime.Now;
+
+        // Calculate the number of days until Sunday (Sunday is considered DayOfWeek.Sunday)
+        int daysUntilSunday = ((int)DayOfWeek.Sunday - (int)now.DayOfWeek + 7) % 7;
+
+        // Find the upcoming Sunday
+        DateTime nextSunday = now.AddDays(daysUntilSunday);
+
+        // Set the time to 23:59:00 for the next Sunday in local time
+        DateTime sundayAtMidnight = new DateTime(nextSunday.Year, nextSunday.Month, nextSunday.Day, 23, 59, 0, DateTimeKind.Local);
+
+        // Convert the time to UTC before saving to the database
+        DateTime sundayAtMidnightUtc = sundayAtMidnight.ToUniversalTime();
+        var existingRel = await _scheduleSubkectRelationService.Where(x => x.UniqueId == model.UniqueIdSubject).ToListAsync();
+        if (existingRel.IsNull() || existingRel.Count == 0)
+        {
+            Guid g = Guid.NewGuid();
+
+            foreach (var schedulesId in schedulesIds)
+            {
+
+                var secSub = new SubjectScheduleRelation()
+                {
+                    SubjectId = model.SubjectId,
+                    ScheduleId = schedulesId,
+                    UniqueId = g.ToString(),
+                    ExpireDate = sundayAtMidnightUtc,
+                    QuestionCount = model.QuestionCount,
+                    IsDone = false,
+                };
+
+
+                await _scheduleSubkectRelationService.AddAsync(secSub);
+            }
+        }
+        else
+        {
+
+            foreach (var rel in existingRel)
+            {
+                rel.SubjectId = model.SubjectId;
+                rel.QuestionCount = model.QuestionCount;
+                await _scheduleSubkectRelationService.UpdateAsync(rel);
+            }
+
+        }
+
+
+
+
+        return new SuccessResult("Subject added to student schedule successfully");
+    }
 }
