@@ -22,15 +22,17 @@ public class SubjectService : ISubjectService
 {
     private readonly IService<Lesson> _lessonService;
     private readonly IService<SubjectScheduleRelation> _scheduleSubkectRelationService;
+    private readonly IService<Student> _studentService;
     private readonly IService<SubLesson> _subLessonService;
     private readonly IService<Subject> _subjectService;
     private readonly IService<Schedule> _scheduleService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ClaimsPrincipal? _loggedUser;
 
-    public SubjectService(IService<SubjectScheduleRelation> scheduleSubkectRelationService, IService<SubLesson> subLessonService, IService<Lesson> lessonService, IService<Subject> subjectService, IService<Schedule> scheduleService, IHttpContextAccessor httpContextAccessor)
+    public SubjectService(IService<Student> studentService, IService<SubjectScheduleRelation> scheduleSubkectRelationService, IService<SubLesson> subLessonService, IService<Lesson> lessonService, IService<Subject> subjectService, IService<Schedule> scheduleService, IHttpContextAccessor httpContextAccessor)
     {
         _subjectService = subjectService;
+        _studentService = studentService;
         _scheduleSubkectRelationService = scheduleSubkectRelationService;
         _scheduleService = scheduleService;
         _subLessonService = subLessonService;
@@ -43,7 +45,18 @@ public class SubjectService : ISubjectService
     // Helper method to extract studentId from the token
     private long GetStudentIdFromToken()
     {
-        var userIdClaim = _loggedUser.FindFirstValue("Id");
+        var userIdClaim = "";
+        if (_loggedUser.FindFirstValue("userType") == "parent")
+        {
+            var id = userIdClaim = _loggedUser.FindFirstValue("Id");
+
+            userIdClaim = _studentService.Where(x => x.ParentId == int.Parse(id)).Select(x => x.Id).FirstOrDefault().ToString();
+        }
+        else
+        {
+            userIdClaim = _loggedUser.FindFirstValue("Id");
+
+        }
 
 
         if (userIdClaim == null)
