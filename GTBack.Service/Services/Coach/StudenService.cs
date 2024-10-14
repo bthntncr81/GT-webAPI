@@ -168,17 +168,18 @@ public class StudentAuthService : IStudentAuthService
         return new SuccessResult("Password reset successfully", HttpStatusCode.OK);
     }
 
-    public async Task<IDataResults<List<StudentUpdateDTO>>> GetStudentsByCoachId()
+    public async Task<IDataResults<List<StudentResponseDTO>>> GetStudentsByCoachId()
     {
 
         var userIdClaim = _loggedUser.FindFirstValue("Id");
 
-        var student = await _studentService.Where(x => x.CoachId == Int32.Parse(userIdClaim)).Select(s => new StudentUpdateDTO()
+        var student = await _studentService.Where(x => x.CoachId == Int32.Parse(userIdClaim)).Select(s => new StudentResponseDTO()
         {
             Id = s.Id,
             Name = s.Name,
             Surname = s.Surname,
             Grade = s.Grade,
+            ClassroomId = s.ClassroomId.HasValue ? (long)s.ClassroomId : 0,
             Phone = s.Phone,
             Email = s.Email,
             HavePermission = s.HavePermission,
@@ -186,7 +187,7 @@ public class StudentAuthService : IStudentAuthService
 
         }).ToListAsync();
 
-        return new SuccessDataResult<List<StudentUpdateDTO>>(student);
+        return new SuccessDataResult<List<StudentResponseDTO>>(student);
 
     }
 
@@ -226,7 +227,7 @@ public class StudentAuthService : IStudentAuthService
     // Authenticate Student (generates tokens)
     private async Task<AuthenticatedUserResponseDto> Authenticate(StudentRegisterDTO studentDto)
     {
-        var accessToken = _tokenService.GenerateAccessTokenStudent(studentDto,studentDto.HavePermission);
+        var accessToken = _tokenService.GenerateAccessTokenStudent(studentDto, studentDto.HavePermission);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         await _refreshTokenService.Create(new RefreshTokenDto

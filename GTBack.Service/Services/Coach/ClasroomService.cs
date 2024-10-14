@@ -83,6 +83,7 @@ public class ClasroomService : IClassroomService
             Id = s.Id,
             Name = s.Name,
             Surname = s.Surname,
+            HavePermission = s.HavePermission,
             Grade = s.Grade,
             Phone = s.Phone,
             Email = s.Email,
