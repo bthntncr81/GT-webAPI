@@ -21,8 +21,7 @@ public interface IEcommerceProductService
             BaseListFilterDTO<EcommerceProductFilter> model);
 
     Task<IDataResults<BasketADDResponseDTO>> AddBasket(int variantId, string guid, long? clientId);
-    Task<IDataResults<List<BasketDTO>>> GetBasket(string guid);
-
+    Task<IDataResults<List<BasketDTO>>> GetBasket(string guid, long companyId);
 
     Task<IDataResults<List<BasketDTO>>> GetBasketLogged();
     Task<IResults> RemoveBasket(int variantId, string guid, long? clientId);

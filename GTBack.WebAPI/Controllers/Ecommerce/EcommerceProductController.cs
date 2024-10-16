@@ -13,7 +13,7 @@ public class EcommerceProductController : CustomEcommerceBaseController
 {
     private readonly IEcommerceProductService _productService;
 
-    
+
     public EcommerceProductController(IEcommerceProductService productService)
     {
         _productService = productService;
@@ -22,19 +22,19 @@ public class EcommerceProductController : CustomEcommerceBaseController
     [Microsoft.AspNetCore.Mvc.HttpPost("AddOrUpdateProduct")]
     public async Task<IActionResult> AddOrUpdateProduct(EcommerceProductAddDto model)
     {
-            
+
         return ApiResult(await _productService.AddOrUpdateProduct(model));
     }
-    
+
     [Microsoft.AspNetCore.Mvc.HttpPost("UpdateVariant")]
     public async Task<IActionResult> UpdateVariant(EcommerceVariantUpdateDTO model)
     {
-            
+
         return ApiResult(await _productService.UpdateVariant(model));
     }
-    
 
-    
+
+
     [Microsoft.AspNetCore.Mvc.HttpPost("ProductList")]
     public async Task<IActionResult> List(BaseListFilterDTO<EcommerceProductFilter> log)
     {
@@ -51,30 +51,30 @@ public class EcommerceProductController : CustomEcommerceBaseController
     {
         return ApiResult(await _productService.GetCategories(id));
     }
-    
-    
+
+
     [Microsoft.AspNetCore.Mvc.HttpGet("AddBasket")]
-    public async Task<IActionResult> AddBasket(int variantId,string guid,long? clientId)
+    public async Task<IActionResult> AddBasket(int variantId, string guid, long? clientId)
     {
-        return ApiResult(await _productService.AddBasket(variantId,guid,clientId));
+        return ApiResult(await _productService.AddBasket(variantId, guid, clientId));
     }
-    
+
     [Microsoft.AspNetCore.Mvc.HttpGet("GetBasket")]
-    public async Task<IActionResult> GetBasket(string guid)
+    public async Task<IActionResult> GetBasket(string guid, long companyId)
     {
-        return ApiResult(await _productService.GetBasket(guid));
+        return ApiResult(await _productService.GetBasket(guid, companyId));
     }
-    
-      
+
+
     [Microsoft.AspNetCore.Mvc.HttpGet("RemoveBasket")]
-    public async Task<IActionResult> RemoveBasket(int variantId,string guid,long? clientId)
+    public async Task<IActionResult> RemoveBasket(int variantId, string guid, long? clientId)
     {
-        return ApiResult(await _productService.RemoveBasket(variantId,guid,clientId));
+        return ApiResult(await _productService.RemoveBasket(variantId, guid, clientId));
     }
-    
+
     [Authorize]
     [Microsoft.AspNetCore.Mvc.HttpDelete("RemoveVariantById/{id}")]
-    public async Task<IActionResult> RemoveSingleVariant(long id )
+    public async Task<IActionResult> RemoveSingleVariant(long id)
     {
         return ApiResult(await _productService.RemoveSingleVariant(id));
     }

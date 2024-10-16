@@ -28,6 +28,7 @@ public class EcommerceProductService : IEcommerceProductService
     private readonly IService<EcommerceProduct> _productService;
     private readonly IService<EcommerceImage> _imageService;
     private readonly IService<EcommerceVariant> _variantService;
+    private readonly IService<EcommerceCompany> _companyService;
     private readonly IService<EcommerceBasket> _basketService;
     private readonly IService<EcommerceBasketProductRelation> _basketProdRelService;
     private readonly IService<EcommerceClient> _clientService;
@@ -36,7 +37,7 @@ public class EcommerceProductService : IEcommerceProductService
     private readonly IBackgroundJobClient _backgroundJobClient;
 
 
-    public EcommerceProductService(IService<EcommerceClient> clientService, IService<EcommerceBasket> basketService, IService<EcommerceBasketProductRelation> basketProdRelService,
+    public EcommerceProductService(IService<EcommerceCompany> companyService, IService<EcommerceClient> clientService, IService<EcommerceBasket> basketService, IService<EcommerceBasketProductRelation> basketProdRelService,
         IService<EcommerceProduct> productService,
         IService<EcommerceImage> imageService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IService<EcommerceVariant> variantService)
     {
@@ -44,6 +45,7 @@ public class EcommerceProductService : IEcommerceProductService
         _loggedUser = httpContextAccessor.HttpContext?.User;
 
         _productService = productService;
+        _companyService = companyService;
         _imageService = imageService;
         _variantService = variantService;
         _basketService = basketService;
@@ -325,20 +327,22 @@ public class EcommerceProductService : IEcommerceProductService
 
     }
 
-    public async Task<IDataResults<List<BasketDTO>>> GetBasket(string guid)
+    public async Task<IDataResults<List<BasketDTO>>> GetBasket(string guid,long companyId)
     {
 
         var basket = await _basketService.Where(x => !x.IsDeleted && x.Guid == guid).FirstOrDefaultAsync();
+        var compRepo = _companyService.Where(x => !x.IsDeleted);
         var basketRelRepo = _basketProdRelService.Where(x => !x.IsDeleted && x.EcommerceBasketId == basket.Id);
         var variantRepo = _variantService.Where(x => !x.IsDeleted);
         var imageRepo = _imageService.Where(x => !x.IsDeleted);
-        var productRepo = _productService.Where(x => !x.IsDeleted);
+        var productRepo = _productService.Where(x => !x.IsDeleted&&x.EcommerceCompanyId==companyId);
 
         var query = from variant in variantRepo
                     join basketRel in basketRelRepo on variant.Id equals basketRel.EcommerceVariantId into basketRelLeft
                     from basketRel in basketRelLeft
                     join prod in productRepo on variant.EcommerceProductId equals prod.Id into productLeft
                     from prod in productLeft
+          
                     select new BasketDTO()
 
                     {
