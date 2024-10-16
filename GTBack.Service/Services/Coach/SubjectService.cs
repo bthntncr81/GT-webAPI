@@ -48,9 +48,9 @@ public class SubjectService : ISubjectService
         var userIdClaim = "";
         if (_loggedUser.FindFirstValue("userType") == "parent")
         {
-            var id = userIdClaim = _loggedUser.FindFirstValue("Id");
-
-            userIdClaim = _studentService.Where(x => x.ParentId == int.Parse(id)).Select(x => x.Id).FirstOrDefault().ToString();
+            var id = _loggedUser.FindFirstValue("Id");
+            var parsedId = int.Parse(id);
+            userIdClaim = _studentService.Where(x => x.ParentId == parsedId).Select(x => x.Id).FirstOrDefault().ToString();
         }
         else
         {

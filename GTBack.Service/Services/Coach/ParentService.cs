@@ -82,7 +82,11 @@ public class ParentService : IParentAuthService
             IsDeleted = false
         };
 
-        await _parentService.AddAsync(coach);
+        var parent = await _parentService.AddAsync(coach);
+
+        student.ParentId = parent.Id;
+
+        await _studentService.UpdateAsync(student);
 
         var response = await Authenticate(_mapper.Map<ParentRegisterDTO>(coach));
         return new SuccessDataResult<AuthenticatedUserResponseDto>(response, HttpStatusCode.OK);
@@ -200,7 +204,7 @@ public class ParentService : IParentAuthService
         return new SuccessResult();
     }
 
-   
+
 
     private static string GenerateRandomString(int length)
     {
