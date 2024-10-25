@@ -300,7 +300,7 @@ public class EcommerceProductService : IEcommerceProductService
                 {
                     EcommerceVariantId = variantId,
                     EcommerceBasketId = basket.Id,
-                    Count = 1
+                    Count = itemCount
                 };
                 await _basketProdRelService.AddAsync(basketRelModel);
             }
