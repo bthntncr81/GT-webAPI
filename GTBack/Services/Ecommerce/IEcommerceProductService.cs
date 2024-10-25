@@ -20,7 +20,7 @@ public interface IEcommerceProductService
         GetGroupedProducts(
             BaseListFilterDTO<EcommerceProductFilter> model);
 
-    Task<IDataResults<BasketADDResponseDTO>> AddBasket(int variantId, string guid, long? clientId);
+    Task<IDataResults<BasketADDResponseDTO>> AddBasket(int variantId, string guid, long? clientId, int itemCount);
     Task<IDataResults<List<BasketDTO>>> GetBasket(string guid, long companyId);
 
     Task<IDataResults<List<BasketDTO>>> GetBasketLogged();

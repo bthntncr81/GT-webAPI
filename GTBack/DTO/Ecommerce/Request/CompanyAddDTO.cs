@@ -8,6 +8,14 @@ public class CompanyAddDTO
     public string Name { get; set; }
     public string SmtpServer { get; set; }
     public int SmtpPort { get; set; }
+
+    public int? ProductCardId { get; set; }
+    public int? DeailPageId { get; set; }
+    public int? HeaderId { get; set; }
+    public int? FooterId { get; set; }
+    public int? AccountPageId { get; set; }
+    public int? OrderDetailPageId { get; set; }
+    public int? LoginRegisterPageId { get; set; }
     public string EmailPassword { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }

@@ -227,7 +227,7 @@ public class EcommerceProductService : IEcommerceProductService
         return new SuccessResult();
 
     }
-    public async Task<IDataResults<BasketADDResponseDTO>> AddBasket(int variantId, string guid, long? clientId)
+    public async Task<IDataResults<BasketADDResponseDTO>> AddBasket(int variantId, string guid, long? clientId,int itemCount)
     {
 
         var myClient = await _clientService.Where(x => !x.IsDeleted && x.Id == clientId).FirstOrDefaultAsync();
@@ -281,7 +281,7 @@ public class EcommerceProductService : IEcommerceProductService
             {
                 EcommerceVariantId = variantId,
                 EcommerceBasketId = myBasket.Id,
-                Count = 1
+                Count = itemCount
             };
             await _basketProdRelService.AddAsync(basketRelModel);
 
@@ -307,7 +307,7 @@ public class EcommerceProductService : IEcommerceProductService
             else
             {
                 var count = sameCountBasket.Count;
-                sameCountBasket.Count = count + 1;
+                sameCountBasket.Count = count + itemCount;
 
                 _basketProdRelService.UpdateAsync(sameCountBasket);
 

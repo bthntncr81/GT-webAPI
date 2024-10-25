@@ -54,9 +54,9 @@ public class EcommerceProductController : CustomEcommerceBaseController
 
 
     [Microsoft.AspNetCore.Mvc.HttpGet("AddBasket")]
-    public async Task<IActionResult> AddBasket(int variantId, string guid, long? clientId)
+    public async Task<IActionResult> AddBasket(int variantId, string guid, long? clientId, int itemCount)
     {
-        return ApiResult(await _productService.AddBasket(variantId, guid, clientId));
+        return ApiResult(await _productService.AddBasket(variantId, guid, clientId, itemCount));
     }
 
     [Microsoft.AspNetCore.Mvc.HttpGet("GetBasket")]

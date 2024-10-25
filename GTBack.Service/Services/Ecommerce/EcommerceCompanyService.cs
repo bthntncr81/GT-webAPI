@@ -48,6 +48,14 @@ public class EcommerceCompanyService : IEcommerceCompanyService
                 GeoCodeY = model.GeoCodeY,
                 GeoCodeX = model.GeoCodeX,
                 ThemeId = model.ThemeId,
+
+                ProductCardId = model.ProductCardId,
+                DeailPageId = model.DeailPageId,
+                HeaderId = model.HeaderId,
+                FooterId = model.FooterId,
+                AccountPageId = model.AccountPageId,
+                OrderDetailPageId = model.OrderDetailPageId,
+                LoginRegisterPageId = model.LoginRegisterPageId,
                 PrimaryColor = model.PrimaryColor,
                 SecondaryColor = model.SecondaryColor,
                 VergiNumber = model.VergiNumber,
@@ -72,6 +80,13 @@ public class EcommerceCompanyService : IEcommerceCompanyService
             company.EmailPassword = model.EmailPassword;
             company.Address = model.Address;
             company.Email = model.Email;
+            company.ProductCardId = model.ProductCardId;
+            company.DeailPageId = model.DeailPageId;
+            company.HeaderId = model.HeaderId;
+            company.FooterId = model.FooterId;
+            company.AccountPageId = model.AccountPageId;
+            company.OrderDetailPageId = model.OrderDetailPageId;
+            company.LoginRegisterPageId = model.LoginRegisterPageId;
             company.Phone = model.Phone;
             company.GeoCodeY = model.GeoCodeY;
             company.GeoCodeX = model.GeoCodeX;
