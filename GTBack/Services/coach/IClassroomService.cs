@@ -11,6 +11,8 @@ public interface IClassroomService
 
     Task<IResults> AddClassRoomToStudents(AddStudentToClassroom model);
 
+    Task<IResults> RemoveLessonOnClassroom(string UniqueId);
+
     Task<IResults> AddScheduleToClass(AddScheduleAllClass model);
     Task<IDataResults<List<ClassroomListModel>>> GetClassrooms();
     Task<IDataResults<List<StudentResponseDTO>>> GetClassStudents(long classId);

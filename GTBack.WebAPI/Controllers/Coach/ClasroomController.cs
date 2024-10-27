@@ -75,6 +75,16 @@ namespace GTBack.WebAPI.Controllers
 
 
 
+        [Authorize]
+        [HttpDelete("RemoveLesson/{uniqueId}")]
+        public async Task<IActionResult> RemoveLesson(string uniqueId)
+        {
+            var result = await _classroomService.RemoveLessonOnClassroom(uniqueId);
+            return ApiResult(result);
+        }
+
+
+
 
 
     }

@@ -132,6 +132,18 @@ public class ClasroomService : IClassroomService
         return new SuccessResult("Subject added to student schedule successfully");
     }
 
+    public async Task<IResults> RemoveLessonOnClassroom(string UniqueId)
+    {
+
+        var schedules = await _scheduleService.Where(x => x.UniqueId == UniqueId).ToListAsync();
+
+        foreach (var item in schedules)
+        {
+            await _scheduleService.RemoveAsync(item);
+        }
+        return new SuccessResult("Subject Removed to students  successfully");
+
+    }
 
 
     public async Task<IResults> AddSubjectOnSubLesson(AddSubjectAllClassesDTO model)
