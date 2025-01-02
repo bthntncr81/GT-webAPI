@@ -4,7 +4,7 @@
 
 namespace GTBack.Repository.Migrations
 {
-    public partial class rela : Migration
+    public partial class initialmig2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

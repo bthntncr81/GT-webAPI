@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GTBack.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241010121322_email")]
-    partial class email
+    [Migration("20250102192836_initial-mig-2")]
+    partial class initialmig2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -321,6 +321,9 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UniqueId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -462,6 +465,9 @@ namespace GTBack.Repository.Migrations
 
                     b.Property<long?>("SubjectId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("UniqueId")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -656,11 +662,17 @@ namespace GTBack.Repository.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<int?>("AccountPageId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DeailPageId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("DeliveredAndReturnPolicy")
                         .HasColumnType("text");
@@ -675,11 +687,17 @@ namespace GTBack.Repository.Migrations
                     b.Property<string>("EmailPassword")
                         .HasColumnType("text");
 
+                    b.Property<int?>("FooterId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("GeoCodeX")
                         .HasColumnType("text");
 
                     b.Property<string>("GeoCodeY")
                         .HasColumnType("text");
+
+                    b.Property<int?>("HeaderId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -690,12 +708,18 @@ namespace GTBack.Repository.Migrations
                     b.Property<string>("IyzicoSecretId")
                         .HasColumnType("text");
 
+                    b.Property<int?>("LoginRegisterPageId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Logo")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("OrderDetailPageId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -706,6 +730,9 @@ namespace GTBack.Repository.Migrations
 
                     b.Property<string>("PrivacyPolicy")
                         .HasColumnType("text");
+
+                    b.Property<int?>("ProductCardId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SecondaryColor")
                         .HasColumnType("text");
@@ -723,6 +750,9 @@ namespace GTBack.Repository.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("VergiNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WebAddress")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -842,6 +872,9 @@ namespace GTBack.Repository.Migrations
                     b.Property<long?>("EcommerceClientId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("EcommerceCompanyId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -861,6 +894,9 @@ namespace GTBack.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ShippmentTrackingLink")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -873,6 +909,8 @@ namespace GTBack.Repository.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EcommerceClientId");
+
+                    b.HasIndex("EcommerceCompanyId");
 
                     b.ToTable("EcommerceOrder");
                 });
@@ -989,6 +1027,9 @@ namespace GTBack.Repository.Migrations
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("VariantCode")
+                        .HasColumnType("text");
 
                     b.Property<string>("VariantIndicator")
                         .HasColumnType("text");
@@ -1612,7 +1653,13 @@ namespace GTBack.Repository.Migrations
                         .WithMany()
                         .HasForeignKey("EcommerceClientId");
 
+                    b.HasOne("GTBack.Core.Entities.Ecommerce.EcommerceCompany", "EcommerceCompany")
+                        .WithMany("EcommerceOrder")
+                        .HasForeignKey("EcommerceCompanyId");
+
                     b.Navigation("EcommerceClient");
+
+                    b.Navigation("EcommerceCompany");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceProduct", b =>
@@ -1835,6 +1882,8 @@ namespace GTBack.Repository.Migrations
                     b.Navigation("EcommerceClients");
 
                     b.Navigation("EcommerceEmployees");
+
+                    b.Navigation("EcommerceOrder");
                 });
 
             modelBuilder.Entity("GTBack.Core.Entities.Ecommerce.EcommerceEmployee", b =>
